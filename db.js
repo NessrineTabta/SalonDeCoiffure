@@ -27,3 +27,4 @@ const db = knex({
 
 //exporation de cette base de donnée
 module.exports = db;
+//HELLOOO
