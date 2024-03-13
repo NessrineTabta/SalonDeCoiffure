@@ -1,3 +1,8 @@
+// group leader: jordan
+//soldats: nessbin beriv
+//guetteur : mike 
+
+
 /* ----------------------
  * Configuration du serveur
  * ---------------------- */
