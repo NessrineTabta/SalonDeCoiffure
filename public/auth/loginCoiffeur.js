@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // For example, you can store the token in local storage and redirect the user
             localStorage.setItem('token', data.token);
             alert('Login successful! Welcome, ' + email);
-            window.location.href = './page.html'; // Redirect to the home page
+            window.location.href = '../pageCoiffeur.html'; // Redirect to the home page
         })
         .catch(error => {
             // Handle errors, e.g., display error message
