@@ -5,10 +5,6 @@
 //POUR BASE DE DONNEE ET REQUETE
 const db = require('./db');
 
-//les routes
-const loginRouter = require('./login'); 
-const registerRouter = require('./register'); 
-const authRouter = require('./auth'); 
 
 
 var express = require('express');
