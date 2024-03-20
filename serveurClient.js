@@ -37,7 +37,7 @@ function authentification(req, res, next) {
 app.get("/rendezVousClient", authentification, async (req, res) => {
   try {
     const unEmail = req.user; // Email de l'utilisateur extrait du token
-    const rendezVous = await rendezvousCoiffeur(unEmail);
+    const rendezVous = await rendezvousClient(unEmail);
     res.json({
       rendezVous: rendezVous,
       message: "Bienvenue dans le board sécurisé " + req.user,
@@ -114,6 +114,7 @@ function getUserByUsername(unEmail) {
       });
   });
 }
+
 // rdv - peut faire un rdv(post insert) delete ( heure,date,email), get retourne les rdv client, rdv futur ( get actual date function ( rdv a part de cette date))
 // Port d'écoute du serveur
 app.listen(3000, () => {
