@@ -5,10 +5,6 @@
 //POUR BASE DE DONNEE ET REQUETE
 const db = require("./db");
 
-//les routes
-const loginRouter = require("./login");
-const registerRouter = require("./register");
-const authRouter = require("./auth");
 
 var express = require("express");
 var app = express();
@@ -25,54 +21,6 @@ const TOKEN_SECRET_KEY = "WEB_4D2_00003"; //ajout de chaine pour completer le si
  * Définition des routes
  * ------------------------ */
 
-function authentification(req, res, next) {
-  const token = req.body.token;
-  if (!token) {
-    return res.status(400).json({ message: "Accès non autorisé" });
-  }
-
-  jwt.verify(token, TOKEN_SECRET_KEY, (err, decodedToken) => {
-    if (err) {
-      return res.status(400).json({ message: "Token invalide" });
-    }
-    req.user = decodedToken.email; // Accès direct à l'email à partir du token décodé
-    next(); // va executer le prochain code
-  });
-}
-
-//rendez vous coté coiffeur
-app.get("/rendezVousCoiffeur", authentification, async (req, res) => {
-  try {
-    const unEmail = req.user; // Email de l'utilisateur extrait du token
-    const rendezVous = await rendezvousCoiffeur(unEmail);
-    res.json({
-      rendezVous: rendezVous,
-      message: "Bienvenue dans le board sécurisé " + req.user,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message:
-        "Une erreur s'est produite lors de la récupération des rendez-vous.",
-    });
-  }
-});
-
-//fonction rendezvous coiffeur
-function rendezvousCoiffeur(unEmail) {
-  return new Promise((resolve, reject) => {
-    db.select("*")
-      .from("rendezvous")
-      .join("Coiffeur", "rendezvous.idCoiffeur", "=", "Coiffeur.idCoiffeur")
-      .where("Coiffeur.email", unEmail)
-      .then((rows) => {
-        resolve(rows);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-}
 
 /*login */
 
@@ -127,6 +75,7 @@ function getUserByUsername(unEmail) {
 
 /* route pour s'enregistrer*/
 app.post("/register", async (req, res) => {
+app.post('/registerCoiffeur', async (req, res) => {
   try {
     const { unEmail, nom, prenom, numeroTelephone, password } = req.body;
 
@@ -185,6 +134,7 @@ function insertUser(email, nom, prenom, numeroTelephone, passwordHashed) {
   });
 }
 
+
 // -------------------------- client ---------------------------------------------------
 //rendez vous coté client
 app.get("/rendezVousClient", authentification, async (req, res) => {
@@ -215,6 +165,48 @@ function rendezvousClient(unEmail) {
         resolve(rows);
       })
       .catch((err) => {
+
+/* AUTHENTIFICATION DEMANDÉ */
+
+function authentification(req, res, next) {
+  const token = req.body.token;
+  if (!token) {
+      return res.status(400).json({ message: 'Accès non autorisé' });
+  }
+
+  jwt.verify(token, TOKEN_SECRET_KEY, (err, decodedToken) => {
+      if (err) {
+          return res.status(400).json({ message: 'Token invalide' });
+      }
+      req.user = decodedToken.email; // Accès direct à l'email à partir du token décodé
+      next(); // va executer le prochain code
+  });
+}
+
+//rendez vous coté coiffeur
+app.get('/rendezVousCoiffeur', authentification, async (req, res) => {
+  try {
+      const unEmail = req.user; // Email de l'utilisateur extrait du token
+      const rendezVous = await rendezvousCoiffeur(unEmail);
+      res.json({ rendezVous: rendezVous, message: 'Bienvenue dans le board sécurisé ' + req.user });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Une erreur s\'est produite lors de la récupération des rendez-vous.' });
+  }
+});
+
+//fonction rendezvous coiffeur
+function rendezvousCoiffeur(unEmail) {
+  return new Promise((resolve, reject) => {
+    db.select('*')
+      .from('rendezvous')
+      .join('Coiffeur', 'rendezvous.idCoiffeur', '=', 'Coiffeur.idCoiffeur')
+      .where('Coiffeur.email', unEmail)
+      .then(rows => {
+        resolve(rows);
+      })
+      .catch(err => {
+
         reject(err);
       });
   });
@@ -224,3 +216,4 @@ function rendezvousClient(unEmail) {
 app.listen(3000, () => {
   console.log(`Serveur démarré sur le port ${3000}`);
 });
+
