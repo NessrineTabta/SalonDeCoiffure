@@ -1,0 +1,19 @@
+/* Add any custom styles here */
+
+.navbar-brand {
+    justify-content: flex-start;
+  }
+  
+  .navbar-menu {
+    justify-content: flex-end;
+  }
+  
+  #logo1{
+    size: 200%;
+  }
+  .navbar{
+    padding-top: 20px;
+  }
+  .navbar-item{
+    margin-left: 5px;
+  }
