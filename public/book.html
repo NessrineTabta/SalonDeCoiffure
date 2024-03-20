@@ -1,11 +1,272 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="./logo/2.png" />
-    <title>Book an Appointment</title>
-  </head>
-  <body></body>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Schedule Appointment with Bellevista Salon</title>
+    <link rel="stylesheet" href="https://cdn-marketing.acuityscheduling.com/built/csp/schedule.css?v=0d08b9">
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Source+Serif+Pro:400,600');
+
+        body {
+            font-family: 'Source Serif Pro', Helvetica, sans-serif;
+        }
+    </style>
+</head>
+
+<body class="no-touch template-monthly locale-en_US">
+
+    <div class="business-container">
+        <h1 class="business-name">Prendre un Rendez-Vous</h1>
+    </div>
+
+    <div class="content">
+        <div class="header">
+            <ol class="steps">
+                <li class="active step-pick-appointment"><a href="#">Choisir le Rendez-Vous</a></li>
+                <li class="step-forms"><a href="#">Vos informations</a></li>
+                <li class="step-confirmation"><a href="#">Confirmation</a></li>
+            </ol>
+        </div>
+
+        <div class="pane pick-appointment-pane">
+            <div class="select select-category">
+                <button class="back-button" type="button"><i class="fa fa-chevron-left"></i>View all
+                    categories</button>
+
+                <input type="radio" name="categoryType" id="categoryType-0" />
+
+                <div id="categoryType-0-container" class="select-item babel-ignore category-label category-label">
+                    <label for="categoryType-0" tabindex="0">
+                        <span class="appointment-type-name">Sexe</span>
+                    </label>
+                    <button class="btn btn-primary" aria-label="Select Bohemian twist  category" type="button"
+                        data-testid="categoryType-0-select">
+                        Selectionner
+                    </button>
+                </div>
+
+                <input type="radio" name="categoryType" id="categoryType-1" />
+                <div id="categoryType-1-container" class="select-item babel-ignore category-label category-label">
+                    <label for="categoryType-1" tabindex="0">
+                        <span class="appointment-type-name">Salon de coiffure</span>
+                    </label>
+                    <button class="btn btn-primary" aria-label="Select Box braids category" type="button"
+                        data-testid="categoryType-1-select">
+                        Selectionner
+                    </button>
+                </div>
+                <input type="radio" name="categoryType" id="categoryType-2" />
+                <div id="categoryType-2-container" class="select-item babel-ignore category-label category-label">
+                    <label for="categoryType-2" tabindex="0">
+                        <span class="appointment-type-name">Coiffeur</span>
+                    </label>
+                    <button class="btn btn-primary" aria-label="Select Box braids category" type="button"
+                        data-testid="categoryType-2-select">
+                        Selectionner
+                    </button>
+                </div>
+
+
+                <input type="radio" name="categoryType" id="categoryType-3" />
+                <div id="categoryType-3-container" class="select-item babel-ignore category-label category-label">
+                    <label for="categoryType-3" tabindex="0">
+                        <span class="appointment-type-name">Services</span>
+                    </label>
+                    <button class="btn btn-primary" aria-label="Select Box braids category" type="button"
+                        data-testid="categoryType-3-select">
+                        Selectionner
+                    </button>
+                </div>
+
+            </div>
+            <div class="select select-type">
+                <div class="select-group">
+                    <!----------------------------------SEXE--------------------------------------->
+                    <input type="radio" name="appointmentType" data-is-group="0" data-is-class="0" data-is-series="0" />
+
+                    <div class="select-item-box select-item from-category-0" style="display:none" tabindex="0">
+                        <div class="content-container">
+                            <div class="details-container">
+                                <div>
+                                    <label class="babel-ignore">
+                                        <span class="appointment-type-name">Masculin</span>
+                                    </label>
+                                </div>
+                                <button class="btn btn-primary" type="button">Selectionner</button>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <input type="radio" name="appointmentType" data-is-group="0" data-is-class="0" data-is-series="0" />
+
+                    <div class="select-item-box select-item from-category-0" style="display:none" tabindex="0">
+                        <div class="content-container">
+                            <div class="details-container">
+                                <div>
+                                    <label class="babel-ignore">
+                                        <span class="appointment-type-name">Féminin</span>
+                                    </label>
+
+                                </div>
+                                <button class="btn btn-primary" type="button">Selectionner</button>
+                            </div>
+
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <input type="radio" name="appointmentType" data-is-group="0" data-is-class="0" data-is-series="0" />
+
+                    <div class="select-item-box select-item from-category-0" style="display:none" tabindex="0">
+                        <div class="content-container">
+                            <div class="details-container">
+                                <div>
+                                    <label class="babel-ignore">
+                                        <span class="appointment-type-name">Unisexe</span>
+                                    </label>
+
+                                </div>
+                                <button class="btn btn-primary" type="button">Selectionner</button>
+                            </div>
+
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <!----------------------------------SALON DE COIFURE--------------------------------------->
+                    <div class="select-group">
+                        <input type="radio" name="appointmentType" data-is-group="0" data-is-class="0" />
+
+                        <div class="select-item-box select-item from-category-1" style="display:none" tabindex="0">
+                            <div class="content-container">
+                                <div class="details-container">
+                                    <div>
+                                        <label class="babel-ignore">
+                                            <span class="appointment-type-name">nom de salon 1</span>
+                                        </label>
+
+                                    </div>
+                                    <button class="btn btn-primary" type="button">Selectionner</button>
+                                </div>
+
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <input type="radio" name="appointmentType" data-is-group="0" data-is-class="0" />
+
+                        <div class="select-item-box select-item from-category-1" style="display:none" tabindex="0">
+                            <div class="content-container">
+                                <div class="details-container">
+                                    <div>
+                                        <label class="babel-ignore">
+                                            <span class="appointment-type-name">nom de salon 2</span>
+                                        </label>
+                                    </div>
+                                    <button class="btn btn-primary" type="button">Selectionner</button>
+                                </div>
+
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <!----------------------------------COIFFEUR--------------------------------------->
+                        <input type="radio" name="appointmentType" data-is-group="0" data-is-class="0" />
+
+                        <div class="select-item-box select-item from-category-2" style="display:none" tabindex="0">
+                            <div class="content-container">
+                                <div class="details-container">
+                                    <div>
+                                        <label class="babel-ignore">
+                                            <span class="appointment-type-name">Coiffeur1</span>
+                                        </label>
+
+                                    </div>
+                                    <button class="btn btn-primary" type="button">Selectionner</button>
+                                </div>
+
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+
+
+                        <input type="radio" name="appointmentType" data-is-group="0" data-is-class="0" />
+
+                        <div class="select-item-box select-item from-category-2" style="display:none" tabindex="0">
+                            <div class="content-container">
+                                <div class="details-container">
+                                    <div>
+                                        <label class="babel-ignore">
+                                            <span class="appointment-type-name">Coiffeur2</span>
+                                        </label>
+
+                                    </div>
+                                    <button class="btn btn-primary" type="button">Selectionner</button>
+                                </div>
+
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+
+                        <!----------------------------------SERVICES--------------------------------------->
+                        <input type="radio" name="appointmentType" data-is-group="0" data-is-class="0"
+                            data-is-series="0" />
+
+                        <div class="select-item-box select-item from-category-3" style="display:none" tabindex="0">
+                            <div class="content-container">
+                                <div class="details-container">
+                                    <div>
+                                        <label class="babel-ignore" for="appointmentType-51970987">
+                                            <span class="appointment-type-name">service1</span>
+                                        </label>
+                                        <div class="duration-container">
+                                            <span class="price">
+                                                <span id="appointment-51970987-original-price">
+                                                    $290.00
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" type="button"
+                                        data-testid="appointment-51970987-select">Selectionner</button>
+                                </div>
+
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+
+
+                        <input type="radio" name="appointmentType" data-is-group="0" data-is-class="0"
+                            data-is-series="0" />
+
+                        <div class="select-item-box select-item from-category-3" style="display:none" tabindex="0">
+                            <div class="content-container">
+                                <div class="details-container">
+                                    <div>
+                                        <label class="babel-ignore" for="appointmentType-51971016">
+                                            <span class="appointment-type-name">service2</span>
+                                        </label>
+                                        <div class="duration-container">
+                                            <span class="price">
+                                                <span id="appointment-51971016-original-price">
+                                                    $280.00
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" type="button"
+                                        data-testid="appointment-51971016-select">Selectionner</button>
+                                </div>
+
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <script src="script.js"></script>
+
+</body>
+
 </html>
