@@ -71,8 +71,6 @@ function rendezvousCoiffeur(unEmail) {
   });
 }
 
-
-
 /*login */
 
 
@@ -120,7 +118,7 @@ function getUserByUsername(unEmail){
 /*register */
 
 /* route pour s'enregistrer*/
-app.post('/register', async (req, res) => {
+app.post('/registerCoiffeur', async (req, res) => {
   try {
 
       const { unEmail, nom, prenom, numeroTelephone, password } = req.body;
@@ -174,11 +172,9 @@ function insertUser(email, nom, prenom, numeroTelephone, passwordHashed){
         })                              
 }
 
-// -------------------------- client ---------------------------------------------------
-
-
 
 // Port d'écoute du serveur
 app.listen(3000, () => {
     console.log(`Serveur démarré sur le port ${3000}`);
 });
+
