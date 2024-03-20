@@ -73,6 +73,36 @@ function rendezvousCoiffeur(unEmail) {
   });
 }
 
+//GET: Ajouter Service
+app.get('/services', authentification, async (req, res) => {
+  try {
+      const unEmail = req.user; // Email de l'utilisateur extrait du token
+      const rendezVous = await rendezvousCoiffeur(unEmail);
+      res.json({ rendezVous: rendezVous, message: 'Bienvenue dans le board sécurisé ' + req.user });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Une erreur s\'est produite lors de la récupération des rendez-vous.' });
+  }
+});
+
+//fonction rendezvous coiffeur
+function service(unEmail) {
+  return new Promise((resolve, reject) => {
+    db.select('*')
+      .from('Service')
+      .join('Coiffeur', 'rendezvous.idCoiffeur', '=', 'Coiffeur.idCoiffeur')
+      .where('Coiffeur.email', unEmail)
+      .then(rows => {
+        resolve(rows);
+      })
+      .catch(err => {
+
+        reject(err);
+      });
+  });
+}
+
+
 /*login */
 
 // Route POST pour se login en Coiffeur

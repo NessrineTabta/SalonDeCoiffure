@@ -31,15 +31,12 @@ const db = knex({
 // Création de la table Client
 // db.schema.createTable('Client', table => {
  //  table.increments('idClient').primary();
+ // table.string('email').unique().notNullable();
  //  table.string('nomClient').notNullable();
   // table.string('prenomClient').notNullable();
  //  table.integer('numClient').notNullable();
- //  table.integer('idSalon').unsigned();
- //  table.integer('idService').unsigned();
- //  table.integer('idPortfolio').unsigned();
- //  table.foreign('idSalon').references('Salon.idSalon');
- //  table.foreign('idService').references('Service.idService');
- //  table.foreign('idPortfolio').references('Portfolio.idPortfolio');
+  // table.string('password').unique().notNullable();
+
 // }).then(() => console.log('Table Client créée'));
 
 // Création de la table RendezVous
@@ -62,13 +59,6 @@ const db = knex({
  //  table.integer('numSalon').notNullable();
 // }).then(() => console.log('Table Salon créée'));
 
-// Création de la table InscriptionCoiffeur
-// db.schema.createTable('InscriptionCoiffeur', table => {
-  // table.increments('idInscription').primary();
- //  table.string('token').notNullable();
- //  table.integer('idCoiffeur').unsigned();
- // table.foreign('idCoiffeur').references('Coiffeur.idCoiffeur');
-// }).then(() => console.log('Table InscriptionCoiffeur créée'));
 
 // Création de la table Service
 // db.schema.createTable('Service', table => {
