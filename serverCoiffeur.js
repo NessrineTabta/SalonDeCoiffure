@@ -102,10 +102,10 @@ function getServicesForCoiffeur(unEmail) {
   });
 }
 
-//delete service
-app.delete('/services/:idService', authentification, async (req, res) => {
+// DELETE: Supprimer un service
+app.delete('/services', authentification, async (req, res) => {
   try {
-    const idService = req.params.idService;
+    const { idService } = req.body; // Récupérer l'idService depuis le corps de la requête
     // Vérifier si le service existe
     const service = await db('Service').where('idService', idService).first();
     if (!service) {
@@ -121,6 +121,7 @@ app.delete('/services/:idService', authentification, async (req, res) => {
     res.status(500).json({ message: 'Une erreur s\'est produite lors de la suppression du service' });
   }
 });
+
 
 //Post: Service
 app.post('/services', authentification, async (req, res) => {
@@ -169,9 +170,9 @@ function getDisponibilitesForCoiffeur(unEmail) {
 }
 
 // DELETE: Supprimer une disponibilité
-app.delete('/disponibilites/:idDisponibilite', authentification, async (req, res) => {
+app.delete('/disponibilites', authentification, async (req, res) => {
   try {
-    const idDisponibilite = req.params.idDisponibilite;
+    const { idDisponibilite } = req.body; // Récupérer l'idDisponibilite depuis le corps de la requête
     // Vérifier si la disponibilité existe
     const disponibilite = await db('Disponibilite').where('idDisponibilite', idDisponibilite).first();
     if (!disponibilite) {
@@ -189,12 +190,12 @@ app.delete('/disponibilites/:idDisponibilite', authentification, async (req, res
 });
 
 
+
 // POST: Ajouter une disponibilité
 app.post('/disponibilites', authentification, async (req, res) => {
   try {
-    const { dateDisponibilite, heureDisponibilite } = req.body;
+    const { dateDisponibilite, heureDisponibilite, idCoiffeur } = req.body; // Récupérer les données depuis le corps de la requête
     const idDisponibilite = await addDisponibilite(dateDisponibilite, heureDisponibilite);
-    const idCoiffeur = req.user; // Email de l'utilisateur extrait du token
     await db('Coiffeur_Disponibilite').insert({ idCoiffeur, idDisponibilite });
     res.status(201).json({ message: 'Disponibilité ajoutée avec succès', idDisponibilite });
   } catch (error) {
@@ -215,6 +216,7 @@ function addDisponibilite(dateDisponibilite, heureDisponibilite) {
       });
   });
 }
+
 
 
 

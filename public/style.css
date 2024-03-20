@@ -2,37 +2,54 @@
  * Styles global de la page
  * ---------------- */
 
- body {
-    color: white;
+#appointment-overlay {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  padding: 20px;
+  position: fixed; /* Ou absolute selon le besoin */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 600px; /* Ajustez selon la largeur souhaitée */
+  z-index: 10;
+}
+.btn-primary {
+  background-color: #3273dc; /* Couleur principale de Bulma */
+  color: white;
 }
 
-.split {
-    height: 100%;
-    width: 28%;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    overflow-x: hidden;
-    padding-top: 20px;
-    left: 0;
-    background-color: #111;
+.btn-back {
+  margin-bottom: 20px;
+}
+.select,
+.button {
+  width: 100%;
 }
 
-.centered {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
+.form-item {
+  margin-bottom: 15px;
 }
-#filtrage{
-    /* display: flex; 
-    align-items: center; 
-    gap: 10px; */
-    padding-bottom: 500px;
+.progress-list {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
 }
 
-#filtrerSalon, #filtrerSexe, #filtrerServices, #filtrerCoiffeur{
-    width: 400px;
-    height: 30px;
+.progress-item {
+  flex-grow: 1;
+  text-align: center; /* Ajustez selon le style désiré */
+}
+
+.progress-line {
+  position: absolute;
+  height: 2px;
+  background-color: #3273dc; /* Ajustez la couleur au thème */
+  width: 25%; /* Ajustez selon la progression */
+}
+@media (max-width: 768px) {
+  .layout-wrapper,
+  .form-item {
+    padding: 10px;
+  }
 }
