@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Send login credentials to the server
-        fetch('/login', {
+        fetch('/loginCoiffeur', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
