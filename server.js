@@ -43,6 +43,7 @@ function authentification(req, res, next) {
   });
 }
 
+//rendez vous coté coiffeur
 app.get('/rendezVousCoiffeur', authentification, async (req, res) => {
   try {
       const unEmail = req.user; // Email de l'utilisateur extrait du token
@@ -54,17 +55,22 @@ app.get('/rendezVousCoiffeur', authentification, async (req, res) => {
   }
 });
 
+//fonction rendezvous coiffeur
 function rendezvousCoiffeur(unEmail) {
   return new Promise((resolve, reject) => {
-      db.select('*').from('rendezvous').where('email', unEmail)
-          .then(rows => {
-              resolve(rows);
-          })
-          .catch(err => {
-              reject(err);
-          });
+    db.select('*')
+      .from('rendezvous')
+      .join('Coiffeur', 'rendezvous.idCoiffeur', '=', 'Coiffeur.idCoiffeur')
+      .where('Coiffeur.email', unEmail)
+      .then(rows => {
+        resolve(rows);
+      })
+      .catch(err => {
+        reject(err);
+      });
   });
 }
+
 
 
 /*login */
