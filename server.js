@@ -168,9 +168,11 @@ function insertUser(email, nom, prenom, numeroTelephone, passwordHashed){
         })                              
 }
 
+// -------------------------- client ---------------------------------------------------
+
+
 
 // Port d'écoute du serveur
 app.listen(3000, () => {
     console.log(`Serveur démarré sur le port ${3000}`);
 });
-
