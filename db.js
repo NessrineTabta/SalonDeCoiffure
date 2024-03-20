@@ -13,9 +13,11 @@ const db = knex({
 // Création de la table Coiffeur
 // db.schema.createTable('Coiffeur', table => {
  //  table.increments('idCoiffeur').primary();
+// table.string('email').unique().notNullable();
 //   table.string('nomCoiffeur').notNullable();
  //  table.string('prenomCoiffeur').notNullable();
  //  table.integer('numCoiffeur').notNullable();
+ // table.string('password').unique().notNullable();
  //  table.integer('idSalon').unsigned();
 //   table.integer('idService').unsigned();
  //  table.integer('idPortfolio').unsigned();
@@ -26,7 +28,7 @@ const db = knex({
  //  table.foreign('idDisponibilite').references('Disponibilite.idDisponibilite');
 // }).then(() => console.log('Table Coiffeur créée'));
 
-// Création de la table Coiffeur
+// Création de la table Client
 // db.schema.createTable('Client', table => {
  //  table.increments('idClient').primary();
  //  table.string('nomClient').notNullable();

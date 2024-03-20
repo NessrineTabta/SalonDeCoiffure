@@ -31,44 +31,64 @@ const TOKEN_SECRET_KEY= 'WEB_4D2_00003'                  //ajout de chaine pour 
 function authentification(req, res, next) {
   const token = req.body.token;
   if (!token) {
-      return res.status(400).json({ message: 'Accès non autorisé' }); // Vérifiez l'orthographe de "message"
+      return res.status(400).json({ message: 'Accès non autorisé' });
   }
 
-  jwt.verify(token, TOKEN_SECRET_KEY, (err, user) => {
+  jwt.verify(token, TOKEN_SECRET_KEY, (err, decodedToken) => {
       if (err) {
-          return res.status(400).json({ message: 'Token invalide' }); // Vérifiez l'orthographe de "message"
+          return res.status(400).json({ message: 'Token invalide' });
       }
-      req.user = user;
+      req.user = decodedToken.email; // Accès direct à l'email à partir du token décodé
       next(); // va executer le prochain code
   });
 }
 
-app.get('/dashboard', authentification, (req, res) => {
-  res.json({ message: 'Bienvenue dans le board sécurisé ' + req.user.username }); // Vérifiez l'orthographe de "message"
+app.get('/rendezVousCoiffeur', authentification, async (req, res) => {
+  try {
+      const unEmail = req.user; // Email de l'utilisateur extrait du token
+      const rendezVous = await rendezvousCoiffeur(unEmail);
+      res.json({ rendezVous: rendezVous, message: 'Bienvenue dans le board sécurisé ' + req.user });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Une erreur s\'est produite lors de la récupération des rendez-vous.' });
+  }
 });
+
+function rendezvousCoiffeur(unEmail) {
+  return new Promise((resolve, reject) => {
+      db.select('*').from('rendezvous').where('email', unEmail)
+          .then(rows => {
+              resolve(rows);
+          })
+          .catch(err => {
+              reject(err);
+          });
+  });
+}
+
 
 /*login */
 
 
-// Route GET pour se login
-app.post('/login', async (req, res) => {
+// Route POST pour se login en Coiffeur
+app.post('/loginCoiffeur', async (req, res) => {
   try {
-      const { username, password } = req.body;
+      const { unEmail, password } = req.body;
       
-      const user = await getUserByUsername(username);
+      const email = await getUserByUsername(unEmail);
 
       //si l'utilisateur existe pas on peut pas le LOGIN
-      if(!user){
+      if(!email){
           return res.status(400).json({message: 'Username/Passowrd invalide'}); //return quitte la route, le serveur retourne toujours 1 reponse
       }
 
       //on verifie si false que son mot de passe decrypter = a ce quil a ecrit
-      if( !(bcrypt.compare(password, user.password) )){
+      if( !(bcrypt.compare(password, email.password) )){
           return res.status(400).json({message: 'Username/Password unvalide'});
       }
 
       // initialiser token
-      const token = jwt.sign({username}, TOKEN_SECRET_KEY, {expiresIn: 3600})
+      const token = jwt.sign({email}, TOKEN_SECRET_KEY, {expiresIn: 3600})
 
       res.status(200).json({message: 'Connexion reussie.', token, expireDans: 3600})
       
@@ -79,9 +99,9 @@ app.post('/login', async (req, res) => {
   }
 });
 
-function getUserByUsername(username){
+function getUserByUsername(unEmail){
   return new Promise((resolve,reject) => {                         //on retourne une promesse au await
-      db('users').select('*').from('users').where('username', username)
+      db('Coiffeur').select('*').from('Coiffeur').where('email', unEmail)
       .then(row => {
           resolve(row);
       })
@@ -97,19 +117,19 @@ function getUserByUsername(username){
 app.post('/register', async (req, res) => {
   try {
 
-      const { username, email, password } = req.body;
+      const { unEmail, nom, prenom, numeroTelephone, password } = req.body;
 
-      const user = await getUserByUsername(username);
+      const email = await getUserByUsername(unEmail);
 
       //si l'utilisateur existe deja grace a la fonction getUserByUsername
-      if(user){
+      if(email){
           return res.status(400).json({message: 'Cette utilisateur existe déjâ.'}); //return quitte la route, le serveur retourne toujours 1 reponse
       }
 
       const passwordHashed= await bcrypt.hash(password, 10); //hach pour hacher mot de passe deuxieme param cpr le niveau diteration de hachage
 
 
-      await insertUser(username, email, passwordHashed)
+      await insertUser( email, nom, prenom, numeroTelephone, passwordHashed)
       
 
   } catch (error) {
@@ -118,9 +138,9 @@ app.post('/register', async (req, res) => {
   }
 });
 
-function getUserByUsername(username){
+function getUserByUsername(unEmail){
   return new Promise((resolve,reject) => {                         //on retourne une promesse au await
-      db.select('*').from('users').where('username', username)
+      db.select('*').from('Coiffeur').where('email', unEmail)
       .then(row => {
           resolve(row);
       })
@@ -130,11 +150,13 @@ function getUserByUsername(username){
         })                              
 }
 
-function insertUser(username, email, passwordHashed){
+function insertUser(email, nom, prenom, numeroTelephone, passwordHashed){
   return new Promise((resolve,reject) => {                         //on retourne une promesse au await
-      db('users').insert({
-          username: username,
+      db('Coiffeur').insert({
           email: email,
+          nomCoiffeur: nom,
+          prenomCoiffeur: prenom,
+          numCoiffeur:numeroTelephone,
           password: passwordHashed,
       })
       .then(row => {
