@@ -21,7 +21,7 @@ const TOKEN_SECRET_KEY = "WEB_4D2_00003"; //ajout de chaine pour completer le si
  * Définition des routes
  * ------------------------ */
 
-//COTÉ COIFFEUR//
+
 
 /* AUTHENTIFICATION DEMANDÉ */
 
@@ -39,6 +39,10 @@ function authentification(req, res, next) {
       next(); // va executer le prochain code
   });
 }
+
+/* ------------------------
+ *       COTÉ COIFFEUR
+ * ------------------------ */
 
 //rendez vous coté coiffeur
 app.get('/rendezVousCoiffeur', authentification, async (req, res) => {
