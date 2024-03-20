@@ -168,6 +168,26 @@ function getDisponibilitesForCoiffeur(unEmail) {
   });
 }
 
+// DELETE: Supprimer une disponibilité
+app.delete('/disponibilites/:idDisponibilite', authentification, async (req, res) => {
+  try {
+    const idDisponibilite = req.params.idDisponibilite;
+    // Vérifier si la disponibilité existe
+    const disponibilite = await db('Disponibilite').where('idDisponibilite', idDisponibilite).first();
+    if (!disponibilite) {
+      return res.status(404).json({ message: 'Disponibilité non trouvée' });
+    }
+    // Supprimer la disponibilité de la table de jointure
+    await db('Coiffeur_Disponibilite').where('idDisponibilite', idDisponibilite).del();
+    // Supprimer la disponibilité de la table Disponibilite
+    await db('Disponibilite').where('idDisponibilite', idDisponibilite).del();
+    res.json({ message: 'Disponibilité supprimée avec succès' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Une erreur s\'est produite lors de la suppression de la disponibilité' });
+  }
+});
+
 
 // POST: Ajouter une disponibilité
 app.post('/disponibilites', authentification, async (req, res) => {
