@@ -32,48 +32,46 @@ const router= express.Router();
 /* ====== REGISTER ET CONNEXION ======*/
 
 //POST : REGISTER
+
 router.post('/registerCoiffeur', async (req, res) => {
   try {
-    const { unEmail, nom, prenom, numeroTelephone, password } = req.body;
+    const { email, nomCoiffeur, prenomCoiffeur, numCoiffeur, password } = req.body;
 
-    const email = await getUserByUsername(unEmail);
+    const emailExiste = await getUserByUsername(email);
 
-    //si l'utilisateur existe deja grace a la fonction getUserByUsername
-    if (email) {
+    if (!emailExiste) {
       return res
         .status(400)
-        .json({ message: "Cette utilisateur existe déjâ." }); //return quitte la route, le serveur retourne toujours 1 reponse
+        .json({ message: "Cet utilisateur existe déjà." });
     }
 
-    const passwordHashed = await bcrypt.hash(password, 10); //hach pour hacher mot de passe deuxieme param cpr le niveau diteration de hachage
+    const passwordHashed = await bcrypt.hash(password, 10); 
 
-    await insertUser(email, nom, prenom, numeroTelephone, passwordHashed);
+    await insertUser(email,nomCoiffeur, prenomCoiffeur, numCoiffeur, passwordHashed);
+
+    res.status(200).json({ message: "Utilisateur enregistré avec succès." });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      message: "Une erreur s'est produite lors de la récupération des données.",
+      message: "Une erreur s'est produite lors de l'enregistrement de l'utilisateur.",
     });
   }
 });
 
 function getUserByUsername(unEmail) {
   return new Promise((resolve, reject) => {
-    //on retourne une promesse au await
-    db.select("*")
-      .from("Coiffeur")
-      .where("email", unEmail)
+    db.select("*").from("Coiffeur").where("email", unEmail).first()
       .then((row) => {
-        resolve(row);
+          resolve(row);
       })
-      .catch((err) => {
-        reject();
+      .catch(err => {
+            reject();
       });
-  });
+    })
 }
 
 function insertUser(email, nom, prenom, numeroTelephone, passwordHashed) {
   return new Promise((resolve, reject) => {
-    //on retourne une promesse au await
     db("Coiffeur")
       .insert({
         email: email,
@@ -82,14 +80,15 @@ function insertUser(email, nom, prenom, numeroTelephone, passwordHashed) {
         numCoiffeur: numeroTelephone,
         password: passwordHashed,
       })
-      .then((row) => {
-        resolve(row);
+      .then(() => {
+        resolve();
       })
       .catch((err) => {
-        reject();
+        reject(err);
       });
   });
 }
+
 
 
 //POST: LOGIN
