@@ -125,10 +125,7 @@ router.post("/loginCoiffeur", async (req, res) => {
 function getUserByUsername(unEmail) {
   return new Promise((resolve, reject) => {
     //on retourne une promesse au await
-    db("Coiffeur")
-      .select("*")
-      .from("Coiffeur")
-      .where("email", unEmail)
+    db("Coiffeur").select("*").from("Coiffeur").where("email", unEmail).first()
       .then((row) => {
         resolve(row);
       })
