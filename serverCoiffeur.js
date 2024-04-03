@@ -19,6 +19,8 @@ const TOKEN_SECRET_KEY = "WEB_4D2_00003"; //ajout de chaine pour completer le si
 
 const authentification = require('./authentification');
 const router= express.Router();
+// token.js pour stocker et invalider le token dans logout, ou le retourner dynamiquement
+const tokenModule = require('./token.js');
 
 
 /* ------------------------
@@ -97,24 +99,36 @@ router.post("/loginCoiffeur", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const emailExistant = await getUserByUsername(email);
+    const emailExistant = await getUserByEmail(email);
 
     //si l'utilisateur existe pas on peut pas le LOGIN
     if (!emailExistant) {
       return res.status(400).json({ message: "Username/Passowrd invalide" }); //return quitte la route, le serveur retourne toujours 1 reponse
     }
 
-    //on verifie si false que son mot de passe decrypter = a ce quil a ecrit
-    if (!bcrypt.compare(password, email.password)) {
-      return res.status(400).json({ message: "Username/Password unvalide" });
+  // Vérifier si l'utilisateur a déjà un token valide, puis lui redonner son token s'il existe
+    const tokenExistant = tokenModule.getTokenByUsername(username);
+    if (tokenExistant && tokenModule.verifierToken(tokenExistant)) {
+        return res.status(200).json({ message: 'Vous êtes déjà connecté.', token: tokenExistant ,expireDans: 3600});
     }
+    
+    //on verifie si false que son mot de passe decrypter = a ce quil a ecrit
+    //compare retourne une PROMESSE DONC ATTENDRE LA FIN DE LA PROMESSE
+
+    const promesseMdp= await bcrypt.compare(password, email.password);
+
+    if (!promesseMdp){
+        return res.status(400).json({message: 'Username ou Password unvalide'});
+      }
 
     // initialiser token
     const token = jwt.sign({ email }, TOKEN_SECRET_KEY, { expiresIn: 3600 });
 
-    res
-      .status(200)
-      .json({ message: "Connexion reussie.", token, expireDans: 3600 });
+    
+    // Stocker le token dans le module token
+    tokenModule.modifierToken(username, token);
+
+    res.status(200).json({ message: "Connexion reussie.", token, expireDans: 3600 });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -123,7 +137,7 @@ router.post("/loginCoiffeur", async (req, res) => {
   }
 });
 
-function getUserByUsername(unEmail) {
+function getUserByEmail(unEmail) {
   return new Promise((resolve, reject) => {
     //on retourne une promesse au await
     db("Coiffeur").select("*").from("Coiffeur").where("email", unEmail).first()
@@ -172,9 +186,9 @@ function rendezvousCoiffeur(unEmail) {
 // GET: Obtenir les services d'un coiffeur
 router.get('/services', authentification, async (req, res) => {
   try {
-    const unEmail = req.user; // Email de l'utilisateur extrait du token
+    const unEmail = req.user.email; // Email de l'utilisateur extrait du token
     const services = await getServicesForCoiffeur(unEmail);
-    res.json({ services: services, message: 'Liste des services pour le coiffeur ' + req.user });
+    res.json({ services: services, message: 'Liste des services pour le coiffeur ' + req.user.email });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Une erreur s\'est produite lors de la récupération des services.' });

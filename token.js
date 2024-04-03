@@ -1,22 +1,48 @@
-/* J'avais le choix entre req.token est un fichier de modularisation du token
-    Permettra d'afficher dynamiquement le token sans que l'utilisateur aille a l'écrire
-    de plus, il modifiera la valeur d'un token ce qui permettra de logout un utilisateur*/
+/* ------------------------
+ * Définition des variables
+ * ------------------------ */
 
-    let token = null;
+let tokens = []; // Définir tokens comme un tableau
 
-    // Fonction pour afficher le token actuel
-    function afficherToken() {
-        return token;
+
+// Fonction pour modifier le token EN GROS LE SUPPRIMER
+function modifierToken(username, nouveauToken) {
+   //filtre les tokens par username
+    tokens = tokens.filter(token => token.username !== username);
+    //rajoute le novueau token a lusername
+    tokens.push({ username, token: nouveauToken });
+}
+
+// Fonction token associé à un username
+function getTokenByUsername(username) {
+    for (const token of tokens) {
+        if (token.username === username) {
+            return token.token;
+        }
     }
+    return null;
+}
     
-    // Fonction pour modifier le token
-    function modifierToken(nouveauToken) {
-        token = nouveauToken;
+// fonction pour suppriemr un token
+function supprimerToken(tokenASupprimer) {
+    tokens = tokens.filter(token => token.token !== tokenASupprimer); // Supprimer le token du tableau
+}
+
+// Fonction verifie validé dun token
+function verifierToken(token) {
+    for (let i = 0; i < tokens.length; i++) {
+        if (tokens[i].token === token) {
+            return true; // Le token est trouvé, donc valide
+        }
     }
-    
-    // Exporter les fonctions et le token
-    module.exports = {
-        afficherToken,
-        modifierToken
-    };
-    
+    return false; // Le token n'est pas trouvé
+}
+
+
+// Module exports
+module.exports = {
+    modifierToken,
+    supprimerToken,
+    verifierToken,
+    getTokenByUsername 
+};
