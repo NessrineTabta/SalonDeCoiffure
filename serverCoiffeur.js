@@ -213,7 +213,7 @@ function servicesCoiffeur(unEmail) {
 }
 
 
-// POST: Ajouter un service pour un coiffeur
+// POST: service
 router.post('/services', authentification,async (req, res) => {
   try {
     const { nom, description } = req.body;
@@ -328,7 +328,7 @@ async function supprimerService(idService) {
 
 
 
-// GET: Obtenir les disponibilités d'un coiffeur a l'aide de son email
+// GET: Desponibilite
 router.get('/disponibilites', authentification, async (req, res) => {
   try {
     const unEmail = req.user.email; // Email de l'utilisateur extrait du token
@@ -356,6 +356,53 @@ function getDisponibilites(unEmail) {
       });
   });
 }
+// POST: disponibilité
+router.post('/disponibilites', authentification, async (req, res) => {
+  try {
+    const { dateDisponibilite, heureDisponibilite } = req.body;
+    const idCoiffeur = await getCoiffeurByEmail(req.user.email); // Obtenez l'ID du coiffeur à partir de l'e-mail de l'utilisateur connecté
+
+    if (!idCoiffeur) {
+      return res.status(404).json({ message: "Coiffeur non trouvé." });
+    }
+
+    // Insérer le nouveau service et le lier au coiffeur
+    const idDisponibilite = await insererDisponibilite(dateDisponibilite, heureDisponibilite, idCoiffeur);
+
+    res.status(201).json({ message: "Service ajouté avec succès.", idDisponibilite });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Une erreur s'est produite lors de l'ajout du service." });
+  }
+});
+
+// Fonction : pour ajouter une disponibilité avec une transaction
+async function insererDisponibilite(dateDisponibilite, heureDisponibilite, idCoiffeur) {
+  try {
+    // Commencer une transaction
+    const transaction = await db.transaction();
+
+    try {
+      // Insérer le nouveau service dans la table Service
+      const [idDisponibilite] = await transaction('Disponibilite').insert({ dateDisponibilite, heureDisponibilite, idCoiffeur });
+
+      // Insérer la liaison entre le coiffeur et le service dans la table Coiffeur_Service
+      await transaction('Coiffeur_Disponibilite').insert({ idCoiffeur, idDisponibilite });
+
+      // Valider la transaction
+      await transaction.commit();
+
+      return idDisponibilite;
+    } catch (error) {
+      // Annuler la transaction en cas d'erreur
+      await transaction.rollback();
+      throw error;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
 
 // DELETE: Supprimer une disponibilité
 router.delete('/disponibilites', authentification, async (req, res) => {
@@ -379,30 +426,5 @@ router.delete('/disponibilites', authentification, async (req, res) => {
 
 
 
-// POST: Ajouter une disponibilité
-router.post('/disponibilites', authentification, async (req, res) => {
-  try {
-    const { dateDisponibilite, heureDisponibilite, idCoiffeur } = req.body; // Récupérer les données depuis le corps de la requête
-    const idDisponibilite = await addDisponibilite(dateDisponibilite, heureDisponibilite);
-    await db('Coiffeur_Disponibilite').insert({ idCoiffeur, idDisponibilite });
-    res.status(201).json({ message: 'Disponibilité ajoutée avec succès', idDisponibilite });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Une erreur s\'est produite lors de l\'ajout de la disponibilité' });
-  }
-});
-
-// Fonction pour ajouter une disponibilité
-function addDisponibilite(dateDisponibilite, heureDisponibilite) {
-  return new Promise((resolve, reject) => {
-    db('Disponibilite').insert({ dateDisponibilite, heureDisponibilite })
-      .then(ids => {
-        resolve(ids[0]); // Retourne l'ID de la disponibilité ajoutée
-      })
-      .catch(err => {
-        reject(err);
-      });
-  });
-}
 
 module.exports= router;
