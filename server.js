@@ -4,7 +4,6 @@
 
 //variables des routes
 const coiffeurRouter = require('./serverCoiffeur'); 
-const clientRouter = require('./serverClient'); 
 
 var express = require('express');
 var app = express();
@@ -18,7 +17,6 @@ app.use(bodyparser.json()); //pour json
  * ------------------------ */
 
 app.use('/', coiffeurRouter); 
-app.use('/', clientRouter); 
 
 
 

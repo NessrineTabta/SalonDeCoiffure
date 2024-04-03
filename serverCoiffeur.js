@@ -18,10 +18,8 @@ const jwt = require("jsonwebtoken");
 const TOKEN_SECRET_KEY = "WEB_4D2_00003"; //ajout de chaine pour completer le sign token
 
 const authentification = require('./authentification');
-const express= require('express');
 const router= express.Router();
 
-const db = require('../db');
 
 /* ------------------------
  * Définition des routes
@@ -317,13 +315,5 @@ function addDisponibilite(dateDisponibilite, heureDisponibilite) {
       });
   });
 }
-
-
-
-
-// Port d'écoute du serveur
-app.listen(3000, () => {
-  console.log(`Serveur démarré sur le port ${3000}`);
-});
 
 module.exports= router;
