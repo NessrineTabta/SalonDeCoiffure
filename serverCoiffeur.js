@@ -331,9 +331,9 @@ async function supprimerService(idService) {
 // GET: Obtenir les disponibilités d'un coiffeur a l'aide de son email
 router.get('/disponibilites', authentification, async (req, res) => {
   try {
-    const unEmail = req.user; // Email de l'utilisateur extrait du token
+    const unEmail = req.user.email; // Email de l'utilisateur extrait du token
     const disponibilites = await getDisponibilites(unEmail);
-    res.json({ disponibilites: disponibilites, message: 'Liste des disponibilités pour le coiffeur ' + req.user });
+    res.json({ disponibilites: disponibilites, message: 'Liste des disponibilités pour le coiffeur ' + req.user.email });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Une erreur s\'est produite lors de la récupération des disponibilités.' });
