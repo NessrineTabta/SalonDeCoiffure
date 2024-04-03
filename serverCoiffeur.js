@@ -20,7 +20,7 @@ const TOKEN_SECRET_KEY = "WEB_4D2_00003"; //ajout de chaine pour completer le si
 const authentification = require('./authentification');
 const router= express.Router();
 // token.js pour stocker et invalider le token dans logout, ou le retourner dynamiquement
-const tokenModule = require('./token.js');
+const tokenModule = require('./token');
 
 
 /* ------------------------
@@ -39,7 +39,7 @@ router.post('/registerCoiffeur', async (req, res) => {
   try {
     const { email, nomCoiffeur, prenomCoiffeur, numCoiffeur, password , idSalon} = req.body;
 
-    const emailExiste = await getUserByUsername(email);
+    const emailExiste = await getUserByEmail(email);
 
     if (emailExiste) {
       return res
@@ -60,7 +60,7 @@ router.post('/registerCoiffeur', async (req, res) => {
   }
 });
 
-function getUserByUsername(unEmail) {
+function getUserByEmail(unEmail) {
   return new Promise((resolve, reject) => {
     db.select("*").from("Coiffeur").where("email", unEmail).first()
       .then((row) => {
@@ -103,11 +103,11 @@ router.post("/loginCoiffeur", async (req, res) => {
 
     //si l'utilisateur existe pas on peut pas le LOGIN
     if (!emailExistant) {
-      return res.status(400).json({ message: "Username/Passowrd invalide" }); //return quitte la route, le serveur retourne toujours 1 reponse
+      return res.status(400).json({ message: "Email/Passowrd invalide" }); //return quitte la route, le serveur retourne toujours 1 reponse
     }
 
   // Vérifier si l'utilisateur a déjà un token valide, puis lui redonner son token s'il existe
-    const tokenExistant = tokenModule.getTokenByUsername(username);
+    const tokenExistant = tokenModule.getTokenByUsername(email);
     if (tokenExistant && tokenModule.verifierToken(tokenExistant)) {
         return res.status(200).json({ message: 'Vous êtes déjà connecté.', token: tokenExistant ,expireDans: 3600});
     }
@@ -115,10 +115,10 @@ router.post("/loginCoiffeur", async (req, res) => {
     //on verifie si false que son mot de passe decrypter = a ce quil a ecrit
     //compare retourne une PROMESSE DONC ATTENDRE LA FIN DE LA PROMESSE
 
-    const promesseMdp= await bcrypt.compare(password, email.password);
+    const promesseMdp = await bcrypt.compare(password, emailExistant.password);
 
     if (!promesseMdp){
-        return res.status(400).json({message: 'Username ou Password unvalide'});
+        return res.status(400).json({message: 'Email ou Password unvalide'});
       }
 
     // initialiser token
@@ -126,7 +126,7 @@ router.post("/loginCoiffeur", async (req, res) => {
 
     
     // Stocker le token dans le module token
-    tokenModule.modifierToken(username, token);
+    tokenModule.modifierToken(email, token);
 
     res.status(200).json({ message: "Connexion reussie.", token, expireDans: 3600 });
   } catch (error) {

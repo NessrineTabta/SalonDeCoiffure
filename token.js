@@ -6,17 +6,17 @@ let tokens = []; // Définir tokens comme un tableau
 
 
 // Fonction pour modifier le token EN GROS LE SUPPRIMER
-function modifierToken(username, nouveauToken) {
+function modifierToken(email, nouveauToken) {
    //filtre les tokens par username
-    tokens = tokens.filter(token => token.username !== username);
+    tokens = tokens.filter(token => token.email !== email);
     //rajoute le novueau token a lusername
-    tokens.push({ username, token: nouveauToken });
+    tokens.push({ email, token: nouveauToken });
 }
 
 // Fonction token associé à un username
-function getTokenByUsername(username) {
+function getTokenByUsername(email) {
     for (const token of tokens) {
-        if (token.username === username) {
+        if (token.email === email) {
             return token.token;
         }
     }
