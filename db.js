@@ -111,7 +111,7 @@ const db = knex({
  // table.foreign('idService').references('Service.idService');
 //}).then(() => console.log('Table Coiffeur_Service créée'));
 
-// Création de la table Avis
+// Création de la table Aviss
 //db.schema.createTable('Avis', table => {
   //table.increments('idAvis').primary();
   //table.integer('nombreEtoile').notNullable();
