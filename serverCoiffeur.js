@@ -187,7 +187,7 @@ function rendezvousCoiffeur(unEmail) {
 router.get('/services', authentification, async (req, res) => {
   try {
     const unEmail = req.user.email; // Email de l'utilisateur extrait du token
-    const services = await getServicesForCoiffeur(unEmail);
+    const services = await servicesCoiffeur(unEmail);
     res.json({ services: services, message: 'Liste des services pour le coiffeur ' + req.user.email });
   } catch (error) {
     console.error(error);
@@ -196,7 +196,7 @@ router.get('/services', authentification, async (req, res) => {
 });
 
 // Fonction :  obtenir les services d'un coiffeur
-function getServicesForCoiffeur(unEmail) {
+function servicesCoiffeur(unEmail) {
   return new Promise((resolve, reject) => {
     db.select('Service.*')
       .from('Service')
@@ -212,49 +212,127 @@ function getServicesForCoiffeur(unEmail) {
   });
 }
 
-// DELETE: Supprimer un service
-router.delete('/services', authentification, async (req, res) => {
-  try {
-    const { idService } = req.body; // Récupérer l'idService depuis le corps de la requête
-    // Vérifier si le service existe
-    const service = await db('Service').where('idService', idService).first();
-    if (!service) {
-      return res.status(404).json({ message: 'Service non trouvé' });
-    }
-    // Supprimer le service de la table de jointure
-    await db('Coiffeur_Service').where('idService', idService).del();
-    // Supprimer le service de la table Service
-    await db('Service').where('idService', idService).del();
-    res.json({ message: 'Service supprimé avec succès' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Une erreur s\'est produite lors de la suppression du service' });
-  }
-});
 
-
-//Post: ajouter un Service pour un coiffeur
-router.post('/services', authentification, async (req, res) => {
+// POST: Ajouter un service pour un coiffeur
+router.post('/services', authentification,async (req, res) => {
   try {
     const { nom, description } = req.body;
-    // Insérer le service dans la table Service
-    const [idService] = await db('Service').insert({ nom, description });
-    // Associer le service au coiffeur actuel (celui qui a créé le service)
-    const idCoiffeur = req.user; // Email de l'utilisateur extrait du token
-    await db('Coiffeur_Service').insert({ idCoiffeur, idService });
-    res.status(201).json({ message: 'Service ajouté avec succès', idService });
+    const idCoiffeur = await getCoiffeurByEmail(req.user.email); // Obtenez l'ID du coiffeur à partir de l'e-mail de l'utilisateur connecté
+
+    if (!idCoiffeur) {
+      return res.status(404).json({ message: "Coiffeur non trouvé." });
+    }
+
+    // Insérer le nouveau service et le lier au coiffeur
+    const idService = await insererService(nom, description, idCoiffeur);
+
+    res.status(201).json({ message: "Service ajouté avec succès.", idService });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Une erreur s\'est produite lors de l\'ajout du service' });
+    res.status(500).json({ message: "Une erreur s'est produite lors de l'ajout du service." });
   }
 });
+
+// Fonction: récupérer l'ID du coiffeur à partir de l'e-mail
+async function getCoiffeurByEmail(email) {
+  try {
+    const coiffeur = await db('Coiffeur').select('idCoiffeur').where('email', email).first();
+    if (coiffeur) {
+      return coiffeur.idCoiffeur;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+// Fonction: insérer un nouveau service et le lier au coiffeur
+async function insererService(nom, description, idCoiffeur) {
+  try {
+    // Commencer une transaction
+    const transaction = await db.transaction();
+
+    try {
+      // Insérer le nouveau service dans la table Service
+      const [idService] = await transaction('Service').insert({ nom, description, idCoiffeur });
+
+      // Insérer la liaison entre le coiffeur et le service dans la table Coiffeur_Service
+      await transaction('Coiffeur_Service').insert({ idCoiffeur, idService });
+
+      // Valider la transaction
+      await transaction.commit();
+
+      return idService;
+    } catch (error) {
+      // Annuler la transaction en cas d'erreur
+      await transaction.rollback();
+      throw error;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+// DELETE: Service
+router.delete('/services', async (req, res) => {
+  try {
+    const { idService } = req.body;
+
+    if (!idService) {
+      return res.status(400).json({ message: "ID du service manquant dans le corps de la requête." });
+    }
+
+    // Supprimer le service
+    const serviceSupprime = await supprimerService(idService);
+
+    if (serviceSupprime) {
+      res.status(200).json({ message: "Service supprimé avec succès." });
+    } else {
+      res.status(404).json({ message: "Service non trouvé." });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Une erreur s'est produite lors de la suppression du service." });
+  }
+});
+
+// Fonction: pour supprimer un service
+async function supprimerService(idService) {
+  try {
+    // Commencez une transaction
+    const transaction = await db.transaction();
+
+    try {
+      // Supprimer l'entrée correspondante dans la table Coiffeur_Service
+      await transaction('Coiffeur_Service').where('idService', idService).del();
+
+      // Supprimer l'entrée correspondante dans la table Service
+      await transaction('Service').where('idService', idService).del();
+
+      // Valider la transaction
+      await transaction.commit();
+
+      return true; // Service supprimé avec succès
+    } catch (error) {
+      // Annuler la transaction en cas d'erreur
+      await transaction.rollback();
+      throw error;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+
+
 
 
 // GET: Obtenir les disponibilités d'un coiffeur a l'aide de son email
 router.get('/disponibilites', authentification, async (req, res) => {
   try {
     const unEmail = req.user; // Email de l'utilisateur extrait du token
-    const disponibilites = await getDisponibilitesForCoiffeur(unEmail);
+    const disponibilites = await getDisponibilites(unEmail);
     res.json({ disponibilites: disponibilites, message: 'Liste des disponibilités pour le coiffeur ' + req.user });
   } catch (error) {
     console.error(error);
@@ -263,7 +341,7 @@ router.get('/disponibilites', authentification, async (req, res) => {
 });
 
 // Fonction:  obtenir les disponibilités d'un coiffeur
-function getDisponibilitesForCoiffeur(unEmail) {
+function getDisponibilites(unEmail) {
   return new Promise((resolve, reject) => {
     db.select('Disponibilite.*')
       .from('Disponibilite')

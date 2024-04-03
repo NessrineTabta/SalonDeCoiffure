@@ -10,6 +10,7 @@ const db = knex({
 });
 
 
+
 // Création de la table Coiffeur
 // Création de la table Coiffeur
 // db.schema.createTable('Coiffeur', table => {
@@ -67,6 +68,14 @@ const db = knex({
 //   table.integer('idCoiffeur').unsigned();
  //  table.foreign('idCoiffeur').references('Coiffeur.idCoiffeur');
 // }).then(() => console.log('Table Service créée'));
+
+// Création de la table Coiffeur_Service
+// db.schema.createTable('Coiffeur_Service', table => {
+ //  table.integer('idCoiffeur').unsigned();
+  // table.integer('idService').unsigned();
+ //  table.foreign('idCoiffeur').references('Coiffeur.idCoiffeur');
+ //  table.foreign('idService').references('Service.idService');
+// }).then(() => console.log('Table Coiffeur_Service créée'));
 
 // Création de la table Portfolio
 // db.schema.createTable('Portfolio', table => {
