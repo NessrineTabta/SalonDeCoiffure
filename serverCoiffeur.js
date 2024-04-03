@@ -35,11 +35,11 @@ const router= express.Router();
 
 router.post('/registerCoiffeur', async (req, res) => {
   try {
-    const { email, nomCoiffeur, prenomCoiffeur, numCoiffeur, password } = req.body;
+    const { email, nomCoiffeur, prenomCoiffeur, numCoiffeur, password , idSalon} = req.body;
 
     const emailExiste = await getUserByUsername(email);
 
-    if (!emailExiste) {
+    if (emailExiste) {
       return res
         .status(400)
         .json({ message: "Cet utilisateur existe déjà." });
@@ -47,7 +47,7 @@ router.post('/registerCoiffeur', async (req, res) => {
 
     const passwordHashed = await bcrypt.hash(password, 10); 
 
-    await insertUser(email,nomCoiffeur, prenomCoiffeur, numCoiffeur, passwordHashed);
+    await insertUser(email,nomCoiffeur, prenomCoiffeur, numCoiffeur, passwordHashed, idSalon);
 
     res.status(200).json({ message: "Utilisateur enregistré avec succès." });
   } catch (error) {
@@ -70,7 +70,7 @@ function getUserByUsername(unEmail) {
     })
 }
 
-function insertUser(email, nom, prenom, numeroTelephone, passwordHashed) {
+function insertUser(email, nom, prenom, numeroTelephone, passwordHashed,idSalon) {
   return new Promise((resolve, reject) => {
     db("Coiffeur")
       .insert({
@@ -79,6 +79,7 @@ function insertUser(email, nom, prenom, numeroTelephone, passwordHashed) {
         prenomCoiffeur: prenom,
         numCoiffeur: numeroTelephone,
         password: passwordHashed,
+        idSalon: idSalon,
       })
       .then(() => {
         resolve();
@@ -94,12 +95,12 @@ function insertUser(email, nom, prenom, numeroTelephone, passwordHashed) {
 //POST: LOGIN
 router.post("/loginCoiffeur", async (req, res) => {
   try {
-    const { unEmail, password } = req.body;
+    const { email, password } = req.body;
 
-    const email = await getUserByUsername(unEmail);
+    const emailExistant = await getUserByUsername(email);
 
     //si l'utilisateur existe pas on peut pas le LOGIN
-    if (!email) {
+    if (!emailExistant) {
       return res.status(400).json({ message: "Username/Passowrd invalide" }); //return quitte la route, le serveur retourne toujours 1 reponse
     }
 

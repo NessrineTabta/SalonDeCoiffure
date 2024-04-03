@@ -19,7 +19,7 @@ const db = knex({
   // table.string('prenomCoiffeur').notNullable();
   // table.integer('numCoiffeur').notNullable();
   // table.string('password').unique().notNullable();
- //  table.integer('idSalon').unsigned();
+ //  table.integer('idSalon').notNullable();
   // table.integer('idService').unsigned();
   // table.integer('idPortfolio').unsigned();
   // table.integer('idDisponibilite').unsigned();
