@@ -324,10 +324,6 @@ async function supprimerService(idService) {
   }
 }
 
-
-
-
-
 // GET: Desponibilite
 router.get('/disponibilites', authentification, async (req, res) => {
   try {
@@ -356,6 +352,7 @@ function getDisponibilites(unEmail) {
       });
   });
 }
+
 // POST: disponibilité
 router.post('/disponibilites', authentification, async (req, res) => {
   try {
@@ -403,7 +400,6 @@ async function insererDisponibilite(dateDisponibilite, heureDisponibilite, idCoi
   }
 }
 
-
 // DELETE: Supprimer une disponibilité
 router.delete('/disponibilites', authentification, async (req, res) => {
   try {
@@ -423,8 +419,5 @@ router.delete('/disponibilites', authentification, async (req, res) => {
     res.status(500).json({ message: 'Une erreur s\'est produite lors de la suppression de la disponibilité' });
   }
 });
-
-
-
 
 module.exports= router;

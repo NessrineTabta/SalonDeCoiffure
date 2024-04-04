@@ -6,88 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
-    <style>
-        body,
-        html {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            background: url('logo/APbackground.jpg') no-repeat center center fixed;
-            background-size: cover;
-        }
+    <link rel="stylesheet" href="style/avantPremiere.css">
 
-        .right-side {
-            width: 300;
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-        }
-
-        .button.is-black {
-            background-color: #000;
-            color: #fff;
-        }
-
-        .form-container {
-            width: 100%;
-            max-width: 300px;
-        }
-
-        .link {
-            color: #3273dc;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-
-        .button.is-fullwidth {
-            margin-top: 10px;
-        }
-
-        .buttons.has-addons .button {
-            border-radius: 290486px;
-            margin: 0 auto;
-        }
-
-        .buttons.is-centered {
-            justify-content: center;
-        }
-
-        .left-side,
-        .right-side {
-            height: 100vh;
-        }
-
-        .input,
-        .input:focus {
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid #000;
-            box-shadow: none;
-            outline: none;
-        }
-
-        input[type="email"],
-        input[type="password"] {
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid #000;
-            box-shadow: none;
-            outline: none;
-        }
-    </style>
 </head>
 
 <body>
@@ -98,17 +18,15 @@
 
             <div class="field buttons has-addons is-centered">
                 <p class="control">
-                    <button class="button is-fullwidth" id="clientButton"
-                        style="width: 100px; height: 50px;">Client</button>
+                    <button class="button is-fullwidth is-black" id="btnClient">Client</button>
                 </p>
                 <p class="control">
-                    <button class="button is-fullwidth" id="coiffeurButton"
-                        style="width: 100px;height: 50px;">Coiffeur</button>
+                    <button class="button is-fullwidth" id="btnCoiffeur">Coiffeur</button>
                 </p>
             </div>
             <br>
 
-            <form action="/maPageDeTraitement" method="post">
+            <form id="formConnexion">              
                 <div class="field">
                     <div class="control">
                         <input class="input" placeholder="E-mail" type="email" id="email" name="email" required>
@@ -116,31 +34,21 @@
                 </div>
                 <div class="field">
                     <div class="control">
-                        <input class="input" placeholder="Mot de passe" type="password" id="password" name="password" required>
+                        <input class="input" placeholder="Mot de passe" type="password" id="password" name="password"
+                            required>
                     </div>
                 </div>
                 <br>
                 <div class="control">
-                    <input class="button is-black is-fullwidth" type="submit" value="Se connecter" style="border-radius: 290486px;">
+                    <input class="button is-black is-fullwidth" type="submit" value="Se connecter" id="btnConnexion">
                 </div>
             </form>
             <br>
-            <div><a href="/inscription" class="link" style="color: gray; font-size: small;">Créer un compte</a></div>
+            <div><a href="/public/avantPremiere.html" class="link">Créer un compte</a></div>
         </div>
     </div>
-    </div>
 
-    <script>
-        document.getElementById('clientButton').addEventListener('click', function () {
-            this.classList.add('is-black');
-            document.getElementById('coiffeurButton').classList.remove('is-black');
-        });
-
-        document.getElementById('coiffeurButton').addEventListener('click', function () {
-            this.classList.add('is-black');
-            document.getElementById('clientButton').classList.remove('is-black');
-        });
-    </script>
+    <script src="AP.js"></script>
 </body>
 
 </html>

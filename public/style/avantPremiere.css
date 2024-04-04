@@ -1,0 +1,114 @@
+body,
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    background: url('../logo/APbackground.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.right-side {
+    width: 300;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.button.is-black {
+    background-color: #000;
+    color: #fff;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 300px;
+}
+
+.link {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #4a4a4a; 
+    font-size: small;
+}
+
+.link:hover {
+    color: #3a3a3a; /* encore plus foncée quand la souris est dessus */
+}
+
+.button.is-fullwidth {
+    margin-top: 10px;
+}
+
+.buttons.has-addons .button {
+    border-radius: 290486px;
+    margin: 0 auto;
+}
+
+.buttons.is-centered {
+    justify-content: center;
+}
+
+.left-side,
+.right-side {
+    height: 100vh;
+}
+
+.input,
+.input:focus {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #000;
+    box-shadow: none;
+    outline: none;
+}
+
+input[type="email"],
+input[type="password"] {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #000;
+    box-shadow: none;
+    outline: none;
+}
+
+#btnClient,
+#btnCoiffeur {
+    width: 100px;
+    height: 50px;
+}
+
+#btnConnexion, #btnInscription {
+    border-radius: 290486px;
+}
+
+#formConnexion {
+    visibility: visible;
+}
+
+.select select {
+    border: none;
+    box-shadow: none;
+    outline: none;
+    background: transparent;
+    border-bottom: 1px solid #000; /* pr ajouter la ligne en dessous */
+    padding-right: 1.5em; /* pour icone de flèche */
+    cursor: pointer;
+}
+
+.select.is-fullwidth {
+    position: relative;
+    display: block;
+}
