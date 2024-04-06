@@ -1,11 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Portfolio</title>
+    <!-- Liens vers les styles de Bulma et Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Style personnalisé -->
+    <style>
+        /* Ajoutez votre style personnalisé ici */
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .portfolio-container {
+            padding: 20px;
+        }
+        .portfolio-item {
+            margin-bottom: 20px;
+        }
+        .portfolio-img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
-    
+    <div class="container portfolio-container">
+        <h1 class="title">Portfolio</h1>
+        <!-- Ajouter ou mettre à jour un élément du portfolio -->
+        <div class="portfolio-item">
+            <h2 class="subtitle">Projet 1</h2>
+            <!-- Ajoutez votre image -->
+            <img class="portfolio-img" src="chemin/vers/votre/image1.jpg" alt="Projet 1">
+            <p>Description du projet 1.</p>
+            <!-- Bouton pour mettre à jour le projet -->
+            <button class="button is-info">Mettre à jour</button>
+        </div>
+        <!-- Ajouter ou mettre à jour un autre élément du portfolio -->
+        <div class="portfolio-item">
+            <h2 class="subtitle">Projet 2</h2>
+            <!-- Ajoutez votre image -->
+            <img class="portfolio-img" src="chemin/vers/votre/image2.jpg" alt="Projet 2">
+            <p>Description du projet 2.</p>
+            <!-- Bouton pour mettre à jour le projet -->
+            <button class="button is-info">Mettre à jour</button>
+        </div>
+        <!-- Bouton pour ajouter un nouveau projet -->
+        <button class="button is-success">Ajouter un projet</button>
+    </div>
 </body>
 </html>
