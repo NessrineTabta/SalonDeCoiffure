@@ -37,7 +37,7 @@ router.post("/registerClient", async (req, res) => {
 
     const emailExiste = await getUserByUsername(email);
 
-    if (!emailExiste) {
+    if (emailExiste) {
       return res.status(400).json({ message: "Cet utilisateur existe déjà." });
     }
 
@@ -65,7 +65,7 @@ function getUserByUsername(unEmail) {
         resolve(row);
       })
       .catch((err) => {
-        reject();
+        reject(err);
       });
   });
 }
@@ -73,16 +73,6 @@ function getUserByUsername(unEmail) {
 function insertUser(email, nom, prenom, numeroTelephone, passwordHashed) {
   return new Promise((resolve, reject) => {
     db("Client")
-      // Création de la table Client
-      // db.schema.createTable('Client', table => {
-      //  table.increments('idClient').primary();
-      // table.string('email').unique().notNullable();
-      //  table.string('nomClient').notNullable();
-      //   table.string('prenomClient').notNullable();
-      //  table.integer('numClient').notNullable();
-      //   table.string('password').unique().notNullable();
-      // }).then(() => console.log('Table Client créée'));
-
       .insert({
         email: email,
         nomClient: nom,
@@ -98,38 +88,44 @@ function insertUser(email, nom, prenom, numeroTelephone, passwordHashed) {
       });
   });
 }
-
 //POST: LOGIN
 router.post("/loginClient", async (req, res) => {
   try {
     const { unEmail, password } = req.body;
+    console.log(password);
 
-    const email = await getUserByUsername(unEmail);
+    const user = await getUserByUsername(unEmail);
+    console.log(user);
 
     //si l'utilisateur existe pas on peut pas le LOGIN
-    if (!email) {
-      return res.status(400).json({ message: "Username/Passowrd invalide" }); //return quitte la route, le serveur retourne toujours 1 reponse
+    if (!user) {
+      return res.status(400).json({ message: "Username/Password invalide 1 " }); //return quitte la route, le serveur retourne toujours 1 reponse
     }
 
     //on verifie si false que son mot de passe decrypter = a ce quil a ecrit
-    if (!bcrypt.compare(password, email.password)) {
-      return res.status(400).json({ message: "Username/Password unvalide" });
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(400).json({ message: "Username/Password invalide 2 " });
     }
 
     // initialiser token
-    const token = jwt.sign({ email }, TOKEN_SECRET_KEY, { expiresIn: 3600 });
+    const token = jwt.sign(
+      { id: user.idClient, email: user.email },
+      TOKEN_SECRET_KEY,
+      { expiresIn: 3600 }
+    );
 
     res
       .status(200)
-      .json({ message: "Connexion reussie.", token, expireDans: 3600 });
+      .json({ message: "Connexion réussie.", token, expireDans: 3600 });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      message: "Une erreur s'est produite lors de la connexionde lutilisateur",
+      message:
+        "Une erreur s'est produite lors de la connexion de l'utilisateur.",
     });
   }
 });
-
 function getUserByUsername(unEmail) {
   return new Promise((resolve, reject) => {
     //on retourne une promesse au await
@@ -147,10 +143,10 @@ function getUserByUsername(unEmail) {
   });
 }
 
-// POST: Create a new rendezvous
-router.post("/rendezvous", authentification, async (req, res) => {
+// POST: Create a new Rendezvous
+router.post("/Rendezvous", authentification, async (req, res) => {
   try {
-    const clientEmail = req.user.email;
+    const clientEmail = req.user.email.email;
     const { dateRendezvous, heureRendezvous, idCoiffeur } = req.body;
     // Fetch the client ID based on the email
     const client = await db("Client").where("email", clientEmail).first();
@@ -158,7 +154,7 @@ router.post("/rendezvous", authentification, async (req, res) => {
       return res.status(404).json({ message: "Client non trouvé." });
     }
 
-    const [idRendezvous] = await db("rendezvous").insert({
+    const [idRendezvous] = await db("Rendezvous").insert({
       dateRendezvous,
       heureRendezvous,
       idClient: client.idClient,
@@ -176,12 +172,12 @@ router.post("/rendezvous", authentification, async (req, res) => {
   }
 });
 // GET: Obtenir tous les rendez-vous d'un client
-router.get("/rendezvous", authentification, async (req, res) => {
+router.get("/Rendezvous", authentification, async (req, res) => {
   try {
-    const clientEmail = req.user.email; // Email du client extrait du token
-    const rendezvous = await getClientRendezvous(clientEmail);
+    const clientEmail = req.user.email.email; // Email du client extrait du token
+    const Rendezvous = await getClientRendezvous(clientEmail);
     res.json({
-      rendezvous: rendezvous,
+      Rendezvous: Rendezvous,
       message: "Liste des rendez-vous pour le client " + clientEmail,
     });
   } catch (error) {
@@ -196,10 +192,10 @@ router.get("/rendezvous", authentification, async (req, res) => {
 // Fonction: obtenir tous les rendez-vous d'un client
 function getClientRendezvous(clientEmail) {
   return new Promise((resolve, reject) => {
-    db.select("rendezvous.*", "Coiffeur.nomCoiffeur", "Coiffeur.prenomCoiffeur")
-      .from("rendezvous")
-      .join("Client", "rendezvous.idClient", "=", "Client.idClient")
-      .join("Coiffeur", "rendezvous.idCoiffeur", "=", "Coiffeur.idCoiffeur")
+    db.select("Rendezvous.*", "Coiffeur.nomCoiffeur", "Coiffeur.prenomCoiffeur")
+      .from("Rendezvous")
+      .join("Client", "Rendezvous.idClient", "=", "Client.idClient")
+      .join("Coiffeur", "Rendezvous.idCoiffeur", "=", "Coiffeur.idCoiffeur")
       .where("Client.email", clientEmail)
       .then((rows) => {
         resolve(rows);
@@ -210,20 +206,20 @@ function getClientRendezvous(clientEmail) {
   });
 }
 // DELETE: Supprimer/Annuler un rendez-vous
-router.delete("/rendezvous", authentification, async (req, res) => {
+router.delete("/Rendezvous", authentification, async (req, res) => {
   try {
     const { idRendezvous } = req.body; // Récupérer l'idRendezvous depuis le corps de la requête
 
     // Vérifier si le rendez-vous existe
-    const rendezvous = await db("rendezvous")
+    const Rendezvous = await db("Rendezvous")
       .where("idRendezvous", idRendezvous)
       .first();
-    if (!rendezvous) {
+    if (!Rendezvous) {
       return res.status(404).json({ message: "Rendez-vous non trouvé" });
     }
 
-    // Supprimer le rendez-vous de la table rendezvous
-    await db("rendezvous").where("idRendezvous", idRendezvous).del();
+    // Supprimer le rendez-vous de la table Rendezvous
+    await db("Rendezvous").where("idRendezvous", idRendezvous).del();
     res.json({ message: "Rendez-vous supprimé avec succès" });
   } catch (error) {
     console.error(error);
@@ -235,9 +231,9 @@ router.delete("/rendezvous", authentification, async (req, res) => {
 });
 
 // PUT: Modifier un rendez-vous existant d'un client
-router.put("/rendezvous/:idRendezvous", authentification, async (req, res) => {
+router.put("/Rendezvous/:idRendezvous", authentification, async (req, res) => {
   const { idRendezvous } = req.params; // ID du rendez-vous à modifier
-  const clientEmail = req.user.email; // Email du client extrait du token
+  const clientEmail = req.user.email.email; // Email du client extrait du token
   const { dateRendezvous, heureRendezvous, idCoiffeur } = req.body; // Nouvelles données pour le rendez-vous
 
   try {
@@ -248,14 +244,14 @@ router.put("/rendezvous/:idRendezvous", authentification, async (req, res) => {
     }
 
     // Vérifier si le rendez-vous appartient au client
-    const rendezvous = await db("rendezvous")
+    const Rendezvous = await db("Rendezvous")
       .where({
         idRendezvous,
         idClient: client.idClient,
       })
       .first();
 
-    if (!rendezvous) {
+    if (!Rendezvous) {
       return res.status(404).json({
         message:
           "Rendez-vous non trouvé ou vous n'avez pas la permission de le modifier.",
@@ -263,7 +259,7 @@ router.put("/rendezvous/:idRendezvous", authentification, async (req, res) => {
     }
 
     // Modifier le rendez-vous
-    await db("rendezvous").where("idRendezvous", idRendezvous).update({
+    await db("Rendezvous").where("idRendezvous", idRendezvous).update({
       dateRendezvous,
       heureRendezvous,
       idCoiffeur,
@@ -299,7 +295,7 @@ function getSalonByName(nomSalon) {
 }
 // POST: CREER UN AVIS
 router.post("/avis", authentification, async (req, res) => {
-  const clientEmail = req.user.email; // Email du client extrait du token JWT pour l'authentification
+  const clientEmail = req.user.email.email; // Email du client extrait du token JWT pour l'authentification
   const { nombreEtoile, description, nomSalon } = req.body; // nomSalon est utilisé ici au lieu de idSalon
 
   try {
@@ -338,7 +334,7 @@ router.post("/avis", authentification, async (req, res) => {
 // DELETE: Supprimer un avis
 router.delete("/avis/:idAvis", authentification, async (req, res) => {
   const { idAvis } = req.params; // ID de l'avis à supprimer
-  const clientEmail = req.user.email; // Email du client extrait du token JWT
+  const clientEmail = req.user.email.email; // Email du client extrait du token JWT
 
   try {
     // Obtenir l'ID du client à partir de son email pour vérifier qu'il possède l'avis
