@@ -328,12 +328,79 @@ router.post("/avis", authentification, async (req, res) => {
       .json({ message: "Avis créé avec succès pour le salon.", idAvis });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la création de l'avis pour le salon.",
+    });
+  }
+});
+
+// DELETE: Supprimer un avis
+router.delete("/avis/:idAvis", authentification, async (req, res) => {
+  const { idAvis } = req.params; // ID de l'avis à supprimer
+  const clientEmail = req.user.email; // Email du client extrait du token JWT
+
+  try {
+    // Obtenir l'ID du client à partir de son email pour vérifier qu'il possède l'avis
+    const client = await getUserByUsername(clientEmail);
+    if (!client) {
+      return res.status(404).json({ message: "Client non trouvé." });
+    }
+
+    // Vérifier que l'avis appartient au client avant de le supprimer
+    const avis = await db("Avis")
+      .where({
+        idAvis,
+        idClient: client.idClient,
+      })
+      .first();
+
+    if (!avis) {
+      return res.status(404).json({
         message:
-          "Une erreur s'est produite lors de la création de l'avis pour le salon.",
+          "Avis non trouvé ou vous n'avez pas la permission de supprimer cet avis.",
       });
+    }
+
+    // Supprimer l'avis
+    await db("Avis").where("idAvis", idAvis).del();
+
+    res.json({ message: "Avis supprimé avec succès." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Une erreur s'est produite lors de la suppression de l'avis.",
+    });
+  }
+});
+// Route pour créer un salon
+router.post("/salon", async (req, res) => {
+  const { nomSalon, adresseSalon, emailSalon, numSalon } = req.body;
+
+  // Validation des données entrantes
+  if (!nomSalon || !adresseSalon || !emailSalon || !numSalon) {
+    return res.status(400).json({ message: "Tous les champs sont requis." });
+  }
+
+  try {
+    //inserer le salon
+
+    const [idSalon] = await db("Salon").insert({
+      nomSalon,
+      adresseSalon,
+      emailSalon,
+      numSalon,
+    });
+
+    res.status(201).json({
+      message: "Salon créé avec succès.",
+      idSalon,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Une erreur s'est produite lors de la création du salon.",
+    });
   }
 });
 
