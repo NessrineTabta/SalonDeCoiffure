@@ -1,11 +1,112 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Portfolio Coiffeur</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url('/public/logo/BG.jpg'); /* Remplacez 'chemin/vers/votre/image.jpg' par le chemin de votre image de fond */
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        .photo-card {
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+        .photo-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            aspect-ratio: 1 / 1;
+        }
+        .photo-card img:hover {
+            transform: scale(1.1);
+        }
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 0, 0, 0.8);
+            color: #fff;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        .delete-btn:hover {
+            background-color: rgba(255, 0, 0, 1);
+        }
+        .add-photo-btn {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .no-photo-msg {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="text-center mb-4">
+                    <h1 class="display-4">Portfolio Coiffeur</h1>
+                    <p class="lead">Ajoutez et supprimez vos photos</p>
+                </div>
+                <div class="coiffeur">
+                    <h2 class="text-center">Nom du Coiffeur</h2>
+                    <p class="text-center no-photo-msg">Un petit texte descriptif sur le coiffeur</p>
+                    <div class="row row-cols-1 row-cols-md-2 g-4 photos">
+                        <!-- Ajoutez les photos ici -->
+                    </div>
+                    <div class="text-center">
+                        <label for="file-input" class="btn btn-primary add-photo-btn">Ajouter une Photo</label>
+                        <input id="file-input" type="file" accept="image/*" class="d-none">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        document.getElementById('file-input').addEventListener('change', function() {
+            const photosContainer = document.querySelector('.photos');
+            const noPhotoMsg = document.querySelector('.no-photo-msg');
+            const file = this.files[0];
+            const reader = new FileReader();
+            reader.onload = function() {
+                const photoCard = document.createElement('div');
+                photoCard.classList.add('col');
+                photoCard.innerHTML = `
+                    <div class="photo-card position-relative">
+                        <img src="${reader.result}" alt="Nouvelle photo" class="img-fluid">
+                        <button class="delete-btn"><i class="fas fa-times"></i></button>
+                    </div>
+                `;
+                photosContainer.appendChild(photoCard);
+                noPhotoMsg.classList.add('d-none'); // Cacher le message "Aucune photo" une fois qu'une photo est ajoutée
+                photoCard.querySelector('.delete-btn').addEventListener('click', function() {
+                    this.closest('.col').remove();
+                    // Afficher à nouveau le message "Aucune photo" si toutes les photos sont supprimées
+                    if (photosContainer.children.length === 0) {
+                        noPhotoMsg.classList.remove('d-none');
+                    }
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
 </body>
 </html>

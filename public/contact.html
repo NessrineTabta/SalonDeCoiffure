@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contactez-nous</title>
+    <!-- Inclure les styles de Bulma -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Contactez-nous</h1>
+            <form action="traitement.php" method="POST">
+                <div class="field">
+                    <label class="label" for="nom">Nom :</label>
+                    <div class="control">
+                        <input class="input" type="text" id="nom" name="nom" required>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label class="label" for="email">Email :</label>
+                    <div class="control">
+                        <input class="input" type="email" id="email" name="email" required>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <label class="label" for="message">Message :</label>
+                    <div class="control">
+                        <textarea class="textarea" id="message" name="message" rows="4" required></textarea>
+                    </div>
+                </div>
+                
+                <div class="field">
+                    <div class="control">
+                        <input class="button is-primary" type="submit" value="Envoyer">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</body>
+</html>
