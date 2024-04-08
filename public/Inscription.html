@@ -1,22 +1,37 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription</title>
-    <!-- Inclure les feuilles de style CSS nécessaires -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="style/avantPremiere.css">
 </head>
+
 <body>
-    <div class="container">
-        <div class="left-side">
-            <!-- Contenu de la partie gauche si nécessaire -->
-        </div>
-        <div class="right-side">
-            <!-- Contenu de la partie droite généré dynamiquement par JavaScript -->
+    <div class="left-side"></div>
+    <div class="right-side">
+        <div class="form-container">
+            <img src="logo/2-Photoroom.png-Photoroom.png" alt="" style="padding-bottom: 100px;">
+
+            <div class="field buttons has-addons is-centered">
+                <p class="control">
+                    <button class="button is-fullwidth" id="btnClient">Client</button>
+                </p>
+                <p class="control">
+                    <button class="button is-fullwidth is-black" id="btnCoiffeur">Coiffeur</button>
+                </p>
+            </div>
+            <br>
+
+            <!-- Le formulaire d'inscription sera ajouté dynamiquement ici -->
+
+            <div><a href="/connexion.html" class="link">Retour à la connexion</a></div>
         </div>
     </div>
-    <!-- Inclure le script JavaScript -->
-    <script src="Inscription.js"></script>
+
+    <script src="inscription.js" defer></script>
 </body>
+
 </html>
