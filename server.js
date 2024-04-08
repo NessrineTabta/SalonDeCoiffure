@@ -17,7 +17,7 @@ app.use(express.static("public"));
  * ------------------------ */
 
 app.get("/", (req, res) => {
-  res.redirect("/avantPremiere.html");
+  res.redirect("/connexion.html");
 });
 
 app.use("/", coiffeurRouter);
