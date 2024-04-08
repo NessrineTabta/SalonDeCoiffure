@@ -1,6 +1,11 @@
-curl -X POST http://localhost:3000/loginClient \
--H "Content-Type: application/json" \
--d '{"unEmail":"ness@gmail.com", "password":"motdepasse123"}'
+//curl -X POST http://localhost:3000/loginClient \
+//-H "Content-Type: application/json" \
+//-d '{"unEmail":"ness@gmail.com", "password":"motdepasse123"}'
+
+curl -X DELETE http://localhost:3000/avis/1 \
+-D "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJuZXNzQGdtYWlsLmNvbSIsImlhdCI6MTcxMjUzNDM1MywiZXhwIjoxNzEyNTM3OTUzfQ.lFINqIJ7q7FrHdXlKhaNqTYgYDeBs9xDUEBpycitwDQ"
+
+//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJuZXNzQGdtYWlsLmNvbSIsImlhdCI6MTcxMjUzNDM1MywiZXhwIjoxNzEyNTM3OTUzfQ.lFINqIJ7q7FrHdXlKhaNqTYgYDeBs9xDUEBpycitwDQ
 
 //curl -X POST http://localhost:3000/registerClient \
 //-H "Content-Type: application/json" \

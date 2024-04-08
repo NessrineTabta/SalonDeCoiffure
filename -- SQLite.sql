@@ -93,4 +93,6 @@ CREATE TABLE Avis (
   idClient INTEGER NOT NULL,
   idSalon INTEGER NOT NULL, -- Notez que cela devrait être idCoiffeur si vous suivez la structure originale que vous vouliez changer
   FOREIGN KEY(idClient) REFERENCES Client(idClient),
-  FOREIGN KEY
+  FOREIGN KEY (idSalon) REFERENCES Salon(idSalon)
+)
+INSERT INTO Client 

@@ -295,7 +295,7 @@ function getSalonByName(nomSalon) {
 }
 // POST: CREER UN AVIS
 router.post("/avis", authentification, async (req, res) => {
-  const clientEmail = req.user.email.email; // Email du client extrait du token JWT pour l'authentification
+  const clientEmail = req.user.email; // Email du client extrait du token JWT pour l'authentification
   const { nombreEtoile, description, nomSalon } = req.body; // nomSalon est utilisé ici au lieu de idSalon
 
   try {
