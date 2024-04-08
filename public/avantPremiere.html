@@ -90,8 +90,10 @@
                     alert('Connexion réussie ! Bienvenue, ' + email);
                     // Redirect to the appropriate page based on user type
                     if (loginRoute === '/loginClient') {
+                        console.log(token);
                         window.location.href = '/pageClient.html';
                     } else {
+                        console.log(token);
                         window.location.href = '/pageCoiffeur.html';
                     }
                 })
