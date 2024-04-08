@@ -1,8 +1,18 @@
 // MySQL Query Compiler
 // ------
+const assert = require('assert');
 const identity = require('lodash/identity');
+const isPlainObject = require('lodash/isPlainObject');
+const isEmpty = require('lodash/isEmpty');
 const QueryCompiler = require('../../../query/querycompiler');
 const { wrapAsIdentifier } = require('../../../formatter/formatterUtils');
+const {
+  columnize: columnize_,
+  wrap: wrap_,
+} = require('../../../formatter/wrappingFormatter');
+
+const isPlainObjectOrArray = (value) =>
+  isPlainObject(value) || Array.isArray(value);
 
 class QueryCompiler_MySQL extends QueryCompiler {
   constructor(client, builder, formatter) {
@@ -17,12 +27,21 @@ class QueryCompiler_MySQL extends QueryCompiler {
 
     this._emptyInsertValue = '() values ()';
   }
+  // Compiles an `delete` allowing comments
+  del() {
+    const sql = super.del();
+    if (sql === '') return sql;
+    const comments = this.comments();
+    return (comments === '' ? '' : comments + ' ') + sql;
+  }
 
   // Compiles an `insert` query, allowing for multiple
   // inserts using a single query statement.
   insert() {
     let sql = super.insert();
     if (sql === '') return sql;
+    const comments = this.comments();
+    sql = (comments === '' ? '' : comments + ' ') + sql;
 
     const { ignore, merge, insert } = this.single;
     if (ignore) sql = sql.replace('insert into', 'insert ignore into');
@@ -37,6 +56,13 @@ class QueryCompiler_MySQL extends QueryCompiler {
     }
 
     return sql;
+  }
+
+  upsert() {
+    const upsertValues = this.single.upsert || [];
+    const sql = this.with() + `replace into ${this.tableName} `;
+    const body = this._insertBody(upsertValues);
+    return body === '' ? '' : sql + body;
   }
 
   // Compiles merge for onConflict, allowing for different merge strategies
@@ -76,12 +102,16 @@ class QueryCompiler_MySQL extends QueryCompiler {
 
   // Update method, including joins, wheres, order & limits.
   update() {
+    const comments = this.comments();
+    const withSQL = this.with();
     const join = this.join();
     const updates = this._prepUpdate(this.single.update);
     const where = this.where();
     const order = this.order();
     const limit = this.limit();
     return (
+      (comments === '' ? '' : comments + ' ') +
+      withSQL +
       `update ${this.tableName}` +
       (join ? ` ${join}` : '') +
       ' set ' +
@@ -125,7 +155,8 @@ class QueryCompiler_MySQL extends QueryCompiler {
       output(resp) {
         const out = resp.reduce(function (columns, val) {
           columns[val.COLUMN_NAME] = {
-            defaultValue: val.COLUMN_DEFAULT,
+            defaultValue:
+              val.COLUMN_DEFAULT === 'NULL' ? null : val.COLUMN_DEFAULT,
             type: val.DATA_TYPE,
             maxLength: val.CHARACTER_MAXIMUM_LENGTH,
             nullable: val.IS_NULLABLE === 'YES',
@@ -146,12 +177,113 @@ class QueryCompiler_MySQL extends QueryCompiler {
     const limit =
       this.single.offset && noLimit
         ? '18446744073709551615'
-        : this.client.parameter(
-            this.single.limit,
-            this.builder,
-            this.bindingsHolder
-          );
+        : this._getValueOrParameterFromAttribute('limit');
     return `limit ${limit}`;
+  }
+
+  whereBasic(statement) {
+    assert(
+      !isPlainObjectOrArray(statement.value),
+      'The values in where clause must not be object or array.'
+    );
+
+    return super.whereBasic(statement);
+  }
+
+  whereRaw(statement) {
+    assert(
+      isEmpty(statement.value.bindings) ||
+        !Object.values(statement.value.bindings).some(isPlainObjectOrArray),
+      'The values in where clause must not be object or array.'
+    );
+
+    return super.whereRaw(statement);
+  }
+
+  whereLike(statement) {
+    return `${this._columnClause(statement)} ${this._not(
+      statement,
+      'like '
+    )}${this._valueClause(statement)} COLLATE utf8_bin`;
+  }
+
+  whereILike(statement) {
+    return `${this._columnClause(statement)} ${this._not(
+      statement,
+      'like '
+    )}${this._valueClause(statement)}`;
+  }
+
+  // Json functions
+  jsonExtract(params) {
+    return this._jsonExtract(['json_extract', 'json_unquote'], params);
+  }
+
+  jsonSet(params) {
+    return this._jsonSet('json_set', params);
+  }
+
+  jsonInsert(params) {
+    return this._jsonSet('json_insert', params);
+  }
+
+  jsonRemove(params) {
+    const jsonCol = `json_remove(${columnize_(
+      params.column,
+      this.builder,
+      this.client,
+      this.bindingsHolder
+    )},${this.client.parameter(
+      params.path,
+      this.builder,
+      this.bindingsHolder
+    )})`;
+    return params.alias
+      ? this.client.alias(jsonCol, this.formatter.wrap(params.alias))
+      : jsonCol;
+  }
+
+  whereJsonObject(statement) {
+    return this._not(
+      statement,
+      `json_contains(${this._columnClause(statement)}, ${this._jsonValueClause(
+        statement
+      )})`
+    );
+  }
+
+  whereJsonPath(statement) {
+    return this._whereJsonPath('json_extract', statement);
+  }
+
+  whereJsonSupersetOf(statement) {
+    return this._not(
+      statement,
+      `json_contains(${wrap_(
+        statement.column,
+        undefined,
+        this.builder,
+        this.client,
+        this.bindingsHolder
+      )},${this._jsonValueClause(statement)})`
+    );
+  }
+
+  whereJsonSubsetOf(statement) {
+    return this._not(
+      statement,
+      `json_contains(${this._jsonValueClause(statement)},${wrap_(
+        statement.column,
+        undefined,
+        this.builder,
+        this.client,
+        this.bindingsHolder
+      )})`
+    );
+  }
+
+  onJsonPathEquals(clause) {
+    return this._onJsonPathEquals('json_extract', clause);
   }
 }
 

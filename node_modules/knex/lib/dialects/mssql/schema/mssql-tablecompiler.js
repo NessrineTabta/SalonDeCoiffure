@@ -28,6 +28,7 @@ class TableCompiler_MSSQL extends TableCompiler {
         this.tableName() +
         (this._formatting ? ' (\n    ' : ' (') +
         columns.sql.join(this._formatting ? ',\n    ' : ', ') +
+        this._addChecks() +
         ')';
     }
 
@@ -35,6 +36,9 @@ class TableCompiler_MSSQL extends TableCompiler {
 
     if (this.single.comment) {
       this.comment(this.single.comment);
+    }
+    if (like) {
+      this.addColumns(columns, this.addColumnsPrefix);
     }
   }
 
@@ -276,18 +280,23 @@ class TableCompiler_MSSQL extends TableCompiler {
    * Create a unique index.
    *
    * @param {string | string[]} columns
-   * @param {string | {indexName: undefined | string, deferrable?: 'not deferrable'|'deferred'|'immediate' }} indexName
+   * @param {string | {indexName: undefined | string, deferrable?: 'not deferrable'|'deferred'|'immediate', useConstraint?: true|false, predicate?: QueryBuilder }} indexName
    */
   unique(columns, indexName) {
     /** @type {string | undefined} */
     let deferrable;
+    let useConstraint = false;
+    let predicate;
     if (isObject(indexName)) {
-      ({ indexName, deferrable } = indexName);
+      ({ indexName, deferrable, useConstraint, predicate } = indexName);
     }
     if (deferrable && deferrable !== 'not deferrable') {
       this.client.logger.warn(
         `mssql: unique index [${indexName}] will not be deferrable ${deferrable} because mssql does not support deferred constraints.`
       );
+    }
+    if (useConstraint && predicate) {
+      throw new Error('mssql cannot create constraint with predicate');
     }
     indexName = indexName
       ? this.formatter.wrap(indexName)
@@ -297,17 +306,29 @@ class TableCompiler_MSSQL extends TableCompiler {
       columns = [columns];
     }
 
-    const whereAllTheColumnsAreNotNull = columns
-      .map((column) => this.formatter.columnize(column) + ' IS NOT NULL')
-      .join(' AND ');
-
-    // make unique constraint that allows null https://stackoverflow.com/a/767702/360060
-    // to be more or less compatible with other DBs (if any of the columns is NULL then "duplicates" are allowed)
-    this.pushQuery(
-      `CREATE UNIQUE INDEX ${indexName} ON ${this.tableName()} (${this.formatter.columnize(
-        columns
-      )}) WHERE ${whereAllTheColumnsAreNotNull}`
-    );
+    if (useConstraint) {
+      // mssql supports unique indexes and unique constraints.
+      // unique indexes cannot be used with foreign key relationships hence unique constraints are used instead.
+      this.pushQuery(
+        `ALTER TABLE ${this.tableName()} ADD CONSTRAINT ${indexName} UNIQUE (${this.formatter.columnize(
+          columns
+        )})`
+      );
+    } else {
+      // default to making unique index that allows null https://stackoverflow.com/a/767702/360060
+      // to be more or less compatible with other DBs (if any of the columns is NULL then "duplicates" are allowed)
+      const predicateQuery = predicate
+        ? ' ' + this.client.queryCompiler(predicate).where()
+        : ' WHERE ' +
+          columns
+            .map((column) => this.formatter.columnize(column) + ' IS NOT NULL')
+            .join(' AND ');
+      this.pushQuery(
+        `CREATE UNIQUE INDEX ${indexName} ON ${this.tableName()} (${this.formatter.columnize(
+          columns
+        )})${predicateQuery}`
+      );
+    }
   }
 
   // Compile a drop index command.

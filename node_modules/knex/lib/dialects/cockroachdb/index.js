@@ -3,6 +3,7 @@
 const Client_PostgreSQL = require('../postgres');
 const Transaction = require('../postgres/execution/pg-transaction');
 const QueryCompiler = require('./crdb-querycompiler');
+const ColumnCompiler = require('./crdb-columncompiler');
 const TableCompiler = require('./crdb-tablecompiler');
 const ViewCompiler = require('./crdb-viewcompiler');
 const QueryBuilder = require('./crdb-querybuilder');
@@ -17,6 +18,10 @@ class Client_CockroachDB extends Client_PostgreSQL {
 
   queryCompiler(builder, formatter) {
     return new QueryCompiler(this, builder, formatter);
+  }
+
+  columnCompiler() {
+    return new ColumnCompiler(this, ...arguments);
   }
 
   tableCompiler() {
@@ -57,6 +62,19 @@ class Client_CockroachDB extends Client_PostgreSQL {
       connectionToKill,
       connectionToKill.activeQuery
     );
+  }
+
+  toArrayPathFromJsonPath(jsonPath, builder, bindingsHolder) {
+    return jsonPath
+      .replace(/^(\$\.)/, '') // remove the first dollar
+      .replace(/\[([0-9]+)]/, '.$1')
+      .split('.')
+      .map(
+        function (v) {
+          return this.parameter(v, builder, bindingsHolder);
+        }.bind(this)
+      )
+      .join(', ');
   }
 }
 

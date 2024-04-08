@@ -1,4 +1,5 @@
 const extend = require('lodash/extend');
+const assign = require('lodash/assign');
 const toArray = require('lodash/toArray');
 const { addQueryContext } = require('../util/helpers');
 
@@ -42,6 +43,14 @@ const modifiers = [
   'after',
   'comment',
   'collate',
+  'check',
+  'checkPositive',
+  'checkNegative',
+  'checkIn',
+  'checkNotIn',
+  'checkBetween',
+  'checkLength',
+  'checkRegex',
 ];
 
 // Aliases for convenience.
@@ -79,6 +88,18 @@ ColumnBuilder.prototype.notNull = ColumnBuilder.prototype.notNullable =
   };
 });
 
+ColumnBuilder.extend = (methodName, fn) => {
+  if (
+    Object.prototype.hasOwnProperty.call(ColumnBuilder.prototype, methodName)
+  ) {
+    throw new Error(
+      `Can't extend ColumnBuilder with existing method ('${methodName}').`
+    );
+  }
+
+  assign(ColumnBuilder.prototype, { [methodName]: fn });
+};
+
 const AlterMethods = {};
 
 // Specify that the column is to be dropped. This takes precedence
@@ -102,8 +123,13 @@ AlterMethods.alterType = function (type) {
 };
 
 // Set column method to alter (default is add).
-AlterMethods.alter = function () {
+AlterMethods.alter = function ({
+  alterNullable = true,
+  alterType = true,
+} = {}) {
   this._method = 'alter';
+  this.alterNullable = alterNullable;
+  this.alterType = alterType;
 
   return this;
 };

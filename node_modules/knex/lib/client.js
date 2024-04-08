@@ -30,6 +30,8 @@ const Logger = require('./logger');
 const { POOL_CONFIG_OPTIONS } = require('./constants');
 const ViewBuilder = require('./schema/viewbuilder.js');
 const ViewCompiler = require('./schema/viewcompiler.js');
+const isPlainObject = require('lodash/isPlainObject');
+const { setHiddenProperty } = require('./util/security.js');
 
 const debug = require('debug')('knex:client');
 
@@ -42,6 +44,10 @@ class Client extends EventEmitter {
     this.config = config;
     this.logger = new Logger(config);
 
+    if (this.config.connection && this.config.connection.password) {
+      setHiddenProperty(this.config.connection);
+    }
+
     //Client is a required field, so throw error if it's not supplied.
     //If 'this.dialect' is set, then this is a 'super()' call, in which case
     //'client' does not have to be set as it's already assigned on the client prototype.
@@ -51,6 +57,7 @@ class Client extends EventEmitter {
         `Using 'this.dialect' to identify the client is deprecated and support for it will be removed in the future. Please use configuration option 'client' instead.`
       );
     }
+
     const dbClient = this.config.client || this.dialect;
     if (!dbClient) {
       throw new Error(
@@ -67,6 +74,9 @@ class Client extends EventEmitter {
       this.connectionConfigExpirationChecker = () => true; // causes the provider to be called on first use
     } else {
       this.connectionSettings = cloneDeep(config.connection || {});
+      if (config.connection && config.connection.password) {
+        setHiddenProperty(this.connectionSettings, config.connection);
+      }
       this.connectionConfigExpirationChecker = null;
     }
     if (this.driverName && config.connection) {
@@ -211,10 +221,15 @@ class Client extends EventEmitter {
       }
     });
 
+    const DEFAULT_ACQUIRE_TIMEOUT = 60000;
     const timeouts = [
-      this.config.acquireConnectionTimeout || 60000,
+      this.config.acquireConnectionTimeout,
       poolConfig.acquireTimeoutMillis,
     ].filter((timeout) => timeout !== undefined);
+
+    if (!timeouts.length) {
+      timeouts.push(DEFAULT_ACQUIRE_TIMEOUT);
+    }
 
     // acquire connection timeout can be set on config or config.pool
     // choose the smallest, positive timeout setting and set on poolConfig
@@ -298,6 +313,18 @@ class Client extends EventEmitter {
     try {
       const connection = await this.pool.acquire().promise;
       debug('acquired connection from pool: %s', connection.__knexUid);
+      if (connection.config) {
+        if (connection.config.password) {
+          setHiddenProperty(connection.config);
+        }
+        if (
+          connection.config.authentication &&
+          connection.config.authentication.options &&
+          connection.config.authentication.options.password
+        ) {
+          setHiddenProperty(connection.config.authentication.options);
+        }
+      }
       return connection;
     } catch (error) {
       let convertedError = error;
@@ -392,8 +419,13 @@ class Client extends EventEmitter {
       i = -1;
     while (++i < values.length) {
       if (i > 0) str += ', ';
+      let value = values[i];
+      // json columns can have object in values.
+      if (isPlainObject(value)) {
+        value = JSON.stringify(value);
+      }
       str += this.parameter(
-        values[i] === undefined ? notSetValue : values[i],
+        value === undefined ? notSetValue : value,
         builder,
         bindingsHolder
       );
@@ -441,6 +473,12 @@ class Client extends EventEmitter {
 
   processPassedConnection(connection) {
     // Default implementation is noop
+  }
+
+  toPathForJson(jsonPath) {
+    // By default, we want a json path, so if this function is not overriden,
+    // we return the path.
+    return jsonPath;
   }
 }
 

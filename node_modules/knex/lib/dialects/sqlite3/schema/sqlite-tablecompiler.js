@@ -27,9 +27,14 @@ class TableCompiler_SQLite3 extends TableCompiler {
       sql += ' (' + columns.sql.join(', ');
       sql += this.foreignKeys() || '';
       sql += this.primaryKeys() || '';
+      sql += this._addChecks();
       sql += ')';
     }
     this.pushQuery(sql);
+
+    if (like) {
+      this.addColumns(columns, this.addColumnsPrefix);
+    }
   }
 
   addColumns(columns, prefix, colCompilers) {
@@ -46,7 +51,7 @@ class TableCompiler_SQLite3 extends TableCompiler {
         const type = col.getColumnType();
 
         const defaultTo = col.modified['defaultTo']
-          ? formatDefault(col.modified['defaultTo'][0], type, this.client)
+          ? formatDefault(col.modified['defaultTo'][0], col.type, this.client)
           : null;
 
         const notNull =
@@ -57,9 +62,9 @@ class TableCompiler_SQLite3 extends TableCompiler {
 
       this.pushQuery({
         sql: `PRAGMA table_info(${this.tableName()})`,
-        output(pragma) {
+        statementsProducer(pragma, connection) {
           return compiler.client
-            .ddl(compiler, pragma, this.connection)
+            .ddl(compiler, pragma, connection)
             .alterColumn(columnsInfo);
         },
       });
@@ -127,8 +132,9 @@ class TableCompiler_SQLite3 extends TableCompiler {
   // Compile a unique key command.
   unique(columns, indexName) {
     let deferrable;
+    let predicate;
     if (isObject(indexName)) {
-      ({ indexName, deferrable } = indexName);
+      ({ indexName, deferrable, predicate } = indexName);
     }
     if (deferrable && deferrable !== 'not deferrable') {
       this.client.logger.warn(
@@ -139,8 +145,13 @@ class TableCompiler_SQLite3 extends TableCompiler {
       ? this.formatter.wrap(indexName)
       : this._indexCommand('unique', this.tableNameRaw, columns);
     columns = this.formatter.columnize(columns);
+
+    const predicateQuery = predicate
+      ? ' ' + this.client.queryCompiler(predicate).where()
+      : '';
+
     this.pushQuery(
-      `create unique index ${indexName} on ${this.tableName()} (${columns})`
+      `create unique index ${indexName} on ${this.tableName()} (${columns})${predicateQuery}`
     );
   }
 
@@ -257,9 +268,14 @@ class TableCompiler_SQLite3 extends TableCompiler {
       if (constraintName) {
         constraintName = ' constraint ' + this.formatter.wrap(constraintName);
       }
-      return `,${constraintName} primary key (${this.formatter.columnize(
-        columns
-      )})`;
+      const needUniqueCols =
+        this.grouped.columns.filter((t) => t.builder._type === 'increments')
+          .length > 0;
+      // SQLite dont support autoincrement columns and composite primary keys (autoincrement is always primary key).
+      // You need to add unique index instead when you have autoincrement columns (https://stackoverflow.com/a/6154876/1535159)
+      return `,${constraintName} ${
+        needUniqueCols ? 'unique' : 'primary key'
+      } (${this.formatter.columnize(columns)})`;
     }
   }
 

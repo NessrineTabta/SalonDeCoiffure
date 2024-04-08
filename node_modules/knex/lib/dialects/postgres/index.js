@@ -7,6 +7,7 @@ const Client = require('../../client');
 
 const Transaction = require('./execution/pg-transaction');
 const QueryCompiler = require('./query/pg-querycompiler');
+const QueryBuilder = require('./query/pg-querybuilder');
 const ColumnCompiler = require('./schema/pg-columncompiler');
 const TableCompiler = require('./schema/pg-tablecompiler');
 const ViewCompiler = require('./schema/pg-viewcompiler');
@@ -28,6 +29,10 @@ class Client_PG extends Client {
   }
   transaction() {
     return new Transaction(this, ...arguments);
+  }
+
+  queryBuilder() {
+    return new QueryBuilder(this);
   }
 
   queryCompiler(builder, formatter) {
@@ -75,6 +80,14 @@ class Client_PG extends Client {
   _acquireOnlyConnection() {
     const connection = new this.driver.Client(this.connectionSettings);
 
+    connection.on('error', (err) => {
+      connection.__knex__disposed = err;
+    });
+
+    connection.on('end', (err) => {
+      connection.__knex__disposed = err || 'Connection ended unexpectedly';
+    });
+
     return connection.connect().then(() => connection);
   }
 
@@ -85,14 +98,6 @@ class Client_PG extends Client {
 
     return this._acquireOnlyConnection()
       .then(function (connection) {
-        connection.on('error', (err) => {
-          connection.__knex__disposed = err;
-        });
-
-        connection.on('end', (err) => {
-          connection.__knex__disposed = err || 'Connection ended unexpectedly';
-        });
-
         if (!client.version) {
           return client.checkVersion(connection).then(function (version) {
             client.version = version;
@@ -102,8 +107,8 @@ class Client_PG extends Client {
 
         return connection;
       })
-      .then(function setSearchPath(connection) {
-        client.setSchemaSearchPath(connection);
+      .then(async function setSearchPath(connection) {
+        await client.setSchemaSearchPath(connection);
         return connection;
       });
   }
@@ -189,7 +194,10 @@ class Client_PG extends Client {
 
     return new Promise(function (resolver, rejecter) {
       const queryStream = connection.query(
-        new PGQueryStream(sql, obj.bindings, options)
+        new PGQueryStream(sql, obj.bindings, options),
+        (err) => {
+          rejecter(err);
+        }
       );
 
       queryStream.on('error', function (error) {
@@ -241,12 +249,7 @@ class Client_PG extends Client {
       const returns = [];
       for (let i = 0, l = resp.rows.length; i < l; i++) {
         const row = resp.rows[i];
-        if (returning === '*' || Array.isArray(returning)) {
-          returns[i] = row;
-        } else {
-          // Pluck the only column in the row.
-          returns[i] = row[Object.keys(row)[0]];
-        }
+        returns[i] = row;
       }
       return returns;
     }
@@ -273,6 +276,21 @@ class Client_PG extends Client {
       bindings: [connectionToKill.processID],
       options: {},
     });
+  }
+
+  toPathForJson(jsonPath) {
+    const PG_PATH_REGEX = /^{.*}$/;
+    if (jsonPath.match(PG_PATH_REGEX)) {
+      return jsonPath;
+    }
+    return (
+      '{' +
+      jsonPath
+        .replace(/^(\$\.)/, '') // remove the first dollar
+        .replace('.', ',')
+        .replace(/\[([0-9]+)]/, ',$1') + // transform [number] to ,number
+      '}'
+    );
   }
 }
 

@@ -39,8 +39,9 @@ class TableCompiler_Oracle extends TableCompiler {
   renameColumn(from, to) {
     // Remove quotes around tableName
     const tableName = this.tableName().slice(1, -1);
+    const trigger = new Trigger(this.client.version);
     return this.pushQuery(
-      Trigger.renameColumnTrigger(this.client.logger, tableName, from, to)
+      trigger.renameColumnTrigger(this.client.logger, tableName, from, to)
     );
   }
 
@@ -57,7 +58,7 @@ class TableCompiler_Oracle extends TableCompiler {
     const columnsSql =
       like && this.tableNameLike()
         ? ' as (select * from ' + this.tableNameLike() + ' where 0=1)'
-        : ' (' + columns.sql.join(', ') + ')';
+        : ' (' + columns.sql.join(', ') + this._addChecks() + ')';
     const sql = `create table ${this.tableName()}${columnsSql}`;
 
     this.pushQuery({
@@ -66,6 +67,9 @@ class TableCompiler_Oracle extends TableCompiler {
       bindings: columns.bindings,
     });
     if (this.single.comment) this.comment(this.single.comment);
+    if (like) {
+      this.addColumns(columns, this.addColumnsPrefix);
+    }
   }
 
   // Compiles the comment on the table.
@@ -82,13 +86,15 @@ class TableCompiler_Oracle extends TableCompiler {
     );
   }
 
-  changeType() {
-    // alter table + table + ' modify ' + wrapped + '// type';
-  }
-
   _indexCommand(type, tableName, columns) {
+    const nameHelper = new utils.NameHelper(this.client.version);
     return this.formatter.wrap(
-      utils.generateCombinedName(this.client.logger, type, tableName, columns)
+      nameHelper.generateCombinedName(
+        this.client.logger,
+        type,
+        tableName,
+        columns
+      )
     );
   }
 
@@ -101,9 +107,21 @@ class TableCompiler_Oracle extends TableCompiler {
     constraintName = constraintName
       ? this.formatter.wrap(constraintName)
       : this.formatter.wrap(`${this.tableNameRaw}_pkey`);
+    const primaryCols = columns;
+    let incrementsCols = [];
+    if (this.grouped.columns) {
+      incrementsCols = this._getIncrementsColumnNames();
+      if (incrementsCols) {
+        incrementsCols.forEach((c) => {
+          if (!primaryCols.includes(c)) {
+            primaryCols.unshift(c);
+          }
+        });
+      }
+    }
     this.pushQuery(
       `alter table ${this.tableName()} add constraint ${constraintName} primary key (${this.formatter.columnize(
-        columns
+        primaryCols
       )})${deferrable}`
     );
   }

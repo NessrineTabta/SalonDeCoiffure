@@ -45,15 +45,21 @@ class SchemaCompiler_MSSQL extends SchemaCompiler {
   // Check whether a table exists on the query.
   hasTable(tableName) {
     const formattedTable = this.client.parameter(
-      this.formatter.wrap(prefixedTableName(this.schema, tableName)),
+      prefixedTableName(this.schema, tableName),
       this.builder,
       this.bindingsHolder
     );
+    const bindings = [tableName];
+    let sql =
+      `SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES ` +
+      `WHERE TABLE_NAME = ${formattedTable}`;
 
-    const sql =
-      `select object_id from sys.tables ` +
-      `where object_id = object_id(${formattedTable})`;
-    this.pushQuery({ sql, output: (resp) => resp.length > 0 });
+    if (this.schema) {
+      sql += ' AND TABLE_SCHEMA = ?';
+      bindings.push(this.schema);
+    }
+
+    this.pushQuery({ sql, bindings, output: (resp) => resp.length > 0 });
   }
 
   // Check whether a column exists on the schema.

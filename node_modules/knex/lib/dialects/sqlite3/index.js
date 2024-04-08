@@ -15,15 +15,25 @@ const TableCompiler = require('./schema/sqlite-tablecompiler');
 const ViewCompiler = require('./schema/sqlite-viewcompiler');
 const SQLite3_DDL = require('./schema/ddl');
 const Formatter = require('../../formatter');
+const QueryBuilder = require('./query/sqlite-querybuilder');
 
 class Client_SQLite3 extends Client {
   constructor(config) {
     super(config);
+
+    if (config.connection && config.connection.filename === undefined) {
+      this.logger.warn(
+        'Could not find `connection.filename` in config. Please specify ' +
+          'the database path and name to avoid errors. ' +
+          '(see docs https://knexjs.org/guide/#configuration-options)'
+      );
+    }
+
     if (config.useNullAsDefault === undefined) {
       this.logger.warn(
         'sqlite does not support inserting default values. Set the ' +
           '`useNullAsDefault` flag to hide this warning. ' +
-          '(see docs http://knexjs.org/#Builder-insert).'
+          '(see docs https://knexjs.org/guide/query-builder.html#insert).'
       );
     }
   }
@@ -42,6 +52,10 @@ class Client_SQLite3 extends Client {
 
   queryCompiler(builder, formatter) {
     return new SqliteQueryCompiler(this, builder, formatter);
+  }
+
+  queryBuilder() {
+    return new QueryBuilder(this);
   }
 
   viewCompiler(builder, formatter) {
@@ -112,6 +126,8 @@ class Client_SQLite3 extends Client {
     switch (method) {
       case 'insert':
       case 'update':
+        callMethod = obj.returning ? 'all' : 'run';
+        break;
       case 'counter':
       case 'del':
         callMethod = 'run';
@@ -132,6 +148,7 @@ class Client_SQLite3 extends Client {
         // We need the context here, as it contains
         // the "this.lastID" or "this.changes"
         obj.context = this;
+
         return resolver(obj);
       });
     });
@@ -144,6 +161,7 @@ class Client_SQLite3 extends Client {
     return new Promise(function (resolver, rejecter) {
       stream.on('error', rejecter);
       stream.on('end', resolver);
+
       return client
         ._query(connection, obj)
         .then((obj) => obj.response)
@@ -160,7 +178,7 @@ class Client_SQLite3 extends Client {
   // Ensures the response is returned in the same format as other clients.
   processResponse(obj, runner) {
     const ctx = obj.context;
-    const { response } = obj;
+    const { response, returning } = obj;
     if (obj.output) return obj.output.call(runner, response);
     switch (obj.method) {
       case 'select':
@@ -169,14 +187,28 @@ class Client_SQLite3 extends Client {
         return response[0];
       case 'pluck':
         return map(response, obj.pluck);
-      case 'insert':
+      case 'insert': {
+        if (returning) {
+          if (response) {
+            return response;
+          }
+        }
         return [ctx.lastID];
+      }
+      case 'update': {
+        if (returning) {
+          if (response) {
+            return response;
+          }
+        }
+        return ctx.changes;
+      }
       case 'del':
-      case 'update':
       case 'counter':
         return ctx.changes;
-      default:
+      default: {
         return response;
+      }
     }
   }
 
