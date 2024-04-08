@@ -15,6 +15,10 @@ app.use(bodyparser.json()); //pour json
  * Définition des routes
  * ------------------------ */
 
+app.get("/", (req, res) => {
+  res.redirect("./public/pageAccueil.html");
+});
+
 app.use("/", coiffeurRouter);
 app.use("/", ClientRouter);
 
