@@ -75,7 +75,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ unEmail, password })
                 })
                 .then(response => {
                     if (!response.ok) {
@@ -90,10 +90,8 @@
                     alert('Connexion réussie ! Bienvenue, ' + email);
                     // Redirect to the appropriate page based on user type
                     if (loginRoute === '/loginClient') {
-                        console.log(token);
                         window.location.href = '/pageClient.html';
                     } else {
-                        console.log(token);
                         window.location.href = '/pageCoiffeur.html';
                     }
                 })
