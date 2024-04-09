@@ -4,9 +4,12 @@ body {
 }
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> e9be68bbe965eb0dcd97bf324e6625534fa3f286
 
+=======
+>>>>>>> 1e66129d7e3ec7eb1362d337c72b449bacd3dcf2
 body,
 html {
   min-height: 100vh;
@@ -108,6 +111,7 @@ html {
   padding-right: 1.5em;
   cursor: pointer;
   color: rgb(149, 149, 149);
+<<<<<<< HEAD
 }
 <<<<<<< HEAD
 =======
@@ -209,3 +213,6 @@ html {
 >>>>>>> f42a48da41ebfaedf19618db0fcced55c69d8298
 =======
 >>>>>>> e9be68bbe965eb0dcd97bf324e6625534fa3f286
+=======
+}
+>>>>>>> 1e66129d7e3ec7eb1362d337c72b449bacd3dcf2
