@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
         prenom: formData.get("prenom"),
         phone: formData.get("phone"),
         password: formData.get("password"),
-        salon: formData.get("salon"), // Peut être vide pour les clients
+        salon: document.getElementById("salon").value,
       };
 
       try {
@@ -72,11 +72,11 @@ document.addEventListener("DOMContentLoaded", function () {
           });
 
           if (responseCoiffeur.ok) {
+            console.log(requestData);
             const dataCoiffeur = await responseCoiffeur.json();
             console.log(dataCoiffeur.message); // Affichage du message de succès ou redirection
           } else {
-            const errorDataCoiffeur = await responseCoiffeur.json();
-            console.error(errorDataCoiffeur.message); // Affichage du message d'erreur retourné par le serveur
+            console.log(requestData); // Affichage du message d'erreur retourné par le serveur
           }
         }
       } catch (error) {
