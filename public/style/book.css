@@ -2,6 +2,111 @@
 body {
     font-family: 'Source Serif Pro', Helvetica, sans-serif;
 }
+<<<<<<< HEAD
+
+body,
+html {
+  min-height: 100vh;
+  margin: 0;
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 100;
+  font-style: normal;
+  color: white;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.half {
+  flex: 1;
+}
+
+.left-side {
+  background-color: rgb(63, 63, 74);
+  padding: 40px;
+  min-height: 100vh;
+}
+
+.right-side {
+  background-color: rgb(99, 105, 122);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+
+  justify-content: center;
+  padding: 20px;
+
+}
+
+#summary {
+  width: 60%;
+  max-width: 400px;
+  padding: 20px;
+  background-color: rgb(63, 63, 74);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+
+#filters {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 300px;
+  font-size: 20px;
+  text-align: left;
+  line-height: 1.5;
+}
+
+#dateSelection {
+  display: none;
+  width: 100%;
+}
+
+#dateSelection label {
+  display: block;
+}
+
+#moreTimesBtn {
+  position: relative;
+  display: inline-block;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+}
+
+#moreTimesBtn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: currentColor;
+  transition: width 0.3s ease;
+}
+
+#moreTimesBtn:hover::after {
+  width: 100%;
+}
+
+.select select {
+  border: none;
+  box-shadow: none;
+  outline: none;
+  background: transparent;
+  border-bottom: 1px solid #ffffff;
+  padding-right: 1.5em;
+  cursor: pointer;
+  color: rgb(149, 149, 149);
+}
+=======
 @font-face {
     font-family: 'Source Serif Pro';
     font-style: normal;
@@ -97,3 +202,4 @@ body {
     src: url(https://fonts.gstatic.com/s/sourceserifpro/v17/neIXzD-0qpwxpaWvjeD0X88SAOeasasatSyqxA.woff2) format('woff2');
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   }
+>>>>>>> f42a48da41ebfaedf19618db0fcced55c69d8298
