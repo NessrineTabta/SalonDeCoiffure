@@ -168,6 +168,8 @@ function getFormulaireInscription(isCoiffeur = false) {
                               <option value="1">AliCut Laval</option>
                               <option value="2">La Belle et La Barbe </option>
                               <option value="3">Empire Barber Shop </option>
+                              <option value="4">La Coupe des Rois  </option>
+                              <option value="5">Jordan le roi de la tchass </option>
                           </select>
                       </div>
                   </div>
