@@ -9,7 +9,6 @@
 body,
 html {
   min-height: 100vh;
-  /* Utilisez min-height au lieu de height */
   margin: 0;
   font-family: "Raleway", sans-serif;
   font-optical-sizing: auto;
@@ -21,7 +20,6 @@ html {
 .container {
   display: flex;
   min-height: 100vh;
-  /* Utilisez min-height au lieu de height */
 }
 
 .half {
@@ -32,7 +30,6 @@ html {
   background-color: rgb(63, 63, 74);
   padding: 40px;
   min-height: 100vh;
-  /* Utilisez min-height au lieu de height */
 }
 
 .right-side {
@@ -53,14 +50,12 @@ html {
   background-color: rgb(63, 63, 74);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: left;
-  /* Pour le texte à l'intérieur du récapitulatif */
 }
 
 
 #filters {
   display: flex;
   flex-direction: column;
-  /* Centrer les éléments horizontalement */
   justify-content: space-around;
   height: 300px;
   font-size: 20px;
@@ -79,7 +74,6 @@ html {
 
 #moreTimesBtn {
   position: relative;
-  /* Nécessaire pour positionner le pseudo-élément par rapport au bouton */
   display: inline-block;
   background: transparent;
   border: none;
@@ -95,18 +89,13 @@ html {
   bottom: 0;
   left: 0;
   width: 0%;
-  /* Commence sans largeur */
   height: 2px;
-  /* Épaisseur du soulignement */
   background-color: currentColor;
-  /* Utilise la couleur de texte du bouton */
   transition: width 0.3s ease;
-  /* Transition fluide */
 }
 
 #moreTimesBtn:hover::after {
   width: 100%;
-  /* Étend la barre sur tout le bouton au survol */
 }
 
 .select select {
@@ -115,9 +104,7 @@ html {
   outline: none;
   background: transparent;
   border-bottom: 1px solid #ffffff;
-  /* pr ajouter la ligne en dessous */
   padding-right: 1.5em;
-  /* pour icone de flèche */
   cursor: pointer;
   color: rgb(149, 149, 149);
 }

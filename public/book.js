@@ -24,25 +24,25 @@ document.addEventListener('DOMContentLoaded', function () {
     const salonFilterDiv = salonFilter.closest('.control');
     const coiffeurFilterDiv = coiffeurFilter.closest('.control');
     const serviceFilterDiv = serviceFilter.closest('.control');
-    const filters = document.getElementById('filters'); // Le conteneur pour les options initiales
-    const dateSelection = document.getElementById('dateSelection'); // Le conteneur pour les dates
+    const filters = document.getElementById('filters'); 
+    const dateSelection = document.getElementById('dateSelection'); 
 
     const nextStepBtn = document.getElementById('nextStepBtn');
-    const leftSide = document.querySelector('.left-side'); // 
+    const leftSide = document.querySelector('.left-side'); 
 
     salonFilterDiv.style.display = 'none';
     coiffeurFilterDiv.style.display = 'none';
     serviceFilterDiv.style.display = 'none';
     nextStepBtn.style.display = 'none';
 
-    // Fonction pour vérifier si toutes les sélections ont été faites
+    // pour verifier si toutes les sélections ont été faites
     function checkAllSelections() {
         const sexeSelected = document.querySelector('input[name="sexe"]:checked') !== null;
         const salonSelected = salonFilter.value !== "";
         const coiffeurSelected = coiffeurFilter.value !== "";
         const serviceSelected = serviceFilter.value !== "";
 
-        // Si toutes les sélections ont été faites, affichez le bouton Étape suivante
+        // affiche le bouton etape suivante quand toutes les selections faites
         if (sexeSelected && salonSelected && coiffeurSelected && serviceSelected) {
             nextStepBtn.style.display = 'block';
         } else {
@@ -50,36 +50,38 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Ajoutez des écouteurs d'événements pour vérifier les sélections à chaque modification
+    // écouteurs d'événements pour vérifier les sélections à chaque modification
     document.querySelectorAll('input[name="sexe"]').forEach((radio) => {
         radio.addEventListener('change', checkAllSelections);
     });
+
     salonFilter.addEventListener('change', checkAllSelections);
     coiffeurFilter.addEventListener('change', checkAllSelections);
     serviceFilter.addEventListener('change', checkAllSelections);
+
     document.querySelectorAll('input[name="sexe"]').forEach((radio) => {
         radio.addEventListener('change', function () {
             if (this.checked) {
-                fillSalonDropdown(this.value); // Peuple le sélecteur de salon basé sur le sexe choisi
-                salonFilterDiv.style.display = 'block'; // Affiche le choix de salon
-                salonFilter.disabled = false; // Active le sélecteur de salon
+                fillSalonDropdown(this.value); // remplir le sélecteur par le sexe
+                salonFilterDiv.style.display = 'block'; // affiche le prochain choix (salon)
+                salonFilter.disabled = false; // active le sélecteur de salon
             }
         });
     });
 
     salonFilter.addEventListener('change', function () {
         if (this.value) {
-            fillCoiffeurDropdown(this.value); // Peuple le sélecteur de coiffeur basé sur le salon choisi
-            coiffeurFilterDiv.style.display = 'block'; // Affiche le choix de coiffeur
-            coiffeurFilter.disabled = false; // Active le sélecteur de coiffeur
+            fillCoiffeurDropdown(this.value); // remplir le sélecteur par coiffeur
+            coiffeurFilterDiv.style.display = 'block'; // affiche le prochain choix (coiffeur)
+            coiffeurFilter.disabled = false; // active le sélecteur de coiffeur
         }
     });
 
     coiffeurFilter.addEventListener('change', function () {
         if (this.value) {
-            fillServiceDropdown(this.value); // Peuple le sélecteur de service basé sur le coiffeur choisi
-            serviceFilterDiv.style.display = 'block'; // Affiche le choix de service
-            serviceFilter.disabled = false; // Active le sélecteur de service
+            fillServiceDropdown(this.value); // remplir le sélecteur dpar service
+            serviceFilterDiv.style.display = 'block'; // affiche le prochain choix (service)
+            serviceFilter.disabled = false; // active le sélecteur de service
         }
     });
 
@@ -122,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
     moreTimesBtn.style.display = 'none';
     titreHoraire.style.display = 'none';
     titreRdv.style.display = 'block';
-    // Exemple de dates à afficher (devraient être générées ou récupérées d'une source de données)
+    // Exemple de dates à afficher
     const dates = [
         "04/22/24 13:00", "04/22/24 14:00", "04/22/24 15:00",
         "04/23/24 10:00", "04/23/24 11:00", "04/23/24 12:00",
@@ -132,9 +134,9 @@ document.addEventListener('DOMContentLoaded', function () {
         "04/27/24 10:30", "04/28/24 13:30", "04/28/24 15:00"
     ];
 
-    let currentIndex = 0; // Pour suivre le nombre de plages affichées
+    let currentIndex = 0; // pour suivre le nombre de plages affichées
     nextStepBtn.addEventListener('click', function () {
-        // Cachez les filtres initiaux et affichez les sélections de date
+        // cacher les filtres et afficher les plages
         filters.style.display = 'none';
         titreRdv.style.display = 'none';
         dateSelection.style.display = 'block';
@@ -147,8 +149,10 @@ document.addEventListener('DOMContentLoaded', function () {
         moreTimesBtn.addEventListener('click', showNextDates);
 
     });
+
+    //pour afficher les plages horaires
     function showNextDates() {
-        const nextIndex = Math.min(currentIndex + 5, dates.length); // Limite à 5 dates à la fois
+        const nextIndex = Math.min(currentIndex + 5, dates.length); // limite de 5 dates
         for (let i = currentIndex; i < nextIndex; i++) {
             const date = dates[i];
             const label = document.createElement('label');
@@ -163,48 +167,46 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         currentIndex = nextIndex;
 
-        // Afficher ou masquer le bouton "Voir plus" en fonction du besoin
+        // afficher ou masquer le bouton "Voir plus" si besoin
         moreTimesBtn.style.display = currentIndex < dates.length ? 'block' : 'none';
     }
-    // Ajoutez cette fonction pour capturer et afficher les sélections
+    //pr afficher les selections
     function showSelections() {
         const salon = document.getElementById('salonFilter').value;
         const coiffeur = document.getElementById('coiffeurFilter').value;
         const service = document.getElementById('serviceFilter').value;
 
-        // Créez le récapitulatif des sélections
+        // creer le summary des selections
         const summary = document.createElement('div');
-        summary.id = 'summary'; // Assurez-vous que cela correspond au CSS
+        summary.id = 'summary'; 
         summary.innerHTML = `
             <p><strong>Salon</strong><br> ${salon}</p>
             <p><strong>Coiffeur</strong><br> ${coiffeur}</p>
             <p><strong>Service</strong><br> ${service}</p>
         `;
 
-        // Insérez le récapitulatif dans le côté droit
+        // inserer le summary dans cote droit
         const rightSide = document.querySelector('.right-side');
-        rightSide.innerHTML = ''; // Nettoyez d'abord le contenu précédent s'il y en a
+        rightSide.innerHTML = ''; 
         rightSide.appendChild(summary);
     }
 
-    // Modifiez l'événement du bouton "Étape suivante" pour inclure showSelections
     nextStepBtn.addEventListener('click', function () {
-        // Cachez les filtres initiaux et affichez les sélections de date
+        // cacher les autres elements pr montrer les plages horaire
         filters.style.display = 'none';
         dateSelection.style.display = 'block';
         moreTimesBtn.style.display = 'block';
 
-        // Remplissez et affichez les premières plages horaires disponibles
         showNextDates();
         moreTimesBtn.addEventListener('click', showNextDates);
 
-        // Affichez les sélections sur le côté droit
+        // Afficher les sélections sur le côté droit
         showSelections();
     });
     function updateSummaryWithDate(date) {
         const summary = document.querySelector('#summary');
         if (!summary) {
-            // S'il n'y a pas de récapitulatif, ne faites rien (ou créez-le si nécessaire)
+            //rien si ya pas de summary
             return;
         }
 
@@ -217,7 +219,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         dateParagraph.innerHTML = `<strong>Date<br></strong> ${date}`;
 
-        // Assurez-vous que le bouton de confirmation est présent
         let confirmButton = summary.querySelector('#confirmButton');
         if (!confirmButton) {
             confirmButton = document.createElement('button');
@@ -228,7 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
             summary.appendChild(confirmButton);
 
             confirmButton.addEventListener('click', function () {
-                alert('Rendez-vous confirmé !'); // Remplacez ceci par votre logique de confirmation
+                alert('Rendez-vous confirmé !');
             });
         }
     }
