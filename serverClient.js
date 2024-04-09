@@ -400,4 +400,30 @@ router.post("/salon", async (req, res) => {
   }
 });
 
+// GET: Obtenir un salon par son ID à partir du corps de la requête
+router.get('/salon', async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    // Vérifier si l'ID du salon est présent dans le corps de la requête
+    if (!id) {
+      return res.status(400).json({ message: "L'ID du salon est requis dans le corps de la requête." });
+    }
+
+    // Requête pour obtenir le salon par son ID
+    const salon = await db('Salon').select('nomSalon').where('idSalon', id).first();
+
+    // Vérifier si le salon existe
+    if (!salon) {
+      return res.status(404).json({ message: 'Salon non trouvé.' });
+    }
+
+    res.status(200).json({ nomSalon: salon.nomSalon });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Une erreur s'est produite lors de la récupération du salon." });
+  }
+});
+
+
 module.exports = router;
