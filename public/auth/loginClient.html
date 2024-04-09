@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
+    />
+    <link rel="icon" href="../logo/2.png" />
+  </head>
+  <body>
+    <section class="section">
+      <div class="container">
+        <div class="columns is-centered">
+          <div class="column is-half">
+            <h1 class="title has-text-centered">Login</h1>
+            <div class="box">
+              <form id="loginForm">
+                <div class="field">
+                  <label class="label">Email</label>
+                  <div class="control">
+                    <input
+                      class="input"
+                      type="email"
+                      placeholder="Enter your email"
+                      id="email"
+                    />
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label">Password</label>
+                  <div class="control">
+                    <input
+                      class="input"
+                      type="password"
+                      placeholder="Enter your password"
+                      id="password"
+                    />
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="control">
+                    <button
+                      class="button is-primary is-fullwidth"
+                      type="submit"
+                    >
+                      Login
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <p class="has-text-centered">
+              Don't have an account? <a href="./signupClient.html">Sign up</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="loginClient.js"></script>
+  </body>
+</html>

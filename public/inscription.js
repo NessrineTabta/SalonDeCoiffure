@@ -19,33 +19,65 @@ document.addEventListener("DOMContentLoaded", function () {
       const formData = new FormData(event.target);
       const requestData = {
         email: formData.get("email"),
-        nomClient: formData.get("nom"),
-        prenomClient: formData.get("prenom"),
-        numClient: formData.get("phone"),
+        nom: formData.get("nom"),
+        prenom: formData.get("prenom"),
+        phone: formData.get("phone"),
         password: formData.get("password"),
-        idSalon: formData.get("salon"),
+        salon: formData.get("salon"), // Peut être vide pour les clients
       };
 
       try {
-        const url = document
-          .getElementById("btnClient")
-          .classList.contains("is-black")
-          ? "/registerClient"
-          : "/registerCoiffeur";
-        const response = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
-        });
+        if (
+          document.getElementById("btnClient").classList.contains("is-black")
+        ) {
+          // Pour l'inscription d'un client
+          const responseClient = await fetch("/registerClient", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: requestData.email,
+              nomClient: requestData.nom,
+              prenomClient: requestData.prenom,
+              numClient: requestData.phone,
+              password: requestData.password,
+            }),
+          });
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data.message); // Affichage d'un message de succès ou redirection
+          if (responseClient.ok) {
+            const dataClient = await responseClient.json();
+            console.log(dataClient.message); // Affichage du message de succès ou redirection
+            console.log(dataClient);
+          } else {
+            const errorDataClient = await responseClient.json();
+            console.error(errorDataClient.message); // Affichage du message d'erreur retourné par le serveur
+            console.log(dataClient);
+          }
         } else {
-          const errorData = await response.json();
-          console.error(errorData.message); // Affichage du message d'erreur retourné par le serveur
+          // Pour l'inscription d'un coiffeur
+          const responseCoiffeur = await fetch("/registerCoiffeur", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: requestData.email,
+              nomCoiffeur: requestData.nom,
+              prenomCoiffeur: requestData.prenom,
+              numCoiffeur: requestData.phone,
+              password: requestData.password,
+              idSalon: requestData.salon,
+            }),
+          });
+
+          if (responseCoiffeur.ok) {
+            const dataCoiffeur = await responseCoiffeur.json();
+            console.log(dataCoiffeur.message); // Affichage du message de succès ou redirection
+          } else {
+            const errorDataCoiffeur = await responseCoiffeur.json();
+            console.error(errorDataCoiffeur.message); // Affichage du message d'erreur retourné par le serveur
+          }
         }
       } catch (error) {
         console.error("Une erreur s'est produite:", error);
@@ -133,8 +165,11 @@ function getFormulaireInscription(isCoiffeur = false) {
                       <div class="select is-fullwidth">
                           <select id="salon" name="salon">
                               <option value="">Choisir un salon</option>
-                              <option value="barbershop1">Barbershop 1</option>
-                              <option value="barbershop2">Barbershop 2</option>
+                              <option value="1">AliCut Laval</option>
+                              <option value="2">La Belle et La Barbe </option>
+                              <option value="3">Empire Barber Shop </option>
+                              <option value="4">La Coupe des Rois  </option>
+                              <option value="5">Jordan le roi de la tchass </option>
                           </select>
                       </div>
                   </div>
@@ -171,7 +206,7 @@ function getFormulaireInscription(isCoiffeur = false) {
               </div>
               <br>
               <div class="control">
-                  <input class="button is-black is-fullwidth" type="submit" value="S'inscrire" id="btnInscription" <a href="./pageAcceuil.html" class="link">Retour à la connexion</a>>
+                  <input class="button is-black is-fullwidth" type="submit" value="S'inscrire" id="btnInscription">
               </div>
           </form>
           <br>
