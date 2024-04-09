@@ -19,11 +19,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const formData = new FormData(event.target);
       const requestData = {
         email: formData.get("email"),
-        nom: formData.get("nom"),
-        prenom: formData.get("prenom"),
-        phone: formData.get("phone"),
+        nomClient: formData.get("nom"),
+        prenomClient: formData.get("prenom"),
+        numClient: formData.get("phone"),
         password: formData.get("password"),
-        salon: formData.get("salon"),
+        idSalon: formData.get("salon"),
       };
 
       try {
