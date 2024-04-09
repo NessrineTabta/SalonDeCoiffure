@@ -165,8 +165,9 @@ function getFormulaireInscription(isCoiffeur = false) {
                       <div class="select is-fullwidth">
                           <select id="salon" name="salon">
                               <option value="">Choisir un salon</option>
-                              <option value="barbershop1">Barbershop 1</option>
-                              <option value="barbershop2">Barbershop 2</option>
+                              <option value="1">AliCut Laval</option>
+                              <option value="2">La Belle et La Barbe </option>
+                              <option value="3">Empire Barber Shop </option>
                           </select>
                       </div>
                   </div>
