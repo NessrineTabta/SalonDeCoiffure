@@ -203,7 +203,7 @@ function getFormulaireInscription(isCoiffeur = false) {
               </div>
               <br>
               <div class="control">
-                  <input class="button is-black is-fullwidth" type="submit" value="S'inscrire" id="btnInscription" <a href="./pageAcceuil.html" class="link">Retour à la connexion</a>>
+                  <input class="button is-black is-fullwidth" type="submit" value="S'inscrire" id="btnInscription">
               </div>
           </form>
           <br>

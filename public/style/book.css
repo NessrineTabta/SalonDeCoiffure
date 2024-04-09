@@ -1,123 +1,99 @@
-@import url('https://fonts.googleapis.com/css?family=Source+Serif+Pro:400,600');
-
-#results div {
-  margin-top: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
+/* cyrillic-ext */
+body {
+    font-family: 'Source Serif Pro', Helvetica, sans-serif;
 }
-
-body,
-html {
-  min-height: 100vh;
-  /* Utilisez min-height au lieu de height */
-  margin: 0;
-  font-family: "Raleway", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 100;
-  font-style: normal;
-  color: white;
-}
-
-.container {
-  display: flex;
-  min-height: 100vh;
-  /* Utilisez min-height au lieu de height */
-}
-
-.half {
-  flex: 1;
-}
-
-.left-side {
-  background-color: rgb(63, 63, 74);
-  padding: 40px;
-  min-height: 100vh;
-  /* Utilisez min-height au lieu de height */
-}
-
-.right-side {
-  background-color: rgb(99, 105, 122);
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-
-  justify-content: center;
-  padding: 20px;
-
-}
-
-#summary {
-  width: 60%;
-  max-width: 400px;
-  padding: 20px;
-  background-color: rgb(63, 63, 74);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: left;
-  /* Pour le texte à l'intérieur du récapitulatif */
-}
-
-
-#filters {
-  display: flex;
-  flex-direction: column;
-  /* Centrer les éléments horizontalement */
-  justify-content: space-around;
-  height: 300px;
-  font-size: 20px;
-  text-align: left;
-  line-height: 1.5;
-}
-
-#dateSelection {
-  display: none;
-  width: 100%;
-}
-
-#dateSelection label {
-  display: block;
-}
-
-#moreTimesBtn {
-  position: relative;
-  /* Nécessaire pour positionner le pseudo-élément par rapport au bouton */
-  display: inline-block;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
-  overflow: hidden;
-}
-
-#moreTimesBtn::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0%;
-  /* Commence sans largeur */
-  height: 2px;
-  /* Épaisseur du soulignement */
-  background-color: currentColor;
-  /* Utilise la couleur de texte du bouton */
-  transition: width 0.3s ease;
-  /* Transition fluide */
-}
-
-#moreTimesBtn:hover::after {
-  width: 100%;
-  /* Étend la barre sur tout le bouton au survol */
-}
-
-.select select {
-  border: none;
-  box-shadow: none;
-  outline: none;
-  background: transparent;
-  border-bottom: 1px solid #ffffff;
-  /* pr ajouter la ligne en dessous */
-  padding-right: 1.5em;
-  /* pour icone de flèche */
-  cursor: pointer;
-  color: rgb(149, 149, 149);
-}
+@font-face {
+    font-family: 'Source Serif Pro';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/sourceserifpro/v17/neIQzD-0qpwxpaWvjeD0X88SAOeauXk-oBOL.woff2) format('woff2');
+    unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+  }
+  /* cyrillic */
+  @font-face {
+    font-family: 'Source Serif Pro';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/sourceserifpro/v17/neIQzD-0qpwxpaWvjeD0X88SAOeauXA-oBOL.woff2) format('woff2');
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+  }
+  /* greek */
+  @font-face {
+    font-family: 'Source Serif Pro';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/sourceserifpro/v17/neIQzD-0qpwxpaWvjeD0X88SAOeauXc-oBOL.woff2) format('woff2');
+    unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+  }
+  /* vietnamese */
+  @font-face {
+    font-family: 'Source Serif Pro';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/sourceserifpro/v17/neIQzD-0qpwxpaWvjeD0X88SAOeauXs-oBOL.woff2) format('woff2');
+    unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+  }
+  /* latin-ext */
+  @font-face {
+    font-family: 'Source Serif Pro';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/sourceserifpro/v17/neIQzD-0qpwxpaWvjeD0X88SAOeauXo-oBOL.woff2) format('woff2');
+    unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* latin */
+  @font-face {
+    font-family: 'Source Serif Pro';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/sourceserifpro/v17/neIQzD-0qpwxpaWvjeD0X88SAOeauXQ-oA.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  /* cyrillic-ext */
+  @font-face {
+    font-family: 'Source Serif Pro';
+    font-style: normal;
+    font-weight: 600;
+    src: url(https://fonts.gstatic.com/s/sourceserifpro/v17/neIXzD-0qpwxpaWvjeD0X88SAOeasasatSGqxLUv.woff2) format('woff2');
+    unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+  }
+  /* cyrillic */
+  @font-face {
+    font-family: 'Source Serif Pro';
+    font-style: normal;
+    font-weight: 600;
+    src: url(https://fonts.gstatic.com/s/sourceserifpro/v17/neIXzD-0qpwxpaWvjeD0X88SAOeasasatSiqxLUv.woff2) format('woff2');
+    unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+  }
+  /* greek */
+  @font-face {
+    font-family: 'Source Serif Pro';
+    font-style: normal;
+    font-weight: 600;
+    src: url(https://fonts.gstatic.com/s/sourceserifpro/v17/neIXzD-0qpwxpaWvjeD0X88SAOeasasatS-qxLUv.woff2) format('woff2');
+    unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+  }
+  /* vietnamese */
+  @font-face {
+    font-family: 'Source Serif Pro';
+    font-style: normal;
+    font-weight: 600;
+    src: url(https://fonts.gstatic.com/s/sourceserifpro/v17/neIXzD-0qpwxpaWvjeD0X88SAOeasasatSOqxLUv.woff2) format('woff2');
+    unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+  }
+  /* latin-ext */
+  @font-face {
+    font-family: 'Source Serif Pro';
+    font-style: normal;
+    font-weight: 600;
+    src: url(https://fonts.gstatic.com/s/sourceserifpro/v17/neIXzD-0qpwxpaWvjeD0X88SAOeasasatSKqxLUv.woff2) format('woff2');
+    unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* latin */
+  @font-face {
+    font-family: 'Source Serif Pro';
+    font-style: normal;
+    font-weight: 600;
+    src: url(https://fonts.gstatic.com/s/sourceserifpro/v17/neIXzD-0qpwxpaWvjeD0X88SAOeasasatSyqxA.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
