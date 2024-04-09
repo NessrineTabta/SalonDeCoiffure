@@ -10,10 +10,15 @@ var app = express();
 const bodyparser = require("body-parser"); //pour body
 app.use(express.json()); //pour json
 app.use(bodyparser.json()); //pour json
+app.use(express.static("public"));
 
 /* ------------------------
  * Définition des routes
  * ------------------------ */
+
+app.get("/", (req, res) => {
+  res.redirect("/connexion.html");
+});
 
 app.use("/", coiffeurRouter);
 app.use("/", ClientRouter);

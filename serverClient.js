@@ -55,11 +55,11 @@ router.post("/registerClient", async (req, res) => {
   }
 });
 
-function getUserByUsername(unEmail) {
+function getUserByUsername(email) {
   return new Promise((resolve, reject) => {
     db.select("*")
       .from("Client")
-      .where("email", unEmail)
+      .where("email", email)
       .first()
       .then((row) => {
         resolve(row);
@@ -91,10 +91,10 @@ function insertUser(email, nom, prenom, numeroTelephone, passwordHashed) {
 //POST: LOGIN
 router.post("/loginClient", async (req, res) => {
   try {
-    const { unEmail, password } = req.body;
+    const { email, password } = req.body;
     console.log(password);
 
-    const user = await getUserByUsername(unEmail);
+    const user = await getUserByUsername(email);
     console.log(user);
 
     //si l'utilisateur existe pas on peut pas le LOGIN
@@ -126,13 +126,13 @@ router.post("/loginClient", async (req, res) => {
     });
   }
 });
-function getUserByUsername(unEmail) {
+function getUserByUsername(email) {
   return new Promise((resolve, reject) => {
     //on retourne une promesse au await
     db("Client")
       .select("*")
       .from("Client")
-      .where("email", unEmail)
+      .where("email", email)
       .first()
       .then((row) => {
         resolve(row);
