@@ -440,7 +440,7 @@ router.get("/nomsSalons", async (req, res) => {
 // Route pour obtenir l'ID du salon à partir de son nom
 router.get("/getIdSalonByNom", async (req, res) => {
   try {
-    const nomSalon = req.query.nomSalon; // Récupération du nom du salon depuis la requête
+    const nomSalon = req.body; // Récupération du nom du salon depuis la requête
     const salon = await db.select("idSalon").from("Salon").where("nomSalon", nomSalon).first();
     if (salon) {
       res.status(200).json(salon.idSalon);
