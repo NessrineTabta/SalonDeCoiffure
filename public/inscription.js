@@ -1,3 +1,16 @@
+// Fonction pour initialiser la page
+function initializePage() {
+  const rightSide = document.querySelector(".right-side");
+  const formulaire = getFormulaireInscription(false); // Affichage du formulaire du client par défaut
+  rightSide.innerHTML = formulaire;
+  initializeButtonListeners(); // Initialisation des écouteurs d'événements
+  
+}
+
+// Appel de la fonction d'initialisation lors du chargement de la page
+window.onload = initializePage;
+
+
 document.addEventListener("DOMContentLoaded", function () {
   document
     .querySelector(".right-side")
@@ -61,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
           if (response.ok) {
             // Handle success
             const responseData = await response.json();
+            alert("vous avez reussi a vous inscrire!")
             console.log("Success:", responseData.message);
             window.location.href ="./connexion.html";
           } else {
