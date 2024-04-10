@@ -108,3 +108,160 @@ html:not(.dark-style) .account-settings-links .list-group-item.active {
     padding     : 0.85rem 1.5rem;
     border-color: rgba(24, 28, 33, 0.03) !important;
 }
+
+
+/*---------------------------
+           HEADER
+-----------------------------*/
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    color: white;
+}
+
+.nav {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-items a {
+    color: black;
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: 500;
+}
+
+.nav-items {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    color: white;
+    font-size: 14px;
+}
+
+.logo {
+    flex: 1;
+    text-align: center;
+    font-size: 40px;
+    font-family: "Orbitron", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.nav-button {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    color: white;
+    font-size: 13px;
+}
+
+.nav-button button {
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.btn-wrap {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-wrap::before,
+.btn-wrap::after {
+    content: '';
+    position: absolute;
+    background: black;
+}
+
+/* Bas */
+.btn-wrap::before {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+}
+
+/* Droite */
+.btn-wrap::after {
+    right: 0;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    transform: translateY(-100%);
+    transition: transform 0.25s ease 0.25s;
+}
+
+/* Haut et Gauche */
+.btn-wrap button::after,
+.btn-wrap button::before {
+    content: '';
+    position: absolute;
+    background: black;
+}
+
+/* Haut */
+.btn-wrap button::before {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transform: translateX(100%);
+    transition: transform 0.25s ease 0.5s;
+}
+
+/* Gauche */
+.btn-wrap button::after {
+    left: 0;
+    bottom: 0;
+    width: 2px;
+    height: 100%;
+    transform: translateY(100%);
+    transition: transform 0.25s ease 0.75s;
+}
+
+.btn-wrap:hover::before,
+.btn-wrap:hover::after,
+.btn-wrap:hover button::before,
+.btn-wrap:hover button::after {
+    transform: translateX(0);
+    transform: translateY(0);
+}
+
+.nav-items a {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.nav-items a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: black;
+    transform: scaleX(0);
+    transition: transform .3s ease-in-out;
+}
+
+.nav-items a:hover::after {
+    transform: scaleX(1);
+}
