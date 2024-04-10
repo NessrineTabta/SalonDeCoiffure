@@ -11,7 +11,9 @@ const jwt = require("jsonwebtoken"); // Assurez-vous d'importer jsonwebtoken cor
 const tokenModule = require("./token"); // Importer le module token
 
 function authentification(req, res, next) {
-  const token = req.body.token;
+  const token = req.body.token.token;
+  //console.log("req.token:", req.token);
+  //console.log("body", req.body);
 
   // Vérifie la validée du token grace au tableau de token.js
   const verifierToken = tokenModule.verifierToken(token);
