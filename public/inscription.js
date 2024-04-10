@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
         prenom: formData.get("prenom"),
         phone: formData.get("phone"),
         password: formData.get("password"),
-        salon: document.getElementById("salon").value,
+        salon: document.getElementById("salonSelect").value,
       };
 
       console.log("Données du formulaire:", requestData); // Ajout d'un message de débogage pour afficher les données du formulaire
@@ -78,11 +78,11 @@ document.addEventListener("DOMContentLoaded", function () {
           });
 
           if (responseCoiffeur.ok) {
-            console.log(requestData);
+            alert("Data" + requestData);
             const dataCoiffeur = await responseCoiffeur.json();
             console.log(dataCoiffeur.message); // Affichage du message de succès ou redirection
           } else {
-            console.log(requestData); // Affichage du message d'erreur retourné par le serveur
+            alert("Data" + requestData);
           }
         }
       } catch (error) {
@@ -164,7 +164,6 @@ function getFormulaireInscription(isCoiffeur = false) {
       `;
 
   // Ajout du dropdown pour le coiffeur
-  // Ajout du dropdown pour le coiffeur
   if (isCoiffeur) {
     // Récupération dynamique des noms de salon via une requête fetch
     fetch("/nomsSalons")
@@ -177,7 +176,7 @@ function getFormulaireInscription(isCoiffeur = false) {
           )
           .join("");
         document.getElementById(
-          "salon"
+          "salonSelect"
         ).innerHTML = `<option value="">Choisir un salon</option>${options}`;
       })
       .catch((error) => console.error("Une erreur s'est produite:", error));
@@ -186,7 +185,7 @@ function getFormulaireInscription(isCoiffeur = false) {
             <div class="field">
                 <div class="control">
                     <div class="select is-fullwidth">
-                        <select id="salon" name="salon">
+                        <select id="salonSelect" name="salon">
                             <option value="">Choisir un salon</option>
                             <!-- Les options seront ajoutées dynamiquement ici -->
                         </select>
@@ -194,7 +193,7 @@ function getFormulaireInscription(isCoiffeur = false) {
                 </div>
             </div>
             <!-- Champ caché pour stocker l'ID du salon sélectionné -->
-            <input type="hidden" id="idSalon" name="idSalon">
+            <input type="hidden" id="idSalonInput" name="idSalon">
         `;
   }
 
