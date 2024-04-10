@@ -1,20 +1,9 @@
-// Fonction pour initialiser la page
-function initializePage() {
-  const rightSide = document.querySelector(".right-side");
-  const formulaire = getFormulaireInscription(false); // Affichage du formulaire du client par défaut
-  rightSide.innerHTML = formulaire;
-  initializeButtonListeners(); // Initialisation des écouteurs d'événements
-  
-}
-
-// Appel de la fonction d'initialisation lors du chargement de la page
-window.onload = initializePage;
-
-
 document.addEventListener("DOMContentLoaded", function () {
+  // Event delegation for handling form submission
   document
     .querySelector(".right-side")
     .addEventListener("submit", async function (event) {
+      // Check if the event target is our form
       if (event.target && event.target.id === "inscriptionForm") {
         event.preventDefault(); // Prevent the form from submitting normally
 
@@ -74,21 +63,26 @@ document.addEventListener("DOMContentLoaded", function () {
           if (response.ok) {
             // Handle success
             const responseData = await response.json();
-            alert("vous avez reussi a vous inscrire!")
             console.log("Success:", responseData.message);
-            window.location.href ="./connexion.html";
+            // You can redirect the user or show a success message here
           } else {
+            // Handle server-side validation errors or other issues
             const errorData = await response.json();
             console.error("Error response:", errorData.message);
+            // You might want to display this error to the user
           }
         } catch (error) {
+          // Handle network errors or other exceptions
           console.error("Submission error:", error);
+          // Display a generic error message to the user, if appropriate
         }
       }
     });
 
+  // Button listeners and the rest of your initialization code...
 });
 
+// The rest of your script (button click handlers, initializeButtonListeners, getFormulaireInscription) remains unchanged.
 
 // Écouteur d'événement pour le bouton "Client"
 document.getElementById("btnClient").addEventListener("click", function () {

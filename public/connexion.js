@@ -51,9 +51,9 @@ document.addEventListener("DOMContentLoaded", function () {
         sessionStorage.setItem("token", data.token); // Stocker le token dans sessionStorage
         alert("Connexion réussie ! Bienvenue, " + email);
         if (loginType === "client") {
-          window.location.href = "./accueil/accueil.html";
+          window.location.href = "./accueil.html";
         } else {
-          window.location.href = "./accueil/accueil.html";
+          window.location.href = "./accueil.html";
         }
       })
       .catch((error) => {
