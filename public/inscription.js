@@ -158,24 +158,32 @@ function getFormulaireInscription(isCoiffeur = false) {
       `;
 
   // Ajout du dropdown pour le coiffeur
-  if (isCoiffeur) {
-    formContent += `
-              <div class="field">
-                  <div class="control">
-                      <div class="select is-fullwidth">
-                          <select id="salon" name="salon">
-                              <option value="">Choisir un salon</option>
-                              <option value="1">AliCut Laval</option>
-                              <option value="2">La Belle et La Barbe </option>
-                              <option value="3">Empire Barber Shop </option>
-                              <option value="4">La Coupe des Rois  </option>
-                              <option value="5">Jordan le roi de la tchass </option>
-                          </select>
-                      </div>
-                  </div>
-              </div>
-          `;
-  }
+// Ajout du dropdown pour le coiffeur
+if (isCoiffeur) {
+  // Récupération dynamique des noms de salon via une requête fetch
+  fetch("/nomsSalons")
+    .then(response => response.json())
+    .then(data => {
+      const options = data.map(salon => `<option value="${salon.idSalon}">${salon.nomSalon}</option>`).join('');
+      document.getElementById('salon').innerHTML = `<option value="">Choisir un salon</option>${options}`;
+    })
+    .catch(error => console.error("Une erreur s'est produite:", error));
+
+  formContent += `
+            <div class="field">
+                <div class="control">
+                    <div class="select is-fullwidth">
+                        <select id="salon" name="salon">
+                            <option value="">Choisir un salon</option>
+                            <!-- Les options seront ajoutées dynamiquement ici -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <!-- Champ caché pour stocker l'ID du salon sélectionné -->
+            <input type="hidden" id="idSalon" name="idSalon">
+        `;
+}
 
   // Suite du formulaire (commun à client et coiffeur)
   formContent += `

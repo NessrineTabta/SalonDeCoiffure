@@ -426,4 +426,33 @@ router.get('/salon', async (req, res) => {
   }
 });
 
+// Route pour récupérer tous les noms de salons disponibles
+router.get("/nomsSalons", async (req, res) => {
+  try {
+    const nomsSalons = await db.select("nomSalon").from("Salon");
+    res.status(200).json(nomsSalons);
+  } catch (error) {
+    console.error("Une erreur s'est produite:", error);
+    res.status(500).json({ message: "Erreur lors de la récupération des noms de salons." });
+  }
+});
+
+// Route pour obtenir l'ID du salon à partir de son nom
+router.get("/getIdSalonByNom", async (req, res) => {
+  try {
+    const nomSalon = req.query.nomSalon; // Récupération du nom du salon depuis la requête
+    const salon = await db.select("idSalon").from("Salon").where("nomSalon", nomSalon).first();
+    if (salon) {
+      res.status(200).json(salon.idSalon);
+    } else {
+      res.status(404).json({ message: "Salon non trouvé." });
+    }
+  } catch (error) {
+    console.error("Une erreur s'est produite:", error);
+    res.status(500).json({ message: "Erreur lors de la recherche de l'ID du salon." });
+  }
+});
+
+
+
 module.exports = router;
