@@ -292,7 +292,7 @@ function getSalonByName(nomSalon) {
         reject(err);
       });
   });
-}
+} //new
 // POST: CREER UN AVIS
 router.post("/avis", authentification, async (req, res) => {
   const clientEmail = req.user.email; // Email du client extrait du token JWT pour l'authentification
