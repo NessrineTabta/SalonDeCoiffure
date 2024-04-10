@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const salonSelect = document.getElementById("salonSelect");
   const coiffeurSelect = document.getElementById("coiffeurSelect");
+  const reviewForm = document.getElementById("reviewForm");
   // Correct placement of loadSalons
   function loadSalons() {
     fetch("/nomsSalons")
