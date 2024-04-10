@@ -71,4 +71,58 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   });
+
+  reviewForm.addEventListener("submit", function (event) {
+    event.preventDefault(); // Prevent the default form submission behavior
+
+    // Extracting form data
+    const nombreEtoile = parseInt(
+      document.querySelector(".rating input").value,
+      10
+    );
+    const salonId = parseInt(document.getElementById("salonSelect").value, 10);
+
+    const description = document.querySelector(
+      "textarea[name='opinion']"
+    ).value; // Extracting the text from the textarea
+
+    // Assuming you have a session token stored
+    const token = sessionStorage.getItem("token");
+    console.log("session storage token:", token);
+    // Directly retrieving the token here
+    /*console.log({
+      nombreEtoile: nombreEtoile,
+      description: description,
+      idSalon: salonId,
+    });*/
+
+    // Use the data to make a fetch request to your server
+
+    fetch("http://localhost:3000/avis", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nombreEtoile: { nombreEtoile },
+        description: { description },
+        idSalon: { salonId },
+        token: { token },
+      }),
+    })
+      .then((response) => {
+        if (!response) {
+          throw new Error("Failed to submit review");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Review submitted successfully", data);
+        // Here, you might want to clear the form or provide feedback to the user
+      })
+      .catch((error) => {
+        console.error("Error submitting review:", error);
+        // Handle any errors that occurred during the fetch operation
+      });
+  });
 });
