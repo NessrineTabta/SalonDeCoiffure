@@ -438,10 +438,10 @@ router.get("/nomsSalons", async (req, res) => {
 });
 
 // GET: Route pour obtenir l'ID du salon à partir de son nom
-router.get("/getIdSalonByNom", async (req, res) => {
+router.get("/idSalon", async (req, res) => {
   try {
     const { nomSalon } = req.body; // Récupération du nom du salon depuis le corps de la requête
-    const salon = await db.select("idSalon").from("Salon").where("nomSalon", nomSalon).first();
+    const salon =await db('Salon').select('idSalon').where('nomSalon', nomSalon).first();
     if (salon) {
       res.status(200).json(salon.idSalon);
     } else {
@@ -452,6 +452,7 @@ router.get("/getIdSalonByNom", async (req, res) => {
     res.status(500).json({ message: "Erreur lors de la recherche de l'ID du salon." });
   }
 });
+
 
 
 
