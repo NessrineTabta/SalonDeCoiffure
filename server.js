@@ -3,25 +3,27 @@
  * ------------------------ */
 
 //variables des routes
-const coiffeurRouter = require('./serverCoiffeur'); 
-
-var express = require('express');
+const coiffeurRouter = require("./serverCoiffeur");
+const ClientRouter = require("./serverClient");
+var express = require("express");
 var app = express();
-const bodyparser= require('body-parser'); //pour body
+const bodyparser = require("body-parser"); //pour body
 app.use(express.json()); //pour json
 app.use(bodyparser.json()); //pour json
-
+app.use(express.static("public"));
 
 /* ------------------------
  * Définition des routes
  * ------------------------ */
 
-app.use('/', coiffeurRouter); 
+app.get("/", (req, res) => {
+  res.redirect("/inscription.html");
+});
 
-
+app.use("/", coiffeurRouter);
+app.use("/", ClientRouter);
 
 // Port d'écoute du serveur
 app.listen(3000, () => {
-    console.log(`Serveur démarré sur le port ${3000}`);
+  console.log(`Serveur démarré sur le port ${3000}`);
 });
-

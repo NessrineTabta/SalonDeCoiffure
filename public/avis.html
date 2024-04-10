@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <title>Form Reviews</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" />
+    <link rel="icon" href="./logo/2.png" />
+    <link rel="stylesheet" href="./style/avis.css">
+
+</head>
+
+<body>
+    <div class="header">
+        <div class="nav">
+            <div class="nav-items">
+                <a href="./CoiffeurProfil/index.html">Portfolio</a>
+                <a href="#">À Propos</a>
+                <a href="#">Contact</a>
+                <a href="#">Mes Rendez-vous</a>
+                <a href="./avis.html">Avis</a>
+            </div>
+            <div class="logo" style="color: black;"> <a href="./accueil.html">East Cutz</a></div>
+            <div class="nav-button">
+                <button onclick="location.href='./book.html'">Prendre Rendez-vous</button>
+            </div>
+        </div>
+    </div>
+    <div class="wrapper">
+        <h3>Donnez votre avis</h3>
+        <form action="#">
+            <div class="rating">
+                <input type="number" name="rating" hidden>
+                <i class='bx bx-star star' style="--i: 0;"></i>
+                <i class='bx bx-star star' style="--i: 1;"></i>
+                <i class='bx bx-star star' style="--i: 2;"></i>
+                <i class='bx bx-star star' style="--i: 3;"></i>
+                <i class='bx bx-star star' style="--i: 4;"></i>
+            </div>
+            <div>
+                <select id="salonSelect">
+                    <option value="">Choisir un salon</option>
+                    <option value="Salon 1">Salon 1</option>
+                    <option value="Salon 2">Salon 2</option>
+                    <!-- Ajoutez plus d'options de salon ici -->
+                </select>
+            </div>
+
+            <!-- Sélection du coiffeur, désactivée par défaut -->
+            <div>
+                <select id="coiffeurSelect" disabled>
+                    <option value="">Choisir un coiffeur</option>
+                    <!-- Les options seront ajoutées dynamiquement en fonction du salon sélectionné -->
+                </select>
+            </div>
+            <textarea name="opinion" cols="30" rows="5" placeholder="Votre opinion"></textarea>
+            <div class="btn-group">
+                <button type="submit" class="btn submit">Remettre</button>
+                <button class="btn cancel">Annuler</button>
+            </div>
+        </form>
+    </div>
+    <script src="avis.js"></script>
+</body>
+
+</html>
