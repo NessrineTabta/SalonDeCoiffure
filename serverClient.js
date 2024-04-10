@@ -426,7 +426,7 @@ router.get('/salon', async (req, res) => {
   }
 });
 
-// Route pour récupérer tous les noms de salons disponibles
+// GET: Route pour récupérer TOUT les salons disponibles
 router.get("/nomsSalons", async (req, res) => {
   try {
     const nomsSalons = await db.select("nomSalon").from("Salon");
@@ -437,10 +437,10 @@ router.get("/nomsSalons", async (req, res) => {
   }
 });
 
-// Route pour obtenir l'ID du salon à partir de son nom
+// GET: Route pour obtenir l'ID du salon à partir de son nom
 router.get("/getIdSalonByNom", async (req, res) => {
   try {
-    const nomSalon = req.body; // Récupération du nom du salon depuis la requête
+    const { nomSalon } = req.body; // Récupération du nom du salon depuis le corps de la requête
     const salon = await db.select("idSalon").from("Salon").where("nomSalon", nomSalon).first();
     if (salon) {
       res.status(200).json(salon.idSalon);
