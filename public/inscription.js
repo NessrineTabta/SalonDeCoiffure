@@ -1,112 +1,111 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Écouteur d'événement pour le lien "Retour à la connexion"
-  document.querySelector(".link").addEventListener("click", function (event) {
-    event.preventDefault(); // Pour éviter le comportement par défaut du lien
-    // Redirection vers la page de connexion
-    window.location.href = "/connexion.html";
-  });
-
-  // Affichage du formulaire d'inscription du client par défaut
-  const rightSide = document.querySelector(".right-side");
-  rightSide.innerHTML = getFormulaireInscription(false); // Affichage du formulaire du client
-
-  // Écouteur d'événement pour le formulaire d'inscription
+  // Event delegation for handling form submission
   document
-    .getElementById("inscriptionForm")
+    .querySelector(".right-side")
     .addEventListener("submit", async function (event) {
-      event.preventDefault();
+      // Check if the event target is our form
+      if (event.target && event.target.id === "inscriptionForm") {
+        event.preventDefault(); // Prevent the form from submitting normally
 
-      const formData = new FormData(event.target);
-      const requestData = {
-        email: formData.get("email"),
-        nom: formData.get("nom"),
-        prenom: formData.get("prenom"),
-        phone: formData.get("phone"),
-        password: formData.get("password"),
-        salon: formData.get("salonSelect"),
-      };
+        // Extract form data
+        const formData = new FormData(event.target);
+        const requestData = {
+          email: formData.get("email"),
+          nom: formData.get("nom"),
+          prenom: formData.get("prenom"),
+          phone: formData.get("phone"),
+          password: formData.get("password"),
+          salon: formData.get("salonSelect"),
+        };
 
-      console.log("Données du formulaire:", requestData); // Ajout d'un message de débogage pour afficher les données du formulaire
+        // Log form data for debugging
+        console.log("Form data submitted:", requestData);
 
-      try {
-        if (
-          document.getElementById("btnClient").classList.contains("is-black")
-        ) {
-          // Pour l'inscription d'un client
-          const responseClient = await fetch("/registerClient", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
+        try {
+          let endpoint = "";
+          let payload = {};
+
+          if (
+            document.getElementById("btnClient").classList.contains("is-black")
+          ) {
+            // Client form data
+            endpoint = "/registerClient";
+            payload = {
               email: requestData.email,
               nomClient: requestData.nom,
               prenomClient: requestData.prenom,
               numClient: requestData.phone,
               password: requestData.password,
-            }),
-          });
-
-          if (responseClient.ok) {
-            const dataClient = await responseClient.json();
-            console.log(dataClient.message); // Affichage du message de succès ou redirection
+            };
           } else {
-            const errorDataClient = await responseClient.json();
-            console.error(errorDataClient.message); // Affichage du message d'erreur retourné par le serveur
-          }
-        } else {
-          // Pour l'inscription d'un coiffeur
-          const responseCoiffeur = await fetch("/registerCoiffeur", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
+            // Coiffeur form data
+            endpoint = "/registerCoiffeur";
+            payload = {
               email: requestData.email,
               nomCoiffeur: requestData.nom,
               prenomCoiffeur: requestData.prenom,
               numCoiffeur: requestData.phone,
               password: requestData.password,
               idSalon: requestData.salon,
-            }),
+            };
+          }
+          console.log(JSON.stringify(payload));
+
+          // Send request to the server
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
           });
 
-          if (responseCoiffeur.ok) {
-            const dataCoiffeur = await responseCoiffeur.json();
-            console.log(dataCoiffeur.message); // Affichage du message de succès ou redirection
+          if (response.ok) {
+            // Handle success
+            const responseData = await response.json();
+            console.log("Success:", responseData.message);
+            // You can redirect the user or show a success message here
           } else {
-            const errorDataCoiffeur = await responseCoiffeur.json();
-            console.error(errorDataCoiffeur.message); // Affichage du message d'erreur retourné par le serveur
+            // Handle server-side validation errors or other issues
+            const errorData = await response.json();
+            console.error("Error response:", errorData.message);
+            // You might want to display this error to the user
           }
+        } catch (error) {
+          // Handle network errors or other exceptions
+          console.error("Submission error:", error);
+          // Display a generic error message to the user, if appropriate
         }
-      } catch (error) {
-        console.error("Une erreur s'est produite:", error);
       }
     });
 
-  // Écouteur d'événement pour le bouton "Client"
-  document.getElementById("btnClient").addEventListener("click", function () {
-    if (!this.classList.contains("is-black")) {
-      this.classList.add("is-black");
-      document.getElementById("btnCoiffeur").classList.remove("is-black");
-      const rightSide = document.querySelector(".right-side");
-      const formulaire = getFormulaireInscription(false); // Affichage du formulaire du client
-      rightSide.innerHTML = formulaire;
-      initializeButtonListeners(); // Réinitialisation des écouteurs d'événements
-    }
-  });
+  // Button listeners and the rest of your initialization code...
+});
 
-  // Écouteur d'événement pour le bouton "Coiffeur"
-  document.getElementById("btnCoiffeur").addEventListener("click", function () {
-    if (!this.classList.contains("is-black")) {
-      this.classList.add("is-black");
-      document.getElementById("btnClient").classList.remove("is-black");
-      const rightSide = document.querySelector(".right-side");
-      const formulaire = getFormulaireInscription(true); // Affichage du formulaire du coiffeur
-      rightSide.innerHTML = formulaire;
-      initializeButtonListeners(); // Réinitialisation des écouteurs d'événements
-    }
-  });
+// The rest of your script (button click handlers, initializeButtonListeners, getFormulaireInscription) remains unchanged.
+
+// Écouteur d'événement pour le bouton "Client"
+document.getElementById("btnClient").addEventListener("click", function () {
+  if (!this.classList.contains("is-black")) {
+    this.classList.add("is-black");
+    document.getElementById("btnCoiffeur").classList.remove("is-black");
+    const rightSide = document.querySelector(".right-side");
+    const formulaire = getFormulaireInscription(false); // Affichage du formulaire du client
+    rightSide.innerHTML = formulaire;
+    initializeButtonListeners(); // Réinitialisation des écouteurs d'événements
+  }
+});
+
+// Écouteur d'événement pour le bouton "Coiffeur"
+document.getElementById("btnCoiffeur").addEventListener("click", function () {
+  if (!this.classList.contains("is-black")) {
+    this.classList.add("is-black");
+    document.getElementById("btnClient").classList.remove("is-black");
+    const rightSide = document.querySelector(".right-side");
+    const formulaire = getFormulaireInscription(true); // Affichage du formulaire du coiffeur
+    rightSide.innerHTML = formulaire;
+    initializeButtonListeners(); // Réinitialisation des écouteurs d'événements
+  }
 });
 
 function initializeButtonListeners() {
@@ -179,7 +178,7 @@ function getFormulaireInscription(isCoiffeur = false) {
             <div class="field">
                 <div class="control">
                     <div class="select is-fullwidth">
-                        <select id="salonSelect" name="salon">
+                        <select id="salonSelect" name="salonSelect">
                             <option value="">Choisir un salon</option>
                             <!-- Les options seront ajoutées dynamiquement ici -->
                         </select>
