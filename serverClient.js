@@ -275,40 +275,19 @@ router.put("/Rendezvous/:idRendezvous", authentification, async (req, res) => {
   }
 });
 
-// Route pour get un salon par le nom
-function getSalonByName(nomSalon) {
-  return new Promise((resolve, reject) => {
-    db("Salon")
-      .where("nomSalon", "like", `%${nomSalon}%`)
-      .first()
-      .then((salon) => {
-        if (salon) {
-          resolve(salon.idSalon);
-        } else {
-          resolve(null); // Aucun salon trouvé avec ce nom
-        }
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-}
 // POST: CREER UN AVIS
 router.post("/avis", authentification, async (req, res) => {
-  const clientEmail = req.user.email; // Email du client extrait du token JWT pour l'authentification
-  const { nombreEtoile, description, nomSalon } = req.body; // nomSalon est utilisé ici au lieu de idSalon
+  console.log(req.body);
+  const nombreEtoile = req.body.nombreEtoile.nombreEtoile;
+  const description = req.body.description.description;
+  const idSalon = req.body.idSalon.salonId;
+  const clientEmail = req.user.email;
 
   try {
     // Obtenir l'ID du client à partir de son email
     const client = await getUserByUsername(clientEmail);
     if (!client) {
       return res.status(404).json({ message: "Client non trouvé." });
-    }
-
-    // Obtenir l'ID du salon à partir de son nom
-    const idSalon = await getSalonByName(nomSalon);
-    if (!idSalon) {
-      return res.status(404).json({ message: "Salon non trouvé." });
     }
 
     // Créer l'avis pour le salon
