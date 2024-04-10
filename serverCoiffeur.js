@@ -519,4 +519,29 @@ router.delete("/disponibilites", authentification, async (req, res) => {
   }
 });
 
+// Route pour vérifier le type d'utilisateur
+router.get('/verifierTypeUtilisateur', authentification, async (req, res) => {
+  try {
+    const email = req.user.email;
+
+    // Vérification dans la table Coiffeur
+    const coiffeur = await db('Coiffeur').where('email', email).first();
+    if (coiffeur) {
+      return res.status(200).json({ isCoiffeur: true });
+    }
+
+    // Vérification dans la table Client
+    const client = await db('Client').where('email', email).first();
+    if (client) {
+      return res.status(200).json({ isCoiffeur: false });
+    }
+
+    // Si l'utilisateur n'est ni un coiffeur ni un client
+    return res.status(404).json({ message: 'Type d\'utilisateur inconnu' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Une erreur s\'est produite lors de la vérification du type d\'utilisateur' });
+  }
+});
+
 module.exports = router;
