@@ -1,0 +1,298 @@
+/*-------------------------------------------
+                HEADERS
+--------------------------------------------*/
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 1rem 2rem;
+    background-color: transparent;
+    color: black;
+}
+
+.nav {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-items a {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: 500;
+}
+
+.nav-items {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    color: white;
+    font-size: 14px;
+}
+
+.logo {
+    flex: 1;
+    text-align: center;
+    font-size: 40px;
+    font-family: "Orbitron", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.nav-button {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    color: white;
+    font-size: 13px;
+}
+
+.nav-button button {
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.btn-wrap {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-wrap::before,
+.btn-wrap::after {
+    content: '';
+    position: absolute;
+    background: rgb(255, 255, 255);
+}
+
+/* Bas */
+.btn-wrap::before {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+}
+
+/* Droite */
+.btn-wrap::after {
+    right: 0;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    transform: translateY(-100%);
+    transition: transform 0.25s ease 0.25s;
+}
+
+/* Haut et Gauche */
+.btn-wrap button::after,
+.btn-wrap button::before {
+    content: '';
+    position: absolute;
+    background: rgb(255, 255, 255);
+    /* Couleur de la bordure */
+}
+
+/* Haut */
+.btn-wrap button::before {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transform: translateX(100%);
+    transition: transform 0.25s ease 0.5s;
+}
+
+/* Gauche */
+.btn-wrap button::after {
+    left: 0;
+    bottom: 0;
+    width: 2px;
+    height: 100%;
+    transform: translateY(100%);
+    transition: transform 0.25s ease 0.75s;
+}
+
+.btn-wrap:hover::before,
+.btn-wrap:hover::after,
+.btn-wrap:hover button::before,
+.btn-wrap:hover button::after {
+    transform: translateX(0);
+    transform: translateY(0);
+}
+
+.nav-items a {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.nav-items a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: rgb(255, 255, 255);
+    /* Ou une autre couleur de votre choix */
+    transform: scaleX(0);
+    transition: transform .3s ease-in-out;
+}
+
+.nav-items a:hover::after {
+    transform: scaleX(1);
+}
+
+
+
+
+/*-------------------------------------------
+                HEADERS FIN
+--------------------------------------------*/
+body,
+html {
+    margin: 0;
+    padding: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* Chaque section prend toute la hauteur de la fenêtre */
+    text-align: center;
+}
+
+.section-bg-image {
+    background-image: url('../logo/imgAccueil.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.section-white {
+    background-color: white;
+    color: black;
+    height: 700px;
+}
+
+.section-beige {
+    background-color: #4e4d4b;
+    color: white;
+    height: 600px;
+}
+
+.contact-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    padding: 20px;
+}
+
+.contact-text {
+    margin-right: 200px;
+}
+
+.contact-form .field {
+    margin-bottom: 20px;
+}
+
+.contact-form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.contact-form input[type="text"],
+.contact-form input[type="tel"],
+.contact-form input[type="email"],
+.contact-form textarea {
+    width: 500px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.contact-form button {
+    background-color: #000000;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 900px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.contact-form button:hover {
+    background-color: darken(#393939, 10%);
+}
+
+.section-black {
+    background-color: #000000;
+    padding: 50px 0;
+    height: 350px;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.columns {
+    display: flex;
+    justify-content: space-between;
+}
+
+.column {
+    flex: 1;
+}
+
+h3 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    margin-bottom: 10px;
+    color: #666;
+}
+
+ul li:last-child {
+    margin-bottom: 0;
+}
+
+#slogan {
+    font-family: "Outfit", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    font-size: 80px;
+    color: white;
+}
