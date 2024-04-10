@@ -56,9 +56,9 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Connexion réussie ! Bienvenue, " + email);
         // Redirect to the appropriate page based on user type
         if (loginType === "client") {
-          window.location.href = "/pageAcceuil.html";
+          window.location.href = "/acceuil.html";
         } else {
-          window.location.href = "/pageAcceuil.html";
+          window.location.href = "/acceuil.html";
         }
       })
       .catch((error) => {
