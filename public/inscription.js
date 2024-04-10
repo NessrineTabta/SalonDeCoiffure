@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
         prenom: formData.get("prenom"),
         phone: formData.get("phone"),
         password: formData.get("password"),
-        salon: document.getElementById("salonSelect").value,
+        salon: formData.get("salonSelect"),
       };
 
       console.log("Données du formulaire:", requestData); // Ajout d'un message de débogage pour afficher les données du formulaire
@@ -50,18 +50,12 @@ document.addEventListener("DOMContentLoaded", function () {
           if (responseClient.ok) {
             const dataClient = await responseClient.json();
             console.log(dataClient.message); // Affichage du message de succès ou redirection
-            console.log(dataClient);
           } else {
             const errorDataClient = await responseClient.json();
             console.error(errorDataClient.message); // Affichage du message d'erreur retourné par le serveur
-            console.log(dataClient);
           }
         } else {
           // Pour l'inscription d'un coiffeur
-          console.log(
-            "Envoi des données pour l'inscription d'un coiffeur:",
-            requestData
-          ); // Ajout d'un message de débogage pour afficher les données envoyées pour l'inscription d'un coiffeur
           const responseCoiffeur = await fetch("/registerCoiffeur", {
             method: "POST",
             headers: {
@@ -78,11 +72,11 @@ document.addEventListener("DOMContentLoaded", function () {
           });
 
           if (responseCoiffeur.ok) {
-            alert("Data" + requestData);
             const dataCoiffeur = await responseCoiffeur.json();
             console.log(dataCoiffeur.message); // Affichage du message de succès ou redirection
           } else {
-            alert("Data" + requestData);
+            const errorDataCoiffeur = await responseCoiffeur.json();
+            console.error(errorDataCoiffeur.message); // Affichage du message d'erreur retourné par le serveur
           }
         }
       } catch (error) {
