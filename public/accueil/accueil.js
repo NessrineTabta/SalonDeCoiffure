@@ -25,7 +25,7 @@ function updateNavigationBar(loginType) {
   } else if (loginType === "coiffeur") {
     prendreRdv.style.display = 'none'
     navContent = `
-        <a href="./CoiffeurProfil/index.html">Portfolio</a>
+        <a href="../CoiffeurProfil/index.html">Portfolio</a>
         <a href="#">À propos</a>
         <a href="#">Contact</a>
         <a href="../avis.html">Avis</a>`;
