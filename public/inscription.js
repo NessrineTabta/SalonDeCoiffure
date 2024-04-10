@@ -26,6 +26,8 @@ document.addEventListener("DOMContentLoaded", function () {
         salon: document.getElementById("salon").value,
       };
 
+      console.log("Données du formulaire:", requestData); // Ajout d'un message de débogage pour afficher les données du formulaire
+
       try {
         if (
           document.getElementById("btnClient").classList.contains("is-black")
@@ -56,6 +58,10 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         } else {
           // Pour l'inscription d'un coiffeur
+          console.log(
+            "Envoi des données pour l'inscription d'un coiffeur:",
+            requestData
+          ); // Ajout d'un message de débogage pour afficher les données envoyées pour l'inscription d'un coiffeur
           const responseCoiffeur = await fetch("/registerCoiffeur", {
             method: "POST",
             headers: {
@@ -158,18 +164,25 @@ function getFormulaireInscription(isCoiffeur = false) {
       `;
 
   // Ajout du dropdown pour le coiffeur
-// Ajout du dropdown pour le coiffeur
-if (isCoiffeur) {
-  // Récupération dynamique des noms de salon via une requête fetch
-  fetch("/nomsSalons")
-    .then(response => response.json())
-    .then(data => {
-      const options = data.map(salon => `<option value="${salon.idSalon}">${salon.nomSalon}</option>`).join('');
-      document.getElementById('salon').innerHTML = `<option value="">Choisir un salon</option>${options}`;
-    })
-    .catch(error => console.error("Une erreur s'est produite:", error));
+  // Ajout du dropdown pour le coiffeur
+  if (isCoiffeur) {
+    // Récupération dynamique des noms de salon via une requête fetch
+    fetch("/nomsSalons")
+      .then((response) => response.json())
+      .then((data) => {
+        const options = data
+          .map(
+            (salon) =>
+              `<option value="${salon.idSalon}">${salon.nomSalon}</option>`
+          )
+          .join("");
+        document.getElementById(
+          "salon"
+        ).innerHTML = `<option value="">Choisir un salon</option>${options}`;
+      })
+      .catch((error) => console.error("Une erreur s'est produite:", error));
 
-  formContent += `
+    formContent += `
             <div class="field">
                 <div class="control">
                     <div class="select is-fullwidth">
@@ -183,7 +196,7 @@ if (isCoiffeur) {
             <!-- Champ caché pour stocker l'ID du salon sélectionné -->
             <input type="hidden" id="idSalon" name="idSalon">
         `;
-}
+  }
 
   // Suite du formulaire (commun à client et coiffeur)
   formContent += `
