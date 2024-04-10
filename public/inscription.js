@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const responseData = await response.json();
             console.log("Success:", responseData.message);
             // You can redirect the user or show a success message here
+            window.location.href ="./connexion.html";
           } else {
             // Handle server-side validation errors or other issues
             const errorData = await response.json();
