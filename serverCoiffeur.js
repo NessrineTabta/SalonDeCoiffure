@@ -565,4 +565,28 @@ router.get("/coiffeursParSalon/:idSalon", async (req, res) => {
   }
 });
 
+// POST: pour mettre à jour l'image du portfolio
+router.post('/portfolio', authentification, async (req, res) => {
+  const { urlPhoto } = req.body;
+  const { email } = req.user;
+
+  try {
+      // Récupérer l'identifiant du coiffeur à partir de l'email
+      const user = await getUserByEmail(email);
+      const idCoiffeur = user.idCoiffeur;
+
+      // Insérer l'URL de l'image dans la base de données
+      await db('Portfolio').insert({
+          urlPhoto,
+          idCoiffeur
+      });
+
+      res.status(200).json({ message: "Image du portfolio mise à jour avec succès" });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Une erreur est survenue lors de la mise à jour de l'image du portfolio" });
+  }
+});
+
+
 module.exports = router;

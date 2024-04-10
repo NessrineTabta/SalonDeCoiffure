@@ -16,7 +16,7 @@ function authentification(req, res, next) {
   // Vérifie la validée du token grace au tableau de token.js
   const verifierToken = tokenModule.verifierToken(token);
   if (!token) {
-    return res.status(400).json({ message: "Accès non autorisé" });
+    return res.status(400).json({ message: "Accès non autorisé" ,});
   }
 
   jwt.verify(token, TOKEN_SECRET_KEY, (err, user) => {
