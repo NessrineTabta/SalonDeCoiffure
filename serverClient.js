@@ -143,6 +143,26 @@ function getUserByUsername(email) {
   });
 }
 
+// GET: Obtenir les détails d'un client par son ID
+router.get("/client/:idClient", async (req, res) => {
+  try {
+    const idClient = req.params.idClient;
+    const client = await db("Client")
+      .select("nomClient", "prenomClient")
+      .where("idClient", idClient)
+      .first();
+    if (!client) {
+      return res.status(404).json({ message: "Client non trouvé." });
+    }
+    res.json(client);
+  } catch (error) {
+    console.error("Une erreur s'est produite :", error);
+    res.status(500).json({
+      message: "Erreur lors de la récupération des détails du client.",
+    });
+  }
+});
+
 // POST: Create a new Rendezvous
 router.post("/Rendezvous", authentification, async (req, res) => {
   try {
@@ -276,15 +296,18 @@ router.put("/Rendezvous/:idRendezvous", authentification, async (req, res) => {
 });
 
 // GET: AFFICHER TOUT LES AVIS
-router.get('/avis', async (req, res) => {
-  db.select('*').from('Avis')
-      .then((avis) => {
-          res.json(avis);
-      })
-      .catch((err) => {
-          console.error('Erreur lors de la récupération des avis :', err);
-          res.status(500).json({ error: 'Erreur lors de la récupération des avis' });
-      });
+router.get("/avis", async (req, res) => {
+  db.select("*")
+    .from("Avis")
+    .then((avis) => {
+      res.json(avis);
+    })
+    .catch((err) => {
+      console.error("Erreur lors de la récupération des avis :", err);
+      res
+        .status(500)
+        .json({ error: "Erreur lors de la récupération des avis" });
+    });
 });
 
 // POST: CREER UN AVIS
