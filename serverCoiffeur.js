@@ -180,6 +180,33 @@ function getUserByEmail(email) {
   });
 }
 
+// POST: Modifier les informations du coiffeur
+router.post("/coiffeurs", authentification, async (req, res) => {
+  try {
+    const { nomCoiffeur, prenomCoiffeur, numCoiffeur, password } = req.body;
+    const idCoiffeur = await getIdByEmail(req.user.email); // Obtenez l'ID du coiffeur à partir de l'e-mail de l'utilisateur connecté
+
+    if (!idCoiffeur) {
+      return res.status(404).json({ message: "Coiffeur non trouvé." });
+    }
+
+     // Hasher le mot de passe
+     const passwordHashed = await bcrypt.hash(password, 10);
+
+    // Mettre à jour les informations du coiffeur
+    await modifierInformationsCoiffeur(idCoiffeur, nomCoiffeur, prenomCoiffeur, numCoiffeur, passwordHashed);
+
+    res.status(200).json({ message: "Informations du coiffeur modifiées avec succès." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Une erreur s'est produite lors de la modification des informations du coiffeur.",
+    });
+  }
+});
+
+
+
 //GET : Afficher les rendezvous d'un coiffeur
 router.get("/rendezVousCoiffeur", authentification, async (req, res) => {
   try {

@@ -83,3 +83,78 @@ document.addEventListener('DOMContentLoaded', async function() {
         console.error('Une erreur est survenue lors de l\'initialisation de l\'image :', error);
     }
 });
+
+
+
+/* ------------------------
+ *   ON RETOURNE TOUT LES SALONS AU CHARGEMENT DE LA PAGE: 
+ * ------------------------ */
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        //ON FAIT UN FETCH POUR RETOURNER TOUTS LES SALONS
+      const response = await fetch("/nomsSalons");
+      const nomsSalons = await response.json();
+      const selectSalon = document.getElementById("salonCoiffure")
+  
+      nomsSalons.forEach((salon) => {
+        const option = document.createElement("option");
+        option.value = salon.idSalon;
+        option.textContent = salon.nomSalon;
+        selectSalon.appendChild(option);
+      });
+    } catch (error) {
+      console.error("Une erreur s'est produite lors de la récupération des noms de salons:", error);
+      alert("Une erreur s'est produite lors de la récupération des noms de salons");
+    }
+  });
+  
+
+
+/* ------------------------
+ *    Modifier les informations
+     d'un coiffeur grace au FORMULAIRE
+ * ------------------------ */
+     const boutonEnregistrer = document.getElementById("BoutonEnregistrer");
+
+     boutonEnregistrer.addEventListener("click", async () => {
+         const form = document.getElementById("profilForm");
+     
+         const nomCoiffeur = form.querySelector("#nomCoiffeur").value;
+         const prenomCoiffeur = form.querySelector("#prenomCoiffeur").value;
+         const email = form.querySelector("#email").value;
+         const numCoiffeur = form.querySelector("#numCoiffeur").value;
+         const salonCoiffure = form.querySelector("#salonCoiffure").value;
+         const newPassword = form.querySelector("#newPassword").value;
+     
+         const token = sessionStorage.getItem("token");
+     
+         try {
+             const response = await fetch("/coiffeurs", {
+                 method: "POST",
+                 headers: {
+                     "Content-Type": "application/json",
+                 },
+                 body: JSON.stringify({
+                     token,
+                     nomCoiffeur,
+                     prenomCoiffeur,
+                     email,
+                     numCoiffeur,
+                     salonCoiffure,
+                     password: newPassword,
+                 }),
+             });
+     
+             if (!response.ok) {
+                 const errorMessage = await response.text();
+                 throw new Error(errorMessage);
+             }
+     
+             const responseData = await response.json();
+             alert(responseData.message); // Affiche un message de succès
+         } catch (error) {
+             console.error("Une erreur s'est produite lors de la modification du profil :", error.message);
+             alert("Une erreur s'est produite Lors de l'insertion");
+         }
+     });
+     

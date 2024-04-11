@@ -43,10 +43,10 @@
                     <div class="list-group list-group-flush account-settings-links">
                         <a class="list-group-item list-group-item-action active" data-toggle="list"
                             href="#account-general">Général</a>
+                        <!--<a class="list-group-item list-group-item-action" data-toggle="list"
+                            href="#account-change-password">Modifier le mot de passe</a>-->
                         <a class="list-group-item list-group-item-action" data-toggle="list"
-                            href="#account-change-password">Modifier le mot de passe</a>
-                        <a class="list-group-item list-group-item-action" data-toggle="list"
-                            href="#account-info">Infos</a>
+                            href="#account-info">Mes images</a>
                         <a class="list-group-item list-group-item-action" data-toggle="list"
                             href="#account-social-links">Mettre à jour ses services</a>
                         <a class="list-group-item list-group-item-action" data-toggle="list"
@@ -57,42 +57,53 @@
                     <div class="tab-content">
                         <div class="tab-pane fade active show" id="account-general">
                             <div class="card-body media align-items-center">
-                                <img id="imageteleverser" src="https://bootdey.com/img/Content/avatar/avatar1.png" alt
+                                <img id="imageteleverser" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Fond_blanc.svg/2560px-Fond_blanc.svg.png" alt
                                     class="d-block ui-w-80">
                                 <div class="media-body ml-4">
                                     <label class="btn btn-outline-primary">
                                         Téléverser une nouvelle photo
                                         <input type="file" class="account-settings-fileinput" id="televerser">
                                     </label> &nbsp;
-                                    <button type="button" class="btn btn-default md-btn-flat">Reset</button>
                                     <div class="text-light small mt-1">Allowed JPG, GIF or PNG. Max size of 800K</div>
                                 </div>
                             </div>
                             <hr class="border-light m-0">
-                            <div class="card-body">
-                                <div class="form-group">
-                                    <label class="form-label">Prénom</label>
-                                    <input type="text" class="form-control mb-1" value="Berivan">
+                            <form id="profilForm">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label class="form-label">Prénom</label>
+                                        <input type="text" class="form-control mb-1" id="prenomCoiffeur">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Nom</label>
+                                        <input type="text" class="form-control" id="nomCoiffeur">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">E-mail</label>
+                                        <input type="text" class="form-control mb-1" id="email">
+                                        <!-- <div class="alert alert-warning mt-3">
+                                            Your email is not confirmed. Please check your inbox.<br>
+                                            <a href="javascript:void(0)">Resend confirmation</a>
+                                        </div> -->
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Numero de telephone </label>
+                                        <input type="text" class="form-control" id="numCoiffeur">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Salon de coiffure</label>
+                                        <select id="salonCoiffure" class="form-control"></select>
+                                    </div>
+                                
+                                    <div class="form-group">
+                                        <label class="form-label">Modifier votre mot de passe</label>
+                                        <input type="text" class="form-control" id="newPassword">
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="form-label">Nom</label>
-                                    <input type="text" class="form-control" value="Kirisikoglu">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">E-mail</label>
-                                    <input type="text" class="form-control mb-1" value="beri@mail.com">
-                                    <!-- <div class="alert alert-warning mt-3">
-                                        Your email is not confirmed. Please check your inbox.<br>
-                                        <a href="javascript:void(0)">Resend confirmation</a>
-                                    </div> -->
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Salon de coiffure</label>
-                                    <input type="text" class="form-control" value="East Cutz">
-                                </div>
-                            </div>
+                                
                         </div>
-                        <div class="tab-pane fade" id="account-change-password">
+                    </form>
+                        <!--<div class="tab-pane fade" id="account-change-password">
                             <div class="card-body pb-2">
 
                                 <div class="form-group">
@@ -101,12 +112,13 @@
                                 </div>
                             </div>
                         </div>
+                    -->
                         <div class="tab-pane fade" id="account-info">
                             <div class="card-body pb-2">
                                 <div class="form-group">
                                     <label class="form-label">Bio</label>
                                     <textarea class="form-control"
-                                        rows="5">allo voici ma bio</textarea>
+                                        rows="5">Ceci sont mes images</textarea>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Date de naissance</label>
@@ -194,8 +206,7 @@
             </div>
         </div>
         <div class="text-right mt-3">
-            <button type="button" class="btn btn-primary">Enregistrer</button>&nbsp;
-            <button type="button" class="btn btn-default">Annuler</button>
+            <button type="button" class="btn btn-primary" id="BoutonEnregistrer">Enregistrer</button>&nbsp;
         </div>
     </div>
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
