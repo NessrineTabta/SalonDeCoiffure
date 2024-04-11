@@ -57,8 +57,7 @@ televerserInput.addEventListener('change', function() {
       du coiffeur 
  * ------------------------ */
 // Au chargement, mettre l'image du coiffeur
-document.addEventListener('beforeunload', async function() {
-    event.preventDefault();
+document.addEventListener('DOMContentLoaded', async function() {
     try {
         const token = sessionStorage.getItem("token");
         const response = await fetch('/recupererphoto', {
