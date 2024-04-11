@@ -317,7 +317,7 @@ router.post("/avis", authentification, async (req, res) => {
   const description = req.body.description.description;
   const idSalon = req.body.idSalon.salonId;
   const clientEmail = req.user.email;
-  //
+
   try {
     // Obtenir l'ID du client à partir de son email
     const client = await getUserByUsername(clientEmail);
