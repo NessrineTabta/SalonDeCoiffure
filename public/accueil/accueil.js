@@ -21,14 +21,17 @@ function updateNavigationBar(loginType) {
         <a href="#">À propos</a>
         <a href="#">Contact</a>
         <a href="#">Mes rendez-vous</a>
-        <a href="../avis.html">Avis</a>`;
+        <a href="../avis.html">Avis</a>
+        <a href="../AfficherAvis/afficherAvis.html">tt avis</a>
+        `;
   } else if (loginType === "coiffeur") {
     prendreRdv.style.display = 'none'
     navContent = `
-        <a href="../CoiffeurProfil/index.html">Portfolio</a>
+        <a href="../CoiffeurProfil/portfolio.html">Portfolio</a>
         <a href="#">À propos</a>
         <a href="#">Contact</a>
-        <a href="../avis.html">Avis</a>`;
+        <a href="../AfficherAvis/afficherAvis.html">Afficher tout les avis</a>
+        `;
   }
 
   // Mettre à jour le contenu de la barre de navigation

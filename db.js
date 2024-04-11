@@ -8,18 +8,8 @@ const db = knex({
   },
   useNullAsDefault: true,
 });
-// drop les tables
-/*
-DROP TABLE IF EXISTS Coiffeur_Disponibilite;
-DROP TABLE IF EXISTS Coiffeur_Client;
-DROP TABLE IF EXISTS Coiffeur_Service;
-DROP TABLE IF EXISTS Avis;
-DROP TABLE IF EXISTS Portfolio;
-DROP TABLE IF EXISTS Service;
-DROP TABLE IF EXISTS Salon;
-DROP TABLE IF EXISTS Rendezvous;
-DROP TABLE IF EXISTS Client;
-DROP TABLE IF EXISTS Disponibilite;*/
+
+
 //Création de la table Coiffeur
 //db.schema.createTable('Coiffeur', table => {
 // table.increments('idCoiffeur').primary();
@@ -79,11 +69,12 @@ DROP TABLE IF EXISTS Disponibilite;*/
 
 // Création de la table Portfolio
 //db.schema.createTable('Portfolio', table => {
-//table.increments('idPortfolio').primary();
-//table.string('urlPhoto').notNullable();
-//table.integer('idCoiffeur').unsigned();
-//table.foreign('idCoiffeur').references('Coiffeur.idCoiffeur');
+   // table.increments('idPortfolio').primary();
+   // table.string('urlPhoto').notNullable();
+   // table.integer('idCoiffeur').unsigned().unique();
+   // table.foreign('idCoiffeur').references('Coiffeur.idCoiffeur');
 //}).then(() => console.log('Table Portfolio créée'));
+
 
 // Création de la table Disponibilite
 //db.schema.createTable('Disponibilite', table => {

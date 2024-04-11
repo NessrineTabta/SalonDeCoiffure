@@ -275,6 +275,18 @@ router.put("/Rendezvous/:idRendezvous", authentification, async (req, res) => {
   }
 });
 
+// GET: AFFICHER TOUT LES AVIS
+router.get('/avis', async (req, res) => {
+  db.select('*').from('Avis')
+      .then((avis) => {
+          res.json(avis);
+      })
+      .catch((err) => {
+          console.error('Erreur lors de la récupération des avis :', err);
+          res.status(500).json({ error: 'Erreur lors de la récupération des avis' });
+      });
+});
+
 // POST: CREER UN AVIS
 router.post("/avis", authentification, async (req, res) => {
   console.log(req.body);
