@@ -267,3 +267,4 @@ html:not(.dark-style) .account-settings-links .list-group-item.active {
 .nav-items a:hover::after {
     transform: scaleX(1);
 }
+
