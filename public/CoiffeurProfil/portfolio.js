@@ -57,8 +57,9 @@ televerserInput.addEventListener('change', function() {
       du coiffeur 
  * ------------------------ */
 // Au chargement, mettre l'image du coiffeur
-document.addEventListener('beforeunload', async function() {
-    event.preventDefault();
+document.addEventListener('DOMContentLoaded', async function() {
+    // Si la page est rechargé, on va modifier la photo par lancienne
+    if (performance.navigation.type === 1) {
     try {
         const token = sessionStorage.getItem("token");
         const response = await fetch('/recupererphoto', {
@@ -84,6 +85,7 @@ document.addEventListener('beforeunload', async function() {
     } catch (error) {
 
         console.error('Une erreur est survenue lors de l\'initialisation de l\'image :', error);
+    }
     }
 });
 
