@@ -21,6 +21,8 @@ const router = express.Router();
 // token.js pour stocker et invalider le token dans logout, ou le retourner dynamiquement
 const tokenModule = require("./token");
 
+
+
 /* ------------------------
  * Définition des routes
  * ------------------------ */
@@ -261,7 +263,7 @@ function servicesCoiffeur(email) {
 router.post("/services", authentification, async (req, res) => {
   try {
     const { nom, description } = req.body;
-    const idCoiffeur = await getCoiffeurByEmail(req.user.email); // Obtenez l'ID du coiffeur à partir de l'e-mail de l'utilisateur connecté
+    const idCoiffeur = await getIdByEmail(req.user.email); // Obtenez l'ID du coiffeur à partir de l'e-mail de l'utilisateur connecté
 
     if (!idCoiffeur) {
       return res.status(404).json({ message: "Coiffeur non trouvé." });
@@ -280,7 +282,7 @@ router.post("/services", authentification, async (req, res) => {
 });
 
 // Fonction: récupérer l'ID du coiffeur à partir de l'e-mail
-async function getCoiffeurByEmail(email) {
+async function getIdByEmail(email) {
   try {
     const coiffeur = await db("Coiffeur")
       .select("idCoiffeur")
@@ -430,7 +432,7 @@ function getDisponibilites(email) {
 router.post("/disponibilites", authentification, async (req, res) => {
   try {
     const { dateDisponibilite, heureDisponibilite } = req.body;
-    const idCoiffeur = await getCoiffeurByEmail(req.user.email); // Obtenez l'ID du coiffeur à partir de l'e-mail de l'utilisateur connecté
+    const idCoiffeur = await getIdByEmail(req.user.email); // Obtenez l'ID du coiffeur à partir de l'e-mail de l'utilisateur connecté
 
     if (!idCoiffeur) {
       return res.status(404).json({ message: "Coiffeur non trouvé." });
@@ -565,20 +567,19 @@ router.get("/coiffeursParSalon/:idSalon", async (req, res) => {
   }
 });
 
-// POST: pour mettre à jour l'image du portfolio
+// POST: Mettre a jour image du Portofolio
 router.post('/portfolio', authentification, async (req, res) => {
-  const { urlPhoto } = req.body;
-  const { email } = req.user;
+  const urlPhoto  = req.body.imageUrl;
+  const email  = req.user.email;
 
   try {
       // Récupérer l'identifiant du coiffeur à partir de l'email
-      const user = await getUserByEmail(email);
-      const idCoiffeur = user.idCoiffeur;
+      const idCoiffeur = await getIdByEmail(email);
 
       // Insérer l'URL de l'image dans la base de données
       await db('Portfolio').insert({
-          urlPhoto,
-          idCoiffeur
+          urlPhoto:urlPhoto,
+          idCoiffeur:idCoiffeur
       });
 
       res.status(200).json({ message: "Image du portfolio mise à jour avec succès" });
@@ -587,6 +588,25 @@ router.post('/portfolio', authentification, async (req, res) => {
       res.status(500).json({ error: "Une erreur est survenue lors de la mise à jour de l'image du portfolio" });
   }
 });
+
+// POST: Récupérer Image du portfolio
+router.post('/recupererphoto', authentification, async (req, res) => {
+  try {
+      const email = req.user.email;
+      const idCoiffeur = await getIdByEmail(email);
+      const portfolio = await db('Portfolio').select('urlPhoto').where('idCoiffeur', idCoiffeur).orderBy('idPortfolio', 'desc').first();
+      if (portfolio) {
+          res.json({ imageUrl: portfolio.urlPhoto });
+      } else {
+          throw new Error('Le portfolio du coiffeur n\'a pas été trouvé.');
+      }
+  } catch (error) {
+      console.error('Une erreur est survenue lors de la récupération de la photo :', error);
+      res.status(500).json({ error: 'Erreur lors de la récupération de la photo.' });
+  }
+});
+
+
 
 
 module.exports = router;
