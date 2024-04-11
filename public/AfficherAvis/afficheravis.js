@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 document.addEventListener("DOMContentLoaded", () => {
   fetch("/avis")
     .then((response) => response.json())
@@ -55,4 +53,3 @@ function generateStars(nombreEtoile) {
   }
   return starsHTML;
 }
->>>>>>> Stashed changes
