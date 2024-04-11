@@ -118,6 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then((data) => {
         console.log("Review submitted successfully", data);
+        alert("⭐⭐⭐⭐⭐ Avis envoyé avec succès ⭐⭐⭐⭐⭐")
         // Here, you might want to clear the form or provide feedback to the user
       })
       .catch((error) => {
