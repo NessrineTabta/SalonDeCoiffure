@@ -77,9 +77,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             imageTeleverser.src = imageUrl;
 
         } else {
-            console.error('Une erreur est survenue lors de la récupération de l\'URL de l\'image.');
+           // Si l'URL de l'image n'est pas disponible, charger une image de secours
+           console.error('Une erreur est survenue lors de la récupération de l\'URL de l\'image.');
         }
     } catch (error) {
+
         console.error('Une erreur est survenue lors de l\'initialisation de l\'image :', error);
     }
 });

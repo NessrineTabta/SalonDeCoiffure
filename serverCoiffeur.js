@@ -194,7 +194,14 @@ router.post("/coiffeurs", authentification, async (req, res) => {
      const passwordHashed = await bcrypt.hash(password, 10);
 
     // Mettre à jour les informations du coiffeur
-    await modifierInformationsCoiffeur(idCoiffeur, nomCoiffeur, prenomCoiffeur, numCoiffeur, passwordHashed);
+    await db("Coiffeur")
+    .where("idCoiffeur", idCoiffeur)
+    .update({
+      nomCoiffeur,
+      prenomCoiffeur,
+      numCoiffeur,
+      password: passwordHashed // Mise à jour du mot de passe hashé
+    });
 
     res.status(200).json({ message: "Informations du coiffeur modifiées avec succès." });
   } catch (error) {
