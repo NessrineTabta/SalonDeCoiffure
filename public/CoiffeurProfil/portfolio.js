@@ -241,9 +241,9 @@ let heureSelectionnee = null;
 const days = document.querySelectorAll('.days li');
 
 // Fonction pour afficher les heures possibles et le bouton Envoyer
+// Fonction pour afficher les heures possibles et le bouton Envoyer
 function afficherHeuresPossibles() {
     // Placeholder: Remplacez ce bloc avec la logique pour afficher les heures possibles
-    alert("coucou")
     const heuresPossibles = [
          '8:00', '9:00', '10:00', '11:00', 
         '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', 
@@ -252,19 +252,27 @@ function afficherHeuresPossibles() {
     const choisirDate = document.getElementById('choisirDate');
     choisirDate.innerHTML = ''; // Efface le contenu précédent
 
-    // Crée des boutons radio pour chaque heure possible
+    // Crée des cases à cocher pour chaque heure possible
     heuresPossibles.forEach(heure => {
         const input = document.createElement('input');
-        input.type = 'radio';
-        input.name = 'heure-disponible'; // Assure que seul un bouton radio peut être sélectionné à la fois
+        input.type = 'checkbox';
+        input.name = 'heure-disponible'; // Assure que les cases à cocher sont regroupées
         input.value = heure;
 
         const label = document.createElement('label');
         label.textContent = heure;
 
         input.addEventListener('change', () => {
-            // Mettre à jour l'heure sélectionnée lorsque l'utilisateur change la sélection
-            heureSelectionnee = input.value;
+            // Mettre à jour les heures sélectionnées lorsque l'utilisateur change la sélection
+            if (input.checked) {
+                heuresSelectionnees.push(input.value);
+            } else {
+                const index = heuresSelectionnees.indexOf(input.value);
+                if (index !== -1) {
+                    heuresSelectionnees.splice(index, 1);
+                }
+            }
+            heureSelectionnee = heuresSelectionnees; // Mettre à jour heureSelectionnee avec les heures sélectionnées
         });
 
         choisirDate.appendChild(input);
@@ -278,25 +286,31 @@ function afficherHeuresPossibles() {
     boutonEnvoyer.setAttribute('class', 'button is-danger');
     boutonEnvoyer.setAttribute('id', 'boutonEnvoyer');
 
+    
+
     // Ajouter un écouteur d'événement au bouton Envoyer
     boutonEnvoyer.addEventListener('click', () => {
-        if (!dateSelectionnee || !heureSelectionnee) {
-            console.error('Veuillez sélectionner une date et une heure.');
-            return;
-        }
+    if (!dateSelectionnee || !heureSelectionnee || heureSelectionnee.length === 0) {
+        alert(dateSelectionnee, heureSelectionnee)
 
-        // Placeholder: Remplacez cette fonction par la logique pour envoyer les disponibilités
-        insererDisponibilite(dateSelectionnee, heureSelectionnee)
-            .then(idDisponibilite => {
-                console.log('Disponibilité envoyée avec succès. ID de la disponibilité:', idDisponibilite);
-            })
-            .catch(error => {
-                console.error('Erreur lors de l\'envoi de la disponibilité:', error);
-            });
-    });
+        console.error('Veuillez sélectionner une date et au moins une heure.');
+        return;
+    }
+
+    // Placeholder: Remplacez cette fonction par la logique pour envoyer les disponibilités
+    insererDisponibilite(heureSelectionnee)
+        .then(idDisponibilite => {
+            console.log('Disponibilité envoyée avec succès. ID de la disponibilité:', idDisponibilite);
+        })
+        .catch(error => {
+            console.error('Erreur lors de l\'envoi de la disponibilité:', error);
+        });
+});
+
 
     choisirDate.appendChild(boutonEnvoyer); // Ajouter le bouton Envoyer au conteneur
 }
+
 
 // Ajoute un écouteur d'événements à chaque jour dans le calendrier
 days.forEach(day => {
@@ -314,6 +328,7 @@ days.forEach(day => {
 
 // Fonction : pour ajouter une disponibilité avec une transaction
 async function insererDisponibilite(dateDisponibilite, heureDisponibilite) {
+    const token= sessionStorage.getItem("token");
     try {
         // Placeholder: Remplacez cette ligne par la logique pour effectuer la requête fetch
         const response = await fetch('/disponibilites', {
@@ -323,7 +338,8 @@ async function insererDisponibilite(dateDisponibilite, heureDisponibilite) {
             },
             body: JSON.stringify({
                 dateDisponibilite,
-                heureDisponibilite
+                heureDisponibilite,
+                token
             })
         });
 
