@@ -168,75 +168,91 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-
-   /* ------------------------
+/* ------------------------
  *   Calendrier dynamique avec les jours, semaines, mois, etc.
  * ------------------------ */
-   const daysTag = document.querySelector(".days");
-   const currentDate = document.querySelector(".current-date");
-   const prevNextIcon = document.querySelectorAll(".icons span");
-   
-   let date = new Date();
-   let currYear = date.getFullYear();
-   let currMonth = date.getMonth();
-   
-   const months = ["January", "February", "March", "April", "May", "June", "July",
-   "August", "September", "October", "November", "December"];
-   
-   const renderCalendar = () => {
-       // Mettre à jour la variable de date à chaque rendu du calendrier
-       date = new Date(currYear, currMonth, 1);
-   
-       let firstDayofMonth = date.getDay();
-       let lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate();
-       let lastDayofMonth = new Date(currYear, currMonth, lastDateofMonth).getDay();
-       let lastDateofLastMonth = new Date(currYear, currMonth, 0).getDate();
-       let liTag = "";
-   
-       for (let i = firstDayofMonth; i > 0; i--) {
-           liTag += `<li class="inactive">${lastDateofLastMonth - i + 1}</li>`;
-       }
-   
-       for (let i = 1; i <= lastDateofMonth; i++) {
-           // Vérifier si le jour appartient au mois en cours
-           let isCurrentMonth = currMonth === date.getMonth() && currYear === date.getFullYear();
-           let isToday = isCurrentMonth && i === date.getDate() ? "active" : "";
-           let clickEvent = isCurrentMonth ? "selectDate(this)" : "null";
-           liTag += `<li class="${isToday}" onclick="${clickEvent}">${i}</li>`;
-       }
-   
-       for (let i = lastDayofMonth; i < 6; i++) {
-           liTag += `<li class="inactive">${i - lastDayofMonth + 1}</li>`;
-       }
-   
-       currentDate.innerText = `${months[currMonth]} ${currYear}`;
-       daysTag.innerHTML = liTag;
-   }
-   
-   prevNextIcon.forEach(icon => {
-       icon.addEventListener("click", () => {
-           currMonth = icon.id === "prev" ? currMonth - 1 : currMonth + 1;
-           if (currMonth < 0) {
-               currMonth = 11;
-               currYear--;
-           } else if (currMonth > 11) {
-               currMonth = 0;
-               currYear++;
-           }
-           renderCalendar();
-       });
-   });
-   
-   // Fonction pour sélectionner une date
-   function selectDate(element) {
-       const selectedDay = parseInt(element.textContent);
-       date = new Date(currYear, currMonth, selectedDay);
-       console.log("Date sélectionnée :", date);
-       // Ajoutez ici le code pour traiter la date sélectionnée
-   }
-   
-   renderCalendar();
-   
+const daysTag = document.querySelector(".days");
+const currentDate = document.querySelector(".current-date");
+const prevNextIcon = document.querySelectorAll(".icons span");
+
+let date = new Date();
+let currYear = date.getFullYear();
+let currMonth = date.getMonth();
+
+const months = ["January", "February", "March", "April", "May", "June", "July",
+"August", "September", "October", "November", "December"];
+
+const renderCalendar = () => {
+    // Mettre à jour la variable de date à chaque rendu du calendrier
+    date = new Date(currYear, currMonth, 1);
+
+    let firstDayofMonth = date.getDay();
+    let lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate();
+    let lastDayofMonth = new Date(currYear, currMonth, lastDateofMonth).getDay();
+    let lastDateofLastMonth = new Date(currYear, currMonth, 0).getDate();
+    let liTag = "";
+
+    for (let i = firstDayofMonth; i > 0; i--) {
+        liTag += `<li class="inactive">${lastDateofLastMonth - i + 1}</li>`;
+    }
+
+    for (let i = 1; i <= lastDateofMonth; i++) {
+        // Vérifier si le jour appartient au mois en cours
+        let isCurrentMonth = currMonth === date.getMonth() && currYear === date.getFullYear();
+        let isToday = isCurrentMonth && i === date.getDate() ? "active" : "";
+        let clickEvent = isCurrentMonth ? "selectDate(this)" : "null";
+        liTag += `<li class="${isToday}" onclick="${clickEvent}">${i}</li>`;
+    }
+
+    for (let i = lastDayofMonth; i < 6; i++) {
+        liTag += `<li class="inactive">${i - lastDayofMonth + 1}</li>`;
+    }
+
+    currentDate.innerText = `${months[currMonth]} ${currYear}`;
+    daysTag.innerHTML = liTag;
+}
+
+prevNextIcon.forEach(icon => {
+    icon.addEventListener("click", () => {
+        currMonth = icon.id === "prev" ? currMonth - 1 : currMonth + 1;
+        if (currMonth < 0) {
+            currMonth = 11;
+            currYear--;
+        } else if (currMonth > 11) {
+            currMonth = 0;
+            currYear++;
+        }
+        renderCalendar();
+    });
+});
+
+// Fonction pour sélectionner une date
+function selectDate(element) {
+    const selectedDay = parseInt(element.textContent);
+    dateSelectionnee = new Date(currYear, currMonth, selectedDay);
+
+    // Appliquer le style à tous les jours sélectionnés, peu importe le mois
+    const allDays = document.querySelectorAll('.days li');
+    allDays.forEach(day => {
+        day.classList.remove('selected'); // Supprimer la classe 'selected' de tous les jours
+    });
+    element.classList.add('selected'); // Ajouter la classe 'selected' au jour sélectionné
+
+    // Formatage de la date sélectionnée en format YYYY-MM-DD
+    const year = dateSelectionnee.getFullYear();
+    let month = dateSelectionnee.getMonth() + 1;
+    month = month < 10 ? '0' + month : month;
+    let day = dateSelectionnee.getDate();
+    day = day < 10 ? '0' + day : day;
+
+    const formattedDate = `${year}-${month}-${day}`;
+    console.log("Date sélectionnée :", formattedDate);
+
+    // Afficher les heures possibles
+    afficherHeuresPossibles();
+}
+
+
 
 /* ----------------
 --------
@@ -252,89 +268,89 @@ const days = document.querySelectorAll('.days li');
 
 // Fonction pour afficher les heures possibles et le bouton Envoyer
 function afficherHeuresPossibles() {
-// Placeholder: Remplacez ce bloc avec la logique pour afficher les heures possibles
-const heuresPossibles = [
-    '8:00', '9:00', '10:00', '11:00', 
-    '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', 
-    '18:00'
-];
-const choisirDate = document.getElementById('choisirDate');
-choisirDate.innerHTML = ''; // Efface le contenu précédent
+    // Placeholder: Remplacez ce bloc avec la logique pour afficher les heures possibles
+    const heuresPossibles = [
+        '8:00', '9:00', '10:00', '11:00', 
+        '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', 
+        '18:00'
+    ];
+    const choisirDate = document.getElementById('choisirDate');
+    choisirDate.innerHTML = ''; // Efface le contenu précédent
 
-// Crée des cases à cocher pour chaque heure possible
-heuresPossibles.forEach(heure => {
-    const input = document.createElement('input');
-    input.type = 'checkbox';
-    input.name = 'heure-disponible'; // Assure que les cases à cocher sont regroupées
-    input.value = heure;
+    // Crée des cases à cocher pour chaque heure possible
+    heuresPossibles.forEach(heure => {
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.name = 'heure-disponible'; // Assure que les cases à cocher sont regroupées
+        input.value = heure;
 
-    const label = document.createElement('label');
-    label.textContent = heure;
+        const label = document.createElement('label');
+        label.textContent = heure;
 
-    input.addEventListener('change', () => {
-        // Mettre à jour les heures sélectionnées lorsque l'utilisateur change la sélection
-        if (input.checked) {
-            heureSelectionnee.push(input.value);
-        } else {
-            const index = heureSelectionnee.indexOf(input.value);
-            if (index !== -1) {
-                heureSelectionnee.splice(index, 1);
+        input.addEventListener('change', () => {
+            // Mettre à jour les heures sélectionnées lorsque l'utilisateur change la sélection
+            if (input.checked) {
+                heureSelectionnee.push(input.value);
+            } else {
+                const index = heureSelectionnee.indexOf(input.value);
+                if (index !== -1) {
+                    heureSelectionnee.splice(index, 1);
+                }
             }
+        });
+
+        choisirDate.appendChild(input);
+        choisirDate.appendChild(label);
+        choisirDate.appendChild(document.createElement('br'));
+    });
+
+    // Créer le bouton Envoyer
+    const boutonEnvoyer = document.createElement('button');
+    boutonEnvoyer.textContent = 'Envoyer les disponibilités';
+    boutonEnvoyer.setAttribute('class', 'button is-danger');
+    boutonEnvoyer.setAttribute('id', 'boutonEnvoyer');
+
+    // Ajouter un écouteur d'événement au bouton Envoyer
+    boutonEnvoyer.addEventListener('click', async () => {
+        if (!dateSelectionnee || !heureSelectionnee || heureSelectionnee.length === 0) {
+            console.error('Veuillez sélectionner une date et au moins une heure.');
+            return;
+        }
+
+        const token = sessionStorage.getItem("token");
+        const dateISO = formatDateToISO(dateSelectionnee);
+
+        try {
+            const responsePromises = heureSelectionnee.map(async (heure) => {
+                const response = await fetch('/disponibilites', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        dateDisponibilite: dateISO,
+                        heureDisponibilite: heure,
+                        token
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la requête fetch');
+                }
+
+                const data = await response.json();
+                return data.idDisponibilite;
+            });
+
+            const results = await Promise.all(responsePromises);
+            alert("Disponibilités mis a jour" )
+            console.log('Disponibilités envoyées avec succès:', results);
+        } catch (error) {
+            console.error('Erreur lors de l\'envoi des disponibilités:', error);
         }
     });
 
-    choisirDate.appendChild(input);
-    choisirDate.appendChild(label);
-    choisirDate.appendChild(document.createElement('br'));
-});
-
-// Créer le bouton Envoyer
-const boutonEnvoyer = document.createElement('button');
-boutonEnvoyer.textContent = 'Envoyer les disponibilités';
-boutonEnvoyer.setAttribute('class', 'button is-danger');
-boutonEnvoyer.setAttribute('id', 'boutonEnvoyer');
-
-// Ajouter un écouteur d'événement au bouton Envoyer
-boutonEnvoyer.addEventListener('click', async () => {
-    if (!dateSelectionnee || !heureSelectionnee || heureSelectionnee.length === 0) {
-        console.error('Veuillez sélectionner une date et au moins une heure.');
-        return;
-    }
-
-    const token = sessionStorage.getItem("token");
-    const dateISO = formatDateToISO(dateSelectionnee);
-
-    try {
-        const responsePromises = heureSelectionnee.map(async (heure) => {
-            const response = await fetch('/disponibilites', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    dateDisponibilite: dateISO,
-                    heureDisponibilite: heure,
-                    token
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Erreur lors de la requête fetch');
-            }
-
-            const data = await response.json();
-            return data.idDisponibilite;
-        });
-
-        const results = await Promise.all(responsePromises);
-        alert("Disponibilités mis a jour" )
-        console.log('Disponibilités envoyées avec succès:', results);
-    } catch (error) {
-        console.error('Erreur lors de l\'envoi des disponibilités:', error);
-    }
-});
-
-choisirDate.appendChild(boutonEnvoyer); // Ajouter le bouton Envoyer au conteneur
+    choisirDate.appendChild(boutonEnvoyer); // Ajouter le bouton Envoyer au conteneur
 }
 
 // Fonction pour formater la date en format ISO
@@ -347,25 +363,4 @@ const formatDateToISO = (date) => {
     return `${year}-${month}-${day}`;
 };
 
-
-// Ajoute un écouteur d'événements à chaque jour dans le calendrier
-days.forEach(day => {
-    day.addEventListener('click', () => {
-        // Récupérer la date sélectionnée
-        const selectedDay = parseInt(day.textContent);
-        const selectedMonth = currMonth; // Utilisez la variable currMonth définie dans votre code
-        const selectedYear = currYear; // Utilisez la variable currYear définie dans votre code
-        dateSelectionnee = new Date(selectedYear, selectedMonth, selectedDay);
-
-        // Formatage de la date sélectionnée en format YYYY-MM-DD
-        const dateSeule = formatDateToISO(dateSelectionnee);
-        console.log(dateSeule);
-
-        // Afficher les heures possibles
-        afficherHeuresPossibles();
-
-        // Appliquer le style ici
-        day.style.backgroundColor = "turquoise";
-        day.style.borderRadius = "700px";
-    });
-});
+renderCalendar();
