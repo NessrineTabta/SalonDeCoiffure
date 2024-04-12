@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@dhx/trial-eventcalendar": "^2.1.10",
     "bcryptjs": "^2.4.3",
     "expres": "^0.0.5",
     "express": "^4.19.2",
