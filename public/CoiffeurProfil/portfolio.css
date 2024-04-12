@@ -7,6 +7,7 @@
   font-family: 'Poppins', sans-serif;
 }
 
+/*couleur du carré calendrier*/
 .wrapper{
   width: 450px;
   background: #fff;
@@ -23,6 +24,7 @@
 header .icons{
   display: flex;
 }
+/*couleur des lettres des autres*/
 header .icons span{
   height: 38px;
   width: 38px;
@@ -75,9 +77,20 @@ header .current-date{
 .days li.inactive{
   color: #aaa;
 }
+/* couleur du jour */
 .days li.active{
-  color: #fff;
+  color: #000000;
+  background-color: rgba(8, 0, 255, 0.778);
+  border-radius: 700px;
 }
+
+.days li:hover,
+.days li:hover ~ .days li {
+    background-color: rgba(64, 224, 208, 0.5); /* Couleur turquoise avec une opacité de 50% */
+    border-radius: 700px;
+
+}
+
 
 
 .days li:not(.active):hover::before{
@@ -363,3 +376,10 @@ html:not(.dark-style) .account-settings-links .list-group-item.active {
     transform: scaleX(1);
 }
 
+
+
+/* Style pour déplacer les cases à cocher et leurs heures vers la droite */
+input[type="checkbox"],
+label {
+  margin-left: 7px; /* Ajoute un espacement à gauche */
+}

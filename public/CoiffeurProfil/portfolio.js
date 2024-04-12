@@ -334,7 +334,9 @@ const formatDateToISO = (date) => {
     month = month < 10 ? '0' + month : month; // Ajoute un zéro devant si le mois est inférieur à 10
     let day = date.getDate();
     day = day < 10 ? '0' + day : day; // Ajoute un zéro devant si le jour est inférieur à 10
-    return `${year}-${month}-${day}`;};
+    return `${year}-${month}-${day}`;
+};
+
 
 // Ajoute un écouteur d'événements à chaque jour dans le calendrier
 days.forEach(day => {
@@ -351,5 +353,9 @@ days.forEach(day => {
 
         // Afficher les heures possibles
         afficherHeuresPossibles();
+
+        // Appliquer le style ici
+        day.style.backgroundColor = "turquoise";
+        day.style.borderRadius = "700px";
     });
 });
