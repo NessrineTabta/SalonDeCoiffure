@@ -180,6 +180,59 @@ function getUserByEmail(email) {
   });
 }
 
+// GET: Obtenir tous les coiffeurs
+router.get("/coiffeurs", async (req, res) => {
+  try {
+    // Récupérer tous les coiffeurs depuis la base de données
+    const allCoiffeurs = await db.select().from("Coiffeur");
+
+    res.json({
+      coiffeurs: allCoiffeurs,
+      message: "Liste de tous les coiffeurs",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Une erreur s'est produite lors de la récupération des coiffeurs.",
+    });
+  }
+});
+
+
+// POST: Modifier les informations du coiffeur
+router.post("/coiffeurs", authentification, async (req, res) => {
+  try {
+    const { nomCoiffeur, prenomCoiffeur, numCoiffeur, password } = req.body;
+    const idCoiffeur = await getIdByEmail(req.user.email); // Obtenez l'ID du coiffeur à partir de l'e-mail de l'utilisateur connecté
+
+    if (!idCoiffeur) {
+      return res.status(404).json({ message: "Coiffeur non trouvé." });
+    }
+
+     // Hasher le mot de passe
+     const passwordHashed = await bcrypt.hash(password, 10);
+
+    // Mettre à jour les informations du coiffeur
+    await db("Coiffeur")
+    .where("idCoiffeur", idCoiffeur)
+    .update({
+      nomCoiffeur,
+      prenomCoiffeur,
+      numCoiffeur,
+      password: passwordHashed // Mise à jour du mot de passe hashé
+    });
+
+    res.status(200).json({ message: "Informations du coiffeur modifiées avec succès." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Une erreur s'est produite lors de la modification des informations du coiffeur.",
+    });
+  }
+});
+
+
+
 //GET : Afficher les rendezvous d'un coiffeur
 router.get("/rendezVousCoiffeur", authentification, async (req, res) => {
   try {
@@ -258,6 +311,39 @@ function servicesCoiffeur(email) {
       });
   });
 }
+
+// GET: Obtenir tous les services de tous les coiffeurs depuis la base de données
+router.get("/tousservices", async (req, res) => {
+  try {
+    // Utilisation de Knex.js pour effectuer une jointure pour récupérer tous les services avec les informations du coiffeur associé
+    const allServices = await db.select("Service.*")
+      .from("Service")
+      .join(
+        "Coiffeur_Service",
+        "Service.idService",
+        "=",
+        "Coiffeur_Service.idService"
+      )
+      .join(
+        "Coiffeur",
+        "Coiffeur_Service.idCoiffeur",
+        "=",
+        "Coiffeur.idCoiffeur"
+      );
+
+    res.json({
+      services: allServices,
+      message: "Liste de tous les services de tous les coiffeurs",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la récupération des services.",
+    });
+  }
+});
+
 
 // POST: service
 router.post("/services", authentification, async (req, res) => {

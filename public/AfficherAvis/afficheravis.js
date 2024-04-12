@@ -1,4 +1,3 @@
-// Fetch and display testimonials
 document.addEventListener("DOMContentLoaded", () => {
   fetch("/avis")
     .then((response) => response.json())
@@ -7,22 +6,36 @@ document.addEventListener("DOMContentLoaded", () => {
         "testimonial-container"
       );
       avis.forEach((avis) => {
-        testimonialContainer.innerHTML += `
-            <div class="testimonial-box">
-              <div class="box-top">
-                <div class="profile">
-                  <div class="name-user">
-                    <strong>${avis.nomClient}</strong>
+        // Récupérer le nom complet de l'utilisateur associé à l'avis
+        fetch(`/client/${avis.idClient}`)
+          .then((response) => response.json())
+          .then((user) => {
+            const fullName = `${user.nomClient} ${user.prenomClient}`;
+
+            // Afficher l'avis avec le nom complet de l'utilisateur
+            testimonialContainer.innerHTML += `
+              <div class="testimonial-box">
+                <div class="box-top">
+                  <div class="profile">
+                    <div class="name-user">
+                      <strong>${fullName}</strong>
+                    </div>
+                  </div>
+                  <div class="reviews">
+                    ${generateStars(avis.nombreEtoile)}
                   </div>
                 </div>
-                <div class="reviews">
-                  ${generateStars(avis.nombreEtoile)}
+                <div class="client-comment">
+                  <p>${avis.description}</p>
                 </div>
-              </div>
-              <div class="client-comment">
-                <p>${avis.description}</p>
-              </div>
-            </div>`;
+              </div>`;
+          })
+          .catch((error) =>
+            console.error(
+              "Erreur lors de la récupération du nom d'utilisateur :",
+              error
+            )
+          );
       });
     })
     .catch((error) =>

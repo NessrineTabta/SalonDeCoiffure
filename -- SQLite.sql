@@ -1,98 +1,108 @@
--- SQLite
+--LES TABLES SONT EN BAS:
+--ICI CE SONT LES TEST:
 
 
-CREATE TABLE Coiffeur (
-  idCoiffeur INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT UNIQUE NOT NULL,
-  nomCoiffeur TEXT NOT NULL,
-  prenomCoiffeur TEXT NOT NULL,
-  numCoiffeur INTEGER NOT NULL,
-  password TEXT UNIQUE NOT NULL,
-  idSalon INTEGER NOT NULL,
-  idService INTEGER,
-  idPortfolio INTEGER,
-  idDisponibilite INTEGER,
-  FOREIGN KEY(idSalon) REFERENCES Salon(idSalon),
-  FOREIGN KEY(idService) REFERENCES Service(idService),
-  FOREIGN KEY(idPortfolio) REFERENCES Portfolio(idPortfolio),
-  FOREIGN KEY(idDisponibilite) REFERENCES Disponibilite(idDisponibilite)
+-- Insertions dans la table Salon
+INSERT INTO Salon (nomSalon, adresseSalon, emailSalon, numSalon) 
+VALUES ('Jordan le roi de la tchass', '1 Rue de Montreal', 'contact@salona.com', 123456789),
+       ('AliCut Laval', '2 Avenue des Montreal', 'contact@salonb.com', 987654321),
+       ('BarberShop de la street', '3 Rue du Montreal', 'contact@salonc.com', 555555555);
+
+-- Insertions dans la table Service
+INSERT INTO Service (nom, description, idCoiffeur) 
+VALUES ('Coupe de cheveux', 'Service de coupe de cheveux', 1),
+       ('Coloration', 'Service de coloration des cheveux', 2),
+       ('Coiffure mariage', 'Service de coiffure pour mariage', 3);
+
+
+
+-- Création de la table Coiffeur
+CREATE TABLE IF NOT EXISTS Coiffeur (
+    idCoiffeur INTEGER PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL,
+    nomCoiffeur TEXT NOT NULL,
+    prenomCoiffeur TEXT NOT NULL,
+    numCoiffeur INTEGER NOT NULL,
+    password TEXT UNIQUE NOT NULL,
+    idSalon INTEGER NOT NULL,
+    FOREIGN KEY (idSalon) REFERENCES Salon(idSalon)
 );
 
-CREATE TABLE Client (
-  idClient INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT UNIQUE NOT NULL,
-  nomClient TEXT NOT NULL,
-  prenomClient TEXT NOT NULL,
-  numClient INTEGER NOT NULL,
-  password TEXT UNIQUE NOT NULL
+-- Création de la table Client
+CREATE TABLE IF NOT EXISTS Client (
+    idClient INTEGER PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL,
+    nomClient TEXT NOT NULL,
+    prenomClient TEXT NOT NULL,
+    numClient INTEGER NOT NULL,
+    password TEXT UNIQUE NOT NULL
 );
 
-CREATE TABLE Rendezvous (
-  idRendezvous INTEGER PRIMARY KEY AUTOINCREMENT,
-  dateRendezvous DATE NOT NULL,
-  heureRendezvous INTEGER NOT NULL,
-  idClient INTEGER,
-  idCoiffeur INTEGER,
-  FOREIGN KEY(idClient) REFERENCES Client(idClient),
-  FOREIGN KEY(idCoiffeur) REFERENCES Coiffeur(idCoiffeur)
+-- Création de la table RendezVous
+CREATE TABLE IF NOT EXISTS Rendezvous (
+    idRendezvous INTEGER PRIMARY KEY,
+    dateRendezvous DATE NOT NULL,
+    heureRendezvous INTEGER NOT NULL,
+    idClient INTEGER,
+    idCoiffeur INTEGER,
+    FOREIGN KEY (idClient) REFERENCES Client(idClient),
+    FOREIGN KEY (idCoiffeur) REFERENCES Coiffeur(idCoiffeur)
 );
 
-CREATE TABLE Salon (
-  idSalon INTEGER PRIMARY KEY AUTOINCREMENT,
-  nomSalon TEXT NOT NULL,
-  adresseSalon TEXT NOT NULL,
-  emailSalon TEXT NOT NULL,
-  numSalon INTEGER NOT NULL
+-- Création de la table Salon
+CREATE TABLE IF NOT EXISTS Salon (
+    idSalon INTEGER PRIMARY KEY,
+    nomSalon TEXT NOT NULL,
+    adresseSalon TEXT NOT NULL,
+    emailSalon TEXT NOT NULL,
+    numSalon INTEGER NOT NULL
 );
 
-CREATE TABLE Service (
-  idService INTEGER PRIMARY KEY AUTOINCREMENT,
-  nom TEXT NOT NULL,
-  description TEXT NOT NULL,
-  idCoiffeur INTEGER,
-  FOREIGN KEY(idCoiffeur) REFERENCES Coiffeur(idCoiffeur)
+-- Création de la table Service
+CREATE TABLE IF NOT EXISTS Service (
+    idService INTEGER PRIMARY KEY,
+    nom TEXT NOT NULL,
+    description TEXT NOT NULL
 );
 
-CREATE TABLE Portfolio (
-  idPortfolio INTEGER PRIMARY KEY AUTOINCREMENT,
-  urlPhoto TEXT NOT NULL,
-  idCoiffeur INTEGER,
-  FOREIGN KEY(idCoiffeur) REFERENCES Coiffeur(idCoiffeur)
+-- Création de la table Portfolio
+CREATE TABLE IF NOT EXISTS Portfolio (
+    idPortfolio INTEGER PRIMARY KEY,
+    urlPhoto TEXT NOT NULL,
+    idCoiffeur INTEGER UNIQUE,
+    FOREIGN KEY (idCoiffeur) REFERENCES Coiffeur(idCoiffeur)
 );
 
-CREATE TABLE Disponibilite (
-  idDisponibilite INTEGER PRIMARY KEY AUTOINCREMENT,
-  dateDisponibilite DATE NOT NULL,
-  heureDisponibilite INTEGER NOT NULL,
-  idCoiffeur INTEGER,
-  FOREIGN KEY(idCoiffeur) REFERENCES Coiffeur(idCoiffeur)
+-- Création de la table Disponibilite
+CREATE TABLE IF NOT EXISTS Disponibilite (
+    idDisponibilite INTEGER PRIMARY KEY,
+    dateDisponibilite DATE NOT NULL,
+    heureDisponibilite INTEGER NOT NULL,
+    idCoiffeur INTEGER,
+    FOREIGN KEY (idCoiffeur) REFERENCES Coiffeur(idCoiffeur)
 );
 
-CREATE TABLE Coiffeur_Disponibilite (
-  idCoiffeur_Disponibilite INTEGER PRIMARY KEY AUTOINCREMENT,
-  idCoiffeur INTEGER NOT NULL,
-  idDisponibilite INTEGER NOT NULL,
-  FOREIGN KEY(idCoiffeur) REFERENCES Coiffeur(idCoiffeur),
-  FOREIGN KEY(idDisponibilite) REFERENCES Disponibilite(idDisponibilite)
+-- Création de la table Coiffeur_Disponibilite
+CREATE TABLE IF NOT EXISTS Coiffeur_Disponibilite (
+    idCoiffeur_Disponibilite INTEGER PRIMARY KEY,
+    idCoiffeur INTEGER NOT NULL,
+    idDisponibilite INTEGER NOT NULL,
+    FOREIGN KEY (idCoiffeur) REFERENCES Coiffeur(idCoiffeur),
+    FOREIGN KEY (idDisponibilite) REFERENCES Disponibilite(idDisponibilite)
 );
 
-
-
-CREATE TABLE Coiffeur_Service (
-  idCoiffeur_Service INTEGER PRIMARY KEY AUTOINCREMENT,
-  idCoiffeur INTEGER NOT NULL,
-  idService INTEGER NOT NULL,
-  FOREIGN KEY(idCoiffeur) REFERENCES Coiffeur(idCoiffeur),
-  FOREIGN KEY(idService) REFERENCES Service(idService)
+-- Création de la table Coiffeur_Client
+CREATE TABLE IF NOT EXISTS Coiffeur_Client (
+    idCoiffeur_Client INTEGER PRIMARY KEY,
+    idCoiffeur INTEGER NOT NULL,
+    idClient INTEGER NOT NULL,
+    FOREIGN KEY (idCoiffeur) REFERENCES Coiffeur(idCoiffeur),
+    FOREIGN KEY (idClient) REFERENCES Client(idClient)
 );
 
-CREATE TABLE Avis (
-  idAvis INTEGER PRIMARY KEY AUTOINCREMENT,
-  nombreEtoile INTEGER NOT NULL,
-  description TEXT NOT NULL,
-  idClient INTEGER NOT NULL,
-  idSalon INTEGER NOT NULL, -- Notez que cela devrait être idCoiffeur si vous suivez la structure originale que vous vouliez changer
-  FOREIGN KEY(idClient) REFERENCES Client(idClient),
-  FOREIGN KEY (idSalon) REFERENCES Salon(idSalon)
-)
-INSERT INTO Client 
+-- Création de la table Coiffeur_Service
+CREATE TABLE IF NOT EXISTS Coiffeur_Service (
+    idCoiffeur_Service INTEGER PRIMARY KEY,
+    idCoiffeur INTEGER NOT NULL,
+    idService INTEGER NOT NULL
+);

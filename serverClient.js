@@ -143,6 +143,26 @@ function getUserByUsername(email) {
   });
 }
 
+// GET: Obtenir les détails d'un client par son ID
+router.get("/client/:idClient", async (req, res) => {
+  try {
+    const idClient = req.params.idClient;
+    const client = await db("Client")
+      .select("nomClient", "prenomClient")
+      .where("idClient", idClient)
+      .first();
+    if (!client) {
+      return res.status(404).json({ message: "Client non trouvé." });
+    }
+    res.json(client);
+  } catch (error) {
+    console.error("Une erreur s'est produite :", error);
+    res.status(500).json({
+      message: "Erreur lors de la récupération des détails du client.",
+    });
+  }
+});
+
 // POST: Create a new Rendezvous
 router.post("/Rendezvous", authentification, async (req, res) => {
   try {
@@ -276,15 +296,18 @@ router.put("/Rendezvous/:idRendezvous", authentification, async (req, res) => {
 });
 
 // GET: AFFICHER TOUT LES AVIS
-router.get('/avis', async (req, res) => {
-  db.select('*').from('Avis')
-      .then((avis) => {
-          res.json(avis);
-      })
-      .catch((err) => {
-          console.error('Erreur lors de la récupération des avis :', err);
-          res.status(500).json({ error: 'Erreur lors de la récupération des avis' });
-      });
+router.get("/avis", async (req, res) => {
+  db.select("*")
+    .from("Avis")
+    .then((avis) => {
+      res.json(avis);
+    })
+    .catch((err) => {
+      console.error("Erreur lors de la récupération des avis :", err);
+      res
+        .status(500)
+        .json({ error: "Erreur lors de la récupération des avis" });
+    });
 });
 
 // POST: CREER UN AVIS
@@ -294,7 +317,7 @@ router.post("/avis", authentification, async (req, res) => {
   const description = req.body.description.description;
   const idSalon = req.body.idSalon.salonId;
   const clientEmail = req.user.email;
-  //
+
   try {
     // Obtenir l'ID du client à partir de son email
     const client = await getUserByUsername(clientEmail);
@@ -423,18 +446,18 @@ router.get("/salon", async (req, res) => {
   }
 });
 
-// GET: Route pour récupérer TOUT les salons disponibles
-router.get("/nomsSalons", async (req, res) => {
-  try {
-    // Make sure to select both `idSalon` and `nomSalon` from the `Salon` table
-    const nomsSalons = await db.select("idSalon", "nomSalon").from("Salon");
-    res.status(200).json(nomsSalons);
-  } catch (error) {
-    console.error("Une erreur s'est produite:", error);
-    res
-      .status(500)
-      .json({ message: "Erreur lors de la récupération des noms de salons." });
-  }
-});
+  // GET: Route pour récupérer TOUT les salons disponibles
+  router.get("/nomsSalons", async (req, res) => {
+    try {
+      // Make sure to select both `idSalon` and `nomSalon` from the `Salon` table
+      const nomsSalons = await db.select("idSalon", "nomSalon").from("Salon");
+      res.status(200).json(nomsSalons);
+    } catch (error) {
+      console.error("Une erreur s'est produite:", error);
+      res
+        .status(500)
+        .json({ message: "Erreur lors de la récupération des noms de salons." });
+    }
+  });
 
 module.exports = router;
