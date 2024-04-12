@@ -1,3 +1,36 @@
+ /****** ******  ******  ******  ******  ******   ******* */
+/******STYLE POUR LE PORTOFOLIOS (LES PHOTOS) ******* */
+ /****** ******  ******  ******  ******      ******* */
+ 
+/* Style pour cacher l'input file */
+.card.card-image input[type="file"] {
+    display: none;
+}
+
+/* Style pour la carte d'image */
+.card.card-image {
+    cursor: pointer; /* Ajoute un curseur pointer pour indiquer qu'il est cliquable */
+    transition: transform 0.3s ease; /* Ajoute une transition douce au survol */
+    border-radius: 10px
+
+}
+
+/* Effet d'ombre sur la carte au survol */
+.card.card-image:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    border-radius: 20px
+
+}
+
+/* Style pour le contenu de la carte */
+.card.card-image .content {
+    text-align: center; /* Centrer le texte */
+    padding: 1rem; /* Ajouter un padding */
+}
+
+
+
 /* Import Google font - Poppins */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 /*BOUTON CALENDRIER autre jour que avril*/

@@ -364,3 +364,37 @@ const formatDateToISO = (date) => {
 };
 
 renderCalendar();
+
+
+
+
+
+
+
+
+
+/* ----------------
+--------
+*    Upload des photos dans portfolios
+* ------------------------ */
+
+  // Add event listener to each image upload input
+  const imageUploadInputs = document.querySelectorAll('.image-upload');
+  imageUploadInputs.forEach(input => {
+      input.addEventListener('change', (event) => {
+          const file = event.target.files[0];
+          const image = input.parentNode.querySelector('img');
+          if (file) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                  // Update the src attribute of the image preview
+                  image.src = e.target.result;
+              }
+              reader.readAsDataURL(file);
+          } else {
+              // If no file is selected, display a message
+              image.src = "https://via.placeholder.com/300x200";
+              input.parentNode.querySelector('.content').textContent = "No image selected";
+          }
+      });
+  });
