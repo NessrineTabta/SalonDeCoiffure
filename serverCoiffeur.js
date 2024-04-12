@@ -293,6 +293,39 @@ function servicesCoiffeur(email) {
   });
 }
 
+// GET: Obtenir tous les services de tous les coiffeurs depuis la base de données
+router.get("/tousservices", async (req, res) => {
+  try {
+    // Utilisation de Knex.js pour effectuer une jointure pour récupérer tous les services avec les informations du coiffeur associé
+    const allServices = await db.select("Service.*")
+      .from("Service")
+      .join(
+        "Coiffeur_Service",
+        "Service.idService",
+        "=",
+        "Coiffeur_Service.idService"
+      )
+      .join(
+        "Coiffeur",
+        "Coiffeur_Service.idCoiffeur",
+        "=",
+        "Coiffeur.idCoiffeur"
+      );
+
+    res.json({
+      services: allServices,
+      message: "Liste de tous les services de tous les coiffeurs",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la récupération des services.",
+    });
+  }
+});
+
+
 // POST: service
 router.post("/services", authentification, async (req, res) => {
   try {
