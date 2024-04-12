@@ -229,11 +229,31 @@ router.post("/coiffeurs", authentification, async (req, res) => {
     });
   }
 });
+// GET: Obtenir les détails d'un coiffeur par son ID
+router.get("/coiffeur/:idCoiffeur", async (req, res) => {
+  try {
+    const idCoiffeur = req.params.idCoiffeur;
+    const coiffeur = await db("Coiffeur")
+      .select("*")
+      .where("idCoiffeur", idCoiffeur)
+      .first();
+    if (!coiffeur) {
+      return res.status(404).json({ message: "Coiffeur non trouvé." });
+    }
+    res.json(coiffeur);
+  } catch (error) {
+    console.error("Une erreur s'est produite :", error);
+    res.status(500).json({
+      message: "Erreur lors de la récupération des détails du coiffeur.",
+    });
+  }
+});
 
 // POST: Ajouter une relation Coiffeur-Service
-router.post("/CoiffeurService", async (req, res) => {
+router.post("/CoiffeurService", authentification, async (req, res) => {
   try {
-    const { idCoiffeur, idService } = req.body;
+    const idCoiffeur = await getIdByEmail(req.user.email);
+    const { idService } = req.body;
 
     // Vérifier si les ID de coiffeur et de service sont fournis
     if (!idCoiffeur || !idService) {
@@ -256,6 +276,40 @@ router.post("/CoiffeurService", async (req, res) => {
     });
   }
 });
+
+async function insererDisponibilite(idCoiffeur, idService) {
+  try {
+    // Commencer une transaction
+    const transaction = await db.transaction();
+
+    try {
+      // Insérer la nouvelle disponibilité dans la table Disponibilite
+      const [idCoiffeur_Service] = await transaction("Coiffeur_Service").insert(
+        {
+          idService,
+          idCoiffeur,
+        }
+      );
+
+      // Insérer la liaison entre le coiffeur et la disponibilité dans la table Coiffeur_Service
+      await transaction("Coiffeur_Service").insert({
+        idCoiffeur,
+        idCoiffeur_Service,
+      });
+
+      // Valider la transaction
+      await transaction.commit();
+
+      return idCoiffeur_Service;
+    } catch (error) {
+      // Annuler la transaction en cas d'erreur
+      await transaction.rollback();
+      throw error;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
 
 //GET : Afficher les rendezvous d'un coiffeur
 router.get("/rendezVousCoiffeur", authentification, async (req, res) => {
