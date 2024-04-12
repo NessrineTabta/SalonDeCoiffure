@@ -317,6 +317,7 @@ boutonEnvoyer.addEventListener('click', async () => {
         });
 
         const results = await Promise.all(responsePromises);
+        alert("Disponibilités mis a jour" )
         console.log('Disponibilités envoyées avec succès:', results);
     } catch (error) {
         console.error('Erreur lors de l\'envoi des disponibilités:', error);

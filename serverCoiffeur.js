@@ -180,6 +180,25 @@ function getUserByEmail(email) {
   });
 }
 
+// GET: Obtenir tous les coiffeurs
+router.get("/coiffeurs", async (req, res) => {
+  try {
+    // Récupérer tous les coiffeurs depuis la base de données
+    const allCoiffeurs = await db.select().from("Coiffeur");
+
+    res.json({
+      coiffeurs: allCoiffeurs,
+      message: "Liste de tous les coiffeurs",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Une erreur s'est produite lors de la récupération des coiffeurs.",
+    });
+  }
+});
+
+
 // POST: Modifier les informations du coiffeur
 router.post("/coiffeurs", authentification, async (req, res) => {
   try {
