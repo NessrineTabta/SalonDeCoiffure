@@ -329,19 +329,27 @@ choisirDate.appendChild(boutonEnvoyer); // Ajouter le bouton Envoyer au conteneu
 
 // Fonction pour formater la date en format ISO
 const formatDateToISO = (date) => {
-return date.toISOString();
-};
+    const year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    month = month < 10 ? '0' + month : month; // Ajoute un zéro devant si le mois est inférieur à 10
+    let day = date.getDate();
+    day = day < 10 ? '0' + day : day; // Ajoute un zéro devant si le jour est inférieur à 10
+    return `${year}-${month}-${day}`;};
 
 // Ajoute un écouteur d'événements à chaque jour dans le calendrier
 days.forEach(day => {
-day.addEventListener('click', () => {
-    // Récupérer la date sélectionnée
-    const selectedDay = parseInt(day.textContent);
-    const selectedMonth = currMonth; // Utilisez la variable currMonth définie dans votre code
-    const selectedYear = currYear; // Utilisez la variable currYear définie dans votre code
-    dateSelectionnee = new Date(selectedYear, selectedMonth, selectedDay);
+    day.addEventListener('click', () => {
+        // Récupérer la date sélectionnée
+        const selectedDay = parseInt(day.textContent);
+        const selectedMonth = currMonth; // Utilisez la variable currMonth définie dans votre code
+        const selectedYear = currYear; // Utilisez la variable currYear définie dans votre code
+        dateSelectionnee = new Date(selectedYear, selectedMonth, selectedDay);
 
-    // Afficher les heures possibles
-    afficherHeuresPossibles();
-});
+        // Formatage de la date sélectionnée en format YYYY-MM-DD
+        const dateSeule = formatDateToISO(dateSelectionnee);
+        console.log(dateSeule);
+
+        // Afficher les heures possibles
+        afficherHeuresPossibles();
+    });
 });
