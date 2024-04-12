@@ -21,8 +21,6 @@ const router = express.Router();
 // token.js pour stocker et invalider le token dans logout, ou le retourner dynamiquement
 const tokenModule = require("./token");
 
-
-
 /* ------------------------
  * Définition des routes
  * ------------------------ */
@@ -193,11 +191,11 @@ router.get("/coiffeurs", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      message: "Une erreur s'est produite lors de la récupération des coiffeurs.",
+      message:
+        "Une erreur s'est produite lors de la récupération des coiffeurs.",
     });
   }
 });
-
 
 // POST: Modifier les informations du coiffeur
 router.post("/coiffeurs", authentification, async (req, res) => {
@@ -209,29 +207,55 @@ router.post("/coiffeurs", authentification, async (req, res) => {
       return res.status(404).json({ message: "Coiffeur non trouvé." });
     }
 
-     // Hasher le mot de passe
-     const passwordHashed = await bcrypt.hash(password, 10);
+    // Hasher le mot de passe
+    const passwordHashed = await bcrypt.hash(password, 10);
 
     // Mettre à jour les informations du coiffeur
-    await db("Coiffeur")
-    .where("idCoiffeur", idCoiffeur)
-    .update({
+    await db("Coiffeur").where("idCoiffeur", idCoiffeur).update({
       nomCoiffeur,
       prenomCoiffeur,
       numCoiffeur,
-      password: passwordHashed // Mise à jour du mot de passe hashé
+      password: passwordHashed, // Mise à jour du mot de passe hashé
     });
 
-    res.status(200).json({ message: "Informations du coiffeur modifiées avec succès." });
+    res
+      .status(200)
+      .json({ message: "Informations du coiffeur modifiées avec succès." });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      message: "Une erreur s'est produite lors de la modification des informations du coiffeur.",
+      message:
+        "Une erreur s'est produite lors de la modification des informations du coiffeur.",
     });
   }
 });
 
+// POST: Ajouter une relation Coiffeur-Service
+router.post("/CoiffeurService", async (req, res) => {
+  try {
+    const { idCoiffeur, idService } = req.body;
 
+    // Vérifier si les ID de coiffeur et de service sont fournis
+    if (!idCoiffeur || !idService) {
+      return res
+        .status(400)
+        .json({ message: "Veuillez fournir l'ID du coiffeur et de service." });
+    }
+
+    // Insérer la relation Coiffeur-Service dans la table Coiffeur_Service
+    await db("Coiffeur_Service").insert({ idCoiffeur, idService });
+
+    res
+      .status(201)
+      .json({ message: "Relation Coiffeur-Service ajoutée avec succès." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de l'ajout de la relation Coiffeur-Service.",
+    });
+  }
+});
 
 //GET : Afficher les rendezvous d'un coiffeur
 router.get("/rendezVousCoiffeur", authentification, async (req, res) => {
@@ -312,11 +336,31 @@ function servicesCoiffeur(email) {
   });
 }
 
+// GET: Obtenir tous les services
+router.get("/showServices", async (req, res) => {
+  try {
+    // Récupérer tous les services depuis la base de données
+    const allServices = await db.select().from("Service");
+
+    res.json({
+      services: allServices,
+      message: "Liste de tous les services",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la récupération des services.",
+    });
+  }
+});
+
 // GET: Obtenir tous les services de tous les coiffeurs depuis la base de données
 router.get("/tousservices", async (req, res) => {
   try {
     // Utilisation de Knex.js pour effectuer une jointure pour récupérer tous les services avec les informations du coiffeur associé
-    const allServices = await db.select("Service.*")
+    const allServices = await db
+      .select("Service.*")
       .from("Service")
       .join(
         "Coiffeur_Service",
@@ -343,7 +387,6 @@ router.get("/tousservices", async (req, res) => {
     });
   }
 });
-
 
 // POST: service
 router.post("/services", authentification, async (req, res) => {
@@ -654,45 +697,59 @@ router.get("/coiffeursParSalon/:idSalon", async (req, res) => {
 });
 
 // POST: Mettre à jour l'image du Portefeuille
-router.post('/portfolio', authentification, async (req, res) => {
+router.post("/portfolio", authentification, async (req, res) => {
   const urlPhoto = req.body.imageUrl;
   const email = req.user.email;
 
   try {
-      // Récupérer l'identifiant du coiffeur à partir de l'email
-      const idCoiffeur = await getIdByEmail(email);
+    // Récupérer l'identifiant du coiffeur à partir de l'email
+    const idCoiffeur = await getIdByEmail(email);
 
-      // Insérer ou mettre à jour l'URL de l'image dans la base de données
-      await db('Portfolio').insert({
-          urlPhoto: urlPhoto,
-          idCoiffeur: idCoiffeur
-      }).onConflict('idCoiffeur').merge();
+    // Insérer ou mettre à jour l'URL de l'image dans la base de données
+    await db("Portfolio")
+      .insert({
+        urlPhoto: urlPhoto,
+        idCoiffeur: idCoiffeur,
+      })
+      .onConflict("idCoiffeur")
+      .merge();
 
-      res.status(200).json({ message: "Image du portfolio mise à jour avec succès" });
+    res
+      .status(200)
+      .json({ message: "Image du portfolio mise à jour avec succès" });
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Une erreur est survenue lors de la mise à jour de l'image du portfolio" });
+    console.error(error);
+    res.status(500).json({
+      error:
+        "Une erreur est survenue lors de la mise à jour de l'image du portfolio",
+    });
   }
 });
 
 // POST: Récupérer Image du portfolio
-router.post('/recupererphoto', authentification, async (req, res) => {
+router.post("/recupererphoto", authentification, async (req, res) => {
   try {
-      const email = req.user.email;
-      const idCoiffeur = await getIdByEmail(email);
-      const portfolio = await db('Portfolio').select('urlPhoto').where('idCoiffeur', idCoiffeur).orderBy('idPortfolio', 'desc').first();
-      if (portfolio) {
-          res.json({ imageUrl: portfolio.urlPhoto });
-      } else {
-          throw new Error('Le portfolio du coiffeur n\'a pas été trouvé.');
-      }
+    const email = req.user.email;
+    const idCoiffeur = await getIdByEmail(email);
+    const portfolio = await db("Portfolio")
+      .select("urlPhoto")
+      .where("idCoiffeur", idCoiffeur)
+      .orderBy("idPortfolio", "desc")
+      .first();
+    if (portfolio) {
+      res.json({ imageUrl: portfolio.urlPhoto });
+    } else {
+      throw new Error("Le portfolio du coiffeur n'a pas été trouvé.");
+    }
   } catch (error) {
-      console.error('Une erreur est survenue lors de la récupération de la photo :', error);
-      res.status(500).json({ error: 'Erreur lors de la récupération de la photo.' });
+    console.error(
+      "Une erreur est survenue lors de la récupération de la photo :",
+      error
+    );
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la récupération de la photo." });
   }
 });
-
-
-
 
 module.exports = router;

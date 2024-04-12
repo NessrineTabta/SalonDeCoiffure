@@ -389,3 +389,82 @@ days.forEach((day) => {
     afficherHeuresPossibles();
   });
 });
+
+// Fonction pour récupérer et afficher tous les services
+async function getAndRenderServices() {
+  try {
+    const response = await fetch("/showServices");
+    const data = await response.json();
+
+    const servicesList = document.getElementById("servicesList");
+    servicesList.innerHTML = ""; // Clear previous content
+
+    data.services.forEach((service) => {
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.name = "service";
+      checkbox.value = service.idService;
+      checkbox.id = `service-${service.idService}`;
+
+      const label = document.createElement("label");
+      label.htmlFor = `service-${service.idService}`;
+      label.textContent = service.nom;
+
+      servicesList.appendChild(checkbox);
+      servicesList.appendChild(label);
+      servicesList.appendChild(document.createElement("br"));
+    });
+  } catch (error) {
+    console.error(
+      "Une erreur s'est produite lors de la récupération des services:",
+      error
+    );
+  }
+}
+
+// Appeler la fonction pour récupérer et afficher les services lors du chargement de la page
+document.addEventListener("DOMContentLoaded", getAndRenderServices);
+
+// Ajouter un écouteur d'événement pour le bouton Enregistrer
+boutonEnregistrer.addEventListener("click", async () => {
+  const form = document.getElementById("profilForm");
+
+  // Récupérer l'id du coiffeur depuis la session
+  const idCoiffeur = sessionStorage.getItem("token");
+
+  // Récupérer les services sélectionnés
+  const selectedServices = [];
+  document
+    .querySelectorAll('input[name="service"]:checked')
+    .forEach((checkbox) => {
+      selectedServices.push(checkbox.value);
+    });
+
+  try {
+    const response = await fetch("/CoiffeurService", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        idCoiffeur,
+        selectedServices,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Erreur lors de la requête fetch");
+    }
+
+    const responseData = await response.json();
+    alert(responseData.message); // Afficher un message de succès
+  } catch (error) {
+    console.error(
+      "Une erreur s'est produite lors de l'ajout des services du coiffeur:",
+      error.message
+    );
+    alert(
+      "Une erreur s'est produite lors de l'ajout des services du coiffeur."
+    );
+  }
+});
