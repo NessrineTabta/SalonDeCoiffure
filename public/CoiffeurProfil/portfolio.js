@@ -429,6 +429,9 @@ document.addEventListener("DOMContentLoaded", getAndRenderServices);
 boutonEnregistrer.addEventListener("click", async () => {
   const form = document.getElementById("profilForm");
 
+  // Récupérer l'id du coiffeur depuis la session
+  const idCoiffeur = sessionStorage.getItem("token");
+
   // Récupérer les services sélectionnés
   const selectedServices = [];
   document
@@ -444,8 +447,8 @@ boutonEnregistrer.addEventListener("click", async () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        idCoiffeur,
         selectedServices,
-        token,
       }),
     });
 
