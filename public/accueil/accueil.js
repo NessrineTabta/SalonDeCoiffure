@@ -18,19 +18,15 @@ function updateNavigationBar(loginType) {
 
   if (loginType === "client") {
     navContent = `
-        <a href="#">À propos</a>
-        <a href="#">Contact</a>
-        <a href="#">Mes rendez-vous</a>
         <a href="../avis.html">Avis</a>
-        <a href="../AfficherAvis/afficherAvis.html">tt avis</a>
+        <a href="../AfficherAvis/afficherAvis.html">Tout les avis</a>
         `;
   } else if (loginType === "coiffeur") {
     prendreRdv.style.display = 'none'
     navContent = `
         <a href="../CoiffeurProfil/portfolio.html">Portfolio</a>
-        <a href="#">À propos</a>
-        <a href="#">Contact</a>
-        <a href="../AfficherAvis/afficherAvis.html">Afficher tout les avis</a>
+        <a href="../AfficherAvis/afficherAvis.html">Tout les avis</a>
+        <a href="../rendezvousCoiffeur/rendezvousCoiffeur.html">Afficher mes rendez vous</a>
         `;
   }
 
