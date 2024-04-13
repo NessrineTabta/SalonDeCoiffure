@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const token = sessionStorage.getItem("token");
   if (!token) {
-    window.location.href = "../inscription.html"; // Assurez-vous que le chemin est correct
+    window.location.href = "/conn"; // Assurez-vous que le chemin est correct
     return;
   }
 
@@ -18,14 +18,18 @@ function updateNavigationBar(loginType) {
 
   if (loginType === "client") {
     navContent = `
+        <a href="#">À propos</a>
+        <a href="#">Contact</a>
+        <a href="#">Mes rendez-vous</a>
         <a href="../avis.html">Avis</a>
-        <a href="../AfficherAvis/afficherAvis.html">Afficher tout les avis</a>
+        <a href="../AfficherAvis/afficherAvis.html">tt avis</a>
         `;
   } else if (loginType === "coiffeur") {
     prendreRdv.style.display = 'none'
     navContent = `
         <a href="../CoiffeurProfil/portfolio.html">Portfolio</a>
-        <a href="../rendezvousCoiffeur/rendezvousCoiffeur.html">Afficher vos Rendez-Vous</a>
+        <a href="#">À propos</a>
+        <a href="#">Contact</a>
         <a href="../AfficherAvis/afficherAvis.html">Afficher tout les avis</a>
         `;
   }
