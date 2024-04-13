@@ -29,16 +29,21 @@ document.addEventListener("DOMContentLoaded", async function () {
     const showYear = e.getAttribute("data-year");
     const showMonth = e.getAttribute("data-month");
     const showDay = e.getAttribute("data-day");
-    document.getElementById("select").innerHTML =
-      "You have clicked on: " +
-      showDay +
-      " " +
-      months[showMonth] +
-      " " +
-      showYear;
+    const date = new Date(showYear, showMonth, showDay);
+    const dateString = date.toDateString();
+    document.getElementById("select").innerHTML = dateString;
+
+    // Retirer la classe "highlight" de tous les boutons de date
+    const allCells = document.querySelectorAll(".singleDay");
+    allCells.forEach((cell) => {
+      cell.classList.remove("highlight");
+    });
+
+    // Ajouter la classe "highlight" au bouton de date sélectionné
+    e.classList.add("highlight");
 
     // Afficher les rendez-vous pour cette date
-    showAppointmentsForSelectedDate(new Date(showYear, showMonth, showDay));
+    showAppointmentsForSelectedDate(date);
   }
 
   // Fonction pour afficher le calendrier
@@ -123,11 +128,6 @@ document.addEventListener("DOMContentLoaded", async function () {
       );
     });
 
-    // Afficher la date sélectionnée
-    const selectElement = document.getElementById("select");
-    selectElement.innerHTML =
-      selectedDay + " " + months[selectedMonth] + " " + selectedYear;
-
     // Afficher les rendez-vous
     const appointmentsList = document.createElement("ul");
     appointments.forEach((appointment) => {
@@ -136,6 +136,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         "Rendez-vous: " + appointment.heureRendezvous;
       appointmentsList.appendChild(appointmentItem);
     });
+
+    // Supprimer les anciens rendez-vous avant d'ajouter les nouveaux
+    const selectElement = document.getElementById("select");
+    selectElement.innerHTML = date.toDateString();
     selectElement.appendChild(appointmentsList);
   }
 
@@ -177,10 +181,6 @@ document.addEventListener("DOMContentLoaded", async function () {
           dateRendezvous
         ).getMonth()}"][data-year="${new Date(dateRendezvous).getFullYear()}"]`
       );
-      if (cell) {
-        cell.style.backgroundColor = "turquoise";
-        cell.innerHTML = "Rendez-vous pris: " + heureRendezvous;
-      }
     });
   } catch (error) {
     console.error(
