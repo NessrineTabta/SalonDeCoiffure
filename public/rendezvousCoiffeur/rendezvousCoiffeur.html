@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <link href="rendezvousCoiffeur.css" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+
+    <h1>Liste de vos RENDEZ-VOUS</h1>
+
+    <div id="v-cal">
+      <div class="vcal-header">
+        <button class="vcal-btn" data-calendar-toggle="previous">
+          <svg height="24" version="1.1" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"></path>
+          </svg>
+        </button>
+
+        <div class="vcal-header__label" data-calendar-label="month">
+          March 2017
+        </div>
+
+
+        <button class="vcal-btn" data-calendar-toggle="next">
+          <svg height="24" version="1.1" viewbox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4,11V13H16L10.5,18.5L11.92,19.92L19.84,12L11.92,4.08L10.5,5.5L16,11H4Z"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="vcal-week">
+        <span>Lun</span>
+        <span>Mar</span>
+        <span>Mer</span>
+        <span>Jeu</span>
+        <span>Ven</span>
+        <span>Sam</span>
+        <span>Dim</span>
+      </div>
+      <div class="vcal-body" data-calendar-area="month"></div>
+    </div>
+
+    <p class="demo-picked">
+      Date picked:
+      <span data-calendar-label="picked"></span>
+    </p>
+
+  </div>
+  <script src="rendezvousCoiffeur.js" type="text/javascript"></script>
+</body>
+
+</html>
