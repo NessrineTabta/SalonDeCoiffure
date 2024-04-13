@@ -173,16 +173,14 @@ boutonEnregistrer.addEventListener("click", async () => {
 /* ------------------------
  *   Calendrier dynamique avec les jours, semaines, mois, etc.
  * ------------------------ */
-const daysTag = document.querySelector(".days"),
-  currentDate = document.querySelector(".current-date"),
-  prevNextIcon = document.querySelectorAll(".icons span");
+const daysTag = document.querySelector(".days");
+const currentDate = document.querySelector(".current-date");
+const prevNextIcon = document.querySelectorAll(".icons span");
 
-// getting new date, current year and month
-let date = new Date(),
-  currYear = date.getFullYear(),
-  currMonth = date.getMonth();
+let date = new Date();
+let currYear = date.getFullYear();
+let currMonth = date.getMonth();
 
-// storing full name of all months in array
 const months = [
   "January",
   "February",
@@ -199,57 +197,75 @@ const months = [
 ];
 
 const renderCalendar = () => {
-  let firstDayofMonth = new Date(currYear, currMonth, 1).getDay(), // getting first day of month
-    lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate(), // getting last date of month
-    lastDayofMonth = new Date(currYear, currMonth, lastDateofMonth).getDay(), // getting last day of month
-    lastDateofLastMonth = new Date(currYear, currMonth, 0).getDate(); // getting last date of previous month
+  // Mettre à jour la variable de date à chaque rendu du calendrier
+  date = new Date(currYear, currMonth, 1);
+
+  let firstDayofMonth = date.getDay();
+  let lastDateofMonth = new Date(currYear, currMonth + 1, 0).getDate();
+  let lastDayofMonth = new Date(currYear, currMonth, lastDateofMonth).getDay();
+  let lastDateofLastMonth = new Date(currYear, currMonth, 0).getDate();
   let liTag = "";
 
   for (let i = firstDayofMonth; i > 0; i--) {
-    // creating li of previous month last days
     liTag += `<li class="inactive">${lastDateofLastMonth - i + 1}</li>`;
   }
 
   for (let i = 1; i <= lastDateofMonth; i++) {
-    // creating li of all days of current month
-    // adding active class to li if the current day, month, and year matched
-    let isToday =
-      i === date.getDate() &&
-      currMonth === new Date().getMonth() &&
-      currYear === new Date().getFullYear()
-        ? "active"
-        : "";
-    liTag += `<li class="${isToday}">${i}</li>`;
+    // Vérifier si le jour appartient au mois en cours
+    let isCurrentMonth =
+      currMonth === date.getMonth() && currYear === date.getFullYear();
+    let isToday = isCurrentMonth && i === date.getDate() ? "active" : "";
+    let clickEvent = isCurrentMonth ? "selectDate(this)" : "null";
+    liTag += `<li class="${isToday}" onclick="${clickEvent}">${i}</li>`;
   }
 
   for (let i = lastDayofMonth; i < 6; i++) {
-    // creating li of next month first days
     liTag += `<li class="inactive">${i - lastDayofMonth + 1}</li>`;
   }
-  currentDate.innerText = `${months[currMonth]} ${currYear}`; // passing current month and year as currentDate text
+
+  currentDate.innerText = `${months[currMonth]} ${currYear}`;
   daysTag.innerHTML = liTag;
 };
-renderCalendar();
 
 prevNextIcon.forEach((icon) => {
-  // getting prev and next icons
   icon.addEventListener("click", () => {
-    // adding click event on both icons
-    // if clicked icon is previous icon then decrement current month by 1 else increment it by 1
     currMonth = icon.id === "prev" ? currMonth - 1 : currMonth + 1;
-
-    if (currMonth < 0 || currMonth > 11) {
-      // if current month is less than 0 or greater than 11
-      // creating a new date of current year & month and pass it as date value
-      date = new Date(currYear, currMonth, new Date().getDate());
-      currYear = date.getFullYear(); // updating current year with new date year
-      currMonth = date.getMonth(); // updating current month with new date month
-    } else {
-      date = new Date(); // pass the current date as date value
+    if (currMonth < 0) {
+      currMonth = 11;
+      currYear--;
+    } else if (currMonth > 11) {
+      currMonth = 0;
+      currYear++;
     }
-    renderCalendar(); // calling renderCalendar function
+    renderCalendar();
   });
 });
+
+// Fonction pour sélectionner une date
+function selectDate(element) {
+  const selectedDay = parseInt(element.textContent);
+  dateSelectionnee = new Date(currYear, currMonth, selectedDay);
+
+  // Appliquer le style à tous les jours sélectionnés, peu importe le mois
+  const allDays = document.querySelectorAll(".days li");
+  allDays.forEach((day) => {
+    day.classList.remove("selected"); // Supprimer la classe 'selected' de tous les jours
+  });
+  element.classList.add("selected"); // Ajouter la classe 'selected' au jour sélectionné
+
+  // Formatage de la date sélectionnée en format YYYY-MM-DD
+  const year = dateSelectionnee.getFullYear();
+  let month = dateSelectionnee.getMonth() + 1;
+  month = month < 10 ? "0" + month : month;
+  let day = dateSelectionnee.getDate();
+  day = day < 10 ? "0" + day : day;
+
+  const formattedDate = `${year}-${month}-${day}`;
+  console.log("Date sélectionnée :", formattedDate);
+
+  // Afficher les heures possibles
+  afficherHeuresPossibles();
+}
 
 /* ----------------
 --------
@@ -372,29 +388,122 @@ const formatDateToISO = (date) => {
   return `${year}-${month}-${day}`;
 };
 
-// Ajoute un écouteur d'événements à chaque jour dans le calendrier
-days.forEach((day) => {
-  day.addEventListener("click", () => {
-    // Récupérer la date sélectionnée
-    const selectedDay = parseInt(day.textContent);
-    const selectedMonth = currMonth; // Utilisez la variable currMonth définie dans votre code
-    const selectedYear = currYear; // Utilisez la variable currYear définie dans votre code
-    dateSelectionnee = new Date(selectedYear, selectedMonth, selectedDay);
+renderCalendar();
 
-    // Formatage de la date sélectionnée en format YYYY-MM-DD
-    const dateSeule = formatDateToISO(dateSelectionnee);
-    console.log(dateSeule);
+/* ----------------
+--------
+*    Upload des photos dans portfolios
+* ------------------------ */
 
-    // Afficher les heures possibles
-    afficherHeuresPossibles();
+// Add event listener to each image upload input
+// Add event listener to each image upload input
+document.addEventListener("DOMContentLoaded", () => {
+  const imageUploadInputs = document.querySelectorAll(".image-upload");
+  imageUploadInputs.forEach((input) => {
+    input.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      const image = input.parentNode.querySelector("img");
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          // Update the src attribute of the image preview
+          image.src = e.target.result;
+          // Store the image URL in sessionStorage
+          sessionStorage.setItem(
+            `image_${input.dataset.index}`,
+            e.target.result
+          );
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // If no file is selected, display a message
+        image.src = "https://via.placeholder.com/300x200";
+        input.parentNode.querySelector(".content").textContent =
+          "No image selected";
+      }
+    });
   });
 });
 
+// Code to fetch and store image URLs
+const token = sessionStorage.getItem("token");
+const urlPhoto = []; // Déclaration du tableau en dehors de la boucle
+for (let i = 1; i <= 3; i++) {
+  const imageUrl = sessionStorage.getItem(`image_${i}`);
+  if (imageUrl) {
+    urlPhoto.push(imageUrl); // Utilisation de la méthode push pour ajouter l'URL à urlPhoto
+  }
+}
+
+// Effectuer une requête fetch pour stocker les images dans la base de données
+fetch("/portfolioimages", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    urlPhoto: urlPhoto,
+    token: token,
+  }),
+})
+  .then((response) => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error("Erreur lors de la requête fetch");
+    }
+  })
+  .then((data) => {
+    console.log(data.message); // Afficher le message renvoyé par le serveur
+  })
+  .catch((error) => {
+    console.error("Erreur lors de la requête fetch:", error);
+  });
+
+/* 3 photos vont apparaitre au chargfement*/
+document.addEventListener("DOMContentLoaded", () => {
+  const imageUploadInputs = document.querySelectorAll(".image-upload");
+  imageUploadInputs.forEach((input) => {
+    input.addEventListener("change", (event) => {
+      const file = event.target.files[0];
+      const image = input.parentNode.querySelector("img");
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          // Update the src attribute of the image preview
+          image.src = e.target.result;
+          // Store the image URL in sessionStorage
+          sessionStorage.setItem(
+            `image_${input.dataset.index}`,
+            e.target.result
+          );
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // If no file is selected, display a message
+        image.src = "https://via.placeholder.com/300x200";
+        input.parentNode.querySelector(".content").textContent =
+          "No image selected";
+      }
+    });
+
+    // Load image from sessionStorage on page reload
+    const imageUrl = sessionStorage.getItem(`image_${input.dataset.index}`);
+    if (imageUrl) {
+      const image = input.parentNode.querySelector("img");
+      image.src = imageUrl;
+    }
+  });
+});
 // Fonction pour récupérer et afficher tous les services
 async function getAndRenderServices() {
   try {
     const response = await fetch("/showServices");
     const data = await response.json();
+
+    // Récupérer tous les Coiffeur_Service pour l'utilisateur actuel
+    const coiffeurServicesResponse = await fetch("/showCoiffeur_Service");
+    const coiffeurServicesData = await coiffeurServicesResponse.json();
 
     const servicesList = document.getElementById("servicesList");
     servicesList.innerHTML = ""; // Clear previous content
@@ -410,6 +519,92 @@ async function getAndRenderServices() {
       label.htmlFor = `service-${service.idService}`;
       label.textContent = service.nom;
 
+      // Vérifier si le service est sélectionné pour le coiffeur actuel
+      const isSelected = coiffeurServicesData.services.some(
+        (coiffeurService) => coiffeurService.idService === service.idService
+      );
+      checkbox.checked = isSelected;
+
+      // Ajouter un gestionnaire d'événements pour détecter les changements de sélection
+      checkbox.addEventListener("change", async (event) => {
+        const selectedServiceId = event.target.value;
+        if (event.target.checked) {
+          // Si la case est cochée, ajoute l'idService à la liste des services sélectionnés
+          try {
+            const response = await fetch("/CoiffeurService", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                idService: selectedServiceId,
+                token,
+              }),
+            });
+
+            if (!response.ok) {
+              throw new Error("Erreur lors de la requête fetch");
+            }
+
+            const responseData = await response.json();
+            alert(responseData.message); // Afficher un message de succès
+
+            // Mettre à jour les services après chaque ajout
+            getAndRenderServices();
+          } catch (error) {
+            console.error(
+              "Une erreur s'est produite lors de l'ajout du service du coiffeur:",
+              error.message
+            );
+            alert(
+              "Une erreur s'est produite lors de l'ajout du service du coiffeur."
+            );
+          }
+        } else {
+          // Si la case est décochée, supprime l'idService de la liste des services sélectionnés
+          try {
+            // Trouver l'ID Coiffeur-Service correspondant au service désélectionné
+            const coiffeurService = coiffeurServicesData.services.find(
+              (coiffeurService) =>
+                coiffeurService.idService === service.idService
+            );
+
+            if (!coiffeurService) {
+              throw new Error("Relation Coiffeur-Service non trouvée");
+            }
+
+            const response = await fetch("/CoiffeurService", {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                idCoiffeur_Service: coiffeurService.idCoiffeur_Service,
+                token,
+              }),
+            });
+
+            if (!response.ok) {
+              throw new Error("Erreur lors de la requête fetch");
+            }
+
+            const responseData = await response.json();
+            alert(responseData.message); // Afficher un message de succès
+
+            // Mettre à jour les services après chaque suppression
+            getAndRenderServices();
+          } catch (error) {
+            console.error(
+              "Une erreur s'est produite lors de la suppression du service du coiffeur:",
+              error.message
+            );
+            alert(
+              "Une erreur s'est produite lors de la suppression du service du coiffeur."
+            );
+          }
+        }
+      });
+
       servicesList.appendChild(checkbox);
       servicesList.appendChild(label);
       servicesList.appendChild(document.createElement("br"));
@@ -424,47 +619,3 @@ async function getAndRenderServices() {
 
 // Appeler la fonction pour récupérer et afficher les services lors du chargement de la page
 document.addEventListener("DOMContentLoaded", getAndRenderServices);
-
-// Ajouter un écouteur d'événement pour le bouton Enregistrer
-boutonEnregistrer.addEventListener("click", async () => {
-  const form = document.getElementById("profilForm");
-
-  // Récupérer l'id du coiffeur depuis la session
-  const idCoiffeur = sessionStorage.getItem("token");
-
-  // Récupérer les services sélectionnés
-  const selectedServices = [];
-  document
-    .querySelectorAll('input[name="service"]:checked')
-    .forEach((checkbox) => {
-      selectedServices.push(checkbox.value);
-    });
-
-  try {
-    const response = await fetch("/CoiffeurService", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        idCoiffeur,
-        selectedServices,
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Erreur lors de la requête fetch");
-    }
-
-    const responseData = await response.json();
-    alert(responseData.message); // Afficher un message de succès
-  } catch (error) {
-    console.error(
-      "Une erreur s'est produite lors de l'ajout des services du coiffeur:",
-      error.message
-    );
-    alert(
-      "Une erreur s'est produite lors de l'ajout des services du coiffeur."
-    );
-  }
-});

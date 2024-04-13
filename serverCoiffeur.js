@@ -230,33 +230,6 @@ router.post("/coiffeurs", authentification, async (req, res) => {
   }
 });
 
-// POST: Ajouter une relation Coiffeur-Service
-router.post("/CoiffeurService", async (req, res) => {
-  try {
-    const { idCoiffeur, idService } = req.body;
-
-    // Vérifier si les ID de coiffeur et de service sont fournis
-    if (!idCoiffeur || !idService) {
-      return res
-        .status(400)
-        .json({ message: "Veuillez fournir l'ID du coiffeur et de service." });
-    }
-
-    // Insérer la relation Coiffeur-Service dans la table Coiffeur_Service
-    await db("Coiffeur_Service").insert({ idCoiffeur, idService });
-
-    res
-      .status(201)
-      .json({ message: "Relation Coiffeur-Service ajoutée avec succès." });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message:
-        "Une erreur s'est produite lors de l'ajout de la relation Coiffeur-Service.",
-    });
-  }
-});
-
 //GET : Afficher les rendezvous d'un coiffeur
 router.get("/rendezVousCoiffeur", authentification, async (req, res) => {
   try {
@@ -336,25 +309,6 @@ function servicesCoiffeur(email) {
   });
 }
 
-// GET: Obtenir tous les services
-router.get("/showServices", async (req, res) => {
-  try {
-    // Récupérer tous les services depuis la base de données
-    const allServices = await db.select().from("Service");
-
-    res.json({
-      services: allServices,
-      message: "Liste de tous les services",
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message:
-        "Une erreur s'est produite lors de la récupération des services.",
-    });
-  }
-});
-
 // GET: Obtenir tous les services de tous les coiffeurs depuis la base de données
 router.get("/tousservices", async (req, res) => {
   try {
@@ -384,6 +338,70 @@ router.get("/tousservices", async (req, res) => {
     res.status(500).json({
       message:
         "Une erreur s'est produite lors de la récupération des services.",
+    });
+  }
+});
+// GET: Obtenir tous les services
+router.get("/showServices", async (req, res) => {
+  try {
+    // Récupérer tous les services depuis la base de données
+    const allServices = await db.select().from("Service");
+
+    res.json({
+      services: allServices,
+      message: "Liste de tous les services",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la récupération des services.",
+    });
+  }
+});
+
+// GET: Obtenir tous les Coiffeur_Service
+router.get("/showCoiffeur_Service", async (req, res) => {
+  try {
+    // Récupérer tous les services depuis la base de données
+    const allServices = await db.select().from("Coiffeur_Service");
+
+    res.json({
+      services: allServices,
+      message: "Liste de tous les services",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la récupération des Coiffeur_services.",
+    });
+  }
+});
+
+// DELETE: Supprimer une relation Coiffeur-Service
+router.delete("/CoiffeurService", authentification, async (req, res) => {
+  try {
+    const { idCoiffeur_Service } = req.body; // Récupérer l'id de la relation Coiffeur-Service depuis le corps de la requête
+    // Vérifier si la relation Coiffeur-Service existe
+    const coiffeurService = await db("Coiffeur_Service")
+      .where("idCoiffeur_Service", idCoiffeur_Service)
+      .first();
+    if (!coiffeurService) {
+      return res
+        .status(404)
+        .json({ message: "Relation Coiffeur-Service non trouvée" });
+    }
+    // Supprimer la relation Coiffeur-Service
+    await db("Coiffeur_Service")
+      .where("idCoiffeur_Service", idCoiffeur_Service)
+      .del();
+    res.json({ message: "Relation Coiffeur-Service supprimée avec succès" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la suppression de la relation Coiffeur-Service",
     });
   }
 });
@@ -457,6 +475,34 @@ async function insererService(nom, description, idCoiffeur) {
     throw error;
   }
 }
+
+// POST: Ajouter une relation Coiffeur-Service
+router.post("/CoiffeurService", authentification, async (req, res) => {
+  try {
+    const idCoiffeur = await getIdByEmail(req.user.email); // Obtenez l'ID du coiffeur à partir de l'e-mail de l'utilisateur connecté
+    const { idService } = req.body;
+
+    // Vérifier si les ID de coiffeur et de service sont fournis
+    if (!idCoiffeur || !idService) {
+      return res
+        .status(400)
+        .json({ message: "Veuillez fournir l'ID du coiffeur et de service." });
+    }
+
+    // Insérer la relation Coiffeur-Service dans la table Coiffeur_Service
+    await db("Coiffeur_Service").insert({ idCoiffeur, idService });
+
+    res
+      .status(201)
+      .json({ message: "Relation Coiffeur_Service ajoutée avec succès." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de l'ajout de la relation Coiffeur_Service.",
+    });
+  }
+});
 
 // DELETE: Service
 router.delete("/services", async (req, res) => {
