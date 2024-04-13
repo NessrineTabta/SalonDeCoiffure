@@ -378,23 +378,98 @@ renderCalendar();
 *    Upload des photos dans portfolios
 * ------------------------ */
 
-  // Add event listener to each image upload input
-  const imageUploadInputs = document.querySelectorAll('.image-upload');
-  imageUploadInputs.forEach(input => {
-      input.addEventListener('change', (event) => {
-          const file = event.target.files[0];
-          const image = input.parentNode.querySelector('img');
-          if (file) {
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                  // Update the src attribute of the image preview
-                  image.src = e.target.result;
-              }
-              reader.readAsDataURL(file);
-          } else {
-              // If no file is selected, display a message
-              image.src = "https://via.placeholder.com/300x200";
-              input.parentNode.querySelector('.content').textContent = "No image selected";
-          }
-      });
-  });
+ // Add event listener to each image upload input
+// Add event listener to each image upload input
+document.addEventListener('DOMContentLoaded', () => {
+    const imageUploadInputs = document.querySelectorAll('.image-upload');
+    imageUploadInputs.forEach(input => {
+        input.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            const image = input.parentNode.querySelector('img');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    // Update the src attribute of the image preview
+                    image.src = e.target.result;
+                    // Store the image URL in sessionStorage
+                    sessionStorage.setItem(`image_${input.dataset.index}`, e.target.result);
+                }
+                reader.readAsDataURL(file);
+            } else {
+                // If no file is selected, display a message
+                image.src = "https://via.placeholder.com/300x200";
+                input.parentNode.querySelector('.content').textContent = "No image selected";
+            }
+        });
+    });
+});
+
+// Code to fetch and store image URLs
+const token = sessionStorage.getItem("token");
+const urlPhoto = []; // Déclaration du tableau en dehors de la boucle
+for (let i = 1; i <= 3; i++) {
+    const imageUrl = sessionStorage.getItem(`image_${i}`);
+    if (imageUrl) {
+        urlPhoto.push(imageUrl); // Utilisation de la méthode push pour ajouter l'URL à urlPhoto
+    }
+}
+
+
+// Effectuer une requête fetch pour stocker les images dans la base de données
+fetch('/portfolioimages', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        urlPhoto: urlPhoto,
+        token: token
+    })
+})
+.then(response => {
+    if (response.ok) {
+        return response.json();
+    } else {
+        throw new Error('Erreur lors de la requête fetch');
+    }
+})
+.then(data => {
+    console.log(data.message); // Afficher le message renvoyé par le serveur
+})
+.catch(error => {
+    console.error('Erreur lors de la requête fetch:', error);
+});
+
+
+
+/* 3 photos vont apparaitre au chargfement*/
+document.addEventListener('DOMContentLoaded', () => {
+    const imageUploadInputs = document.querySelectorAll('.image-upload');
+    imageUploadInputs.forEach(input => {
+        input.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            const image = input.parentNode.querySelector('img');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    // Update the src attribute of the image preview
+                    image.src = e.target.result;
+                    // Store the image URL in sessionStorage
+                    sessionStorage.setItem(`image_${input.dataset.index}`, e.target.result);
+                }
+                reader.readAsDataURL(file);
+            } else {
+                // If no file is selected, display a message
+                image.src = "https://via.placeholder.com/300x200";
+                input.parentNode.querySelector('.content').textContent = "No image selected";
+            }
+        });
+        
+        // Load image from sessionStorage on page reload
+        const imageUrl = sessionStorage.getItem(`image_${input.dataset.index}`);
+        if (imageUrl) {
+            const image = input.parentNode.querySelector('img');
+            image.src = imageUrl;
+        }
+    });
+});

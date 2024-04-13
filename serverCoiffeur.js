@@ -675,6 +675,9 @@ router.post('/portfolio', authentification, async (req, res) => {
   }
 });
 
+
+
+
 // POST: Récupérer Image du portfolio
 router.post('/recupererphoto', authentification, async (req, res) => {
   try {
@@ -684,7 +687,7 @@ router.post('/recupererphoto', authentification, async (req, res) => {
       if (portfolio) {
           res.json({ imageUrl: portfolio.urlPhoto });
       } else {
-          throw new Error('Le portfolio du coiffeur n\'a pas été trouvé.');
+          throw new Error();
       }
   } catch (error) {
       console.error('Une erreur est survenue lors de la récupération de la photo :', error);
@@ -692,6 +695,51 @@ router.post('/recupererphoto', authentification, async (req, res) => {
   }
 });
 
+
+
+/* stock image portfolio */
+const multer = require('multer');
+const path = require('path');
+
+// Configuration de multer pour le stockage des images téléchargées
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/'); // Le répertoire où stocker les images
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
+
+router.post('/portfolioimages', authentification, upload.array('images', 3), async (req, res) => {
+  const email = req.user.email;
+
+  try {
+      // Récupérer l'identifiant du coiffeur à partir de l'email
+      const idCoiffeur = await getIdByEmail(email);
+
+      // Vérifier si des fichiers ont été téléchargés
+      if (req.files && req.files.length > 0) {
+          // Parcourir chaque image téléchargée
+          req.files.forEach(async (file) => {
+              const imageUrl = '/uploads/' + file.filename; // URL de l'image
+              // Insérer ou mettre à jour l'URL de l'image dans la base de données
+              await db('Portfolio').insert({
+                  urlPhoto: imageUrl,
+                  idCoiffeur: idCoiffeur
+              }).onConflict('idCoiffeur').merge();
+          });
+      }
+
+      res.status(200).json({ message: "Images du portfolio mises à jour avec succès" });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Une erreur est survenue lors de la mise à jour des images du portfolio" });
+  }
+});
 
 
 
