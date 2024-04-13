@@ -166,7 +166,7 @@ router.get("/client/:idClient", async (req, res) => {
 // POST: Create a new Rendezvous
 router.post("/Rendezvous", authentification, async (req, res) => {
   try {
-    const clientEmail = req.user.email.email;
+    const clientEmail = req.user.email;
     const { dateRendezvous, heureRendezvous, idCoiffeur } = req.body;
     // Fetch the client ID based on the email
     const client = await db("Client").where("email", clientEmail).first();

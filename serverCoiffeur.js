@@ -230,39 +230,35 @@ router.post("/coiffeurs", authentification, async (req, res) => {
   }
 });
 
-//GET : Afficher les rendezvous d'un coiffeur
-router.get("/rendezVousCoiffeur", authentification, async (req, res) => {
+
+
+//POST : Afficher les rendezvous d'un coiffeur
+router.post("/rendezVousCoiffeur", authentification, async (req, res) => {
   try {
-    const email = req.user; // Email de l'utilisateur extrait du token
-    const rendezVous = await rendezvousCoiffeur(email);
-    res.json({
-      rendezVous: rendezVous,
-      message: "Bienvenue dans le board sécurisé " + req.user,
-    });
+    const email = req.user.email; // Email de l'utilisateur extrait du token
+    const idCoiffeur = await getIdByEmail(email); // Correction : Récupération de l'identifiant du coiffeur
+    const rendezVous = await rendezvousCoiffeur(idCoiffeur);
+    res.json(rendezVous); // Correction : Retourne directement les rendez-vous
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      message:
-        "Une erreur s'est produite lors de la récupération des rendez-vous.",
+      message: "Une erreur s'est produite lors de la récupération des rendez-vous.",
     });
   }
 });
-
 //Function: affiche rendez vous d'un coiffeur
-function rendezvousCoiffeur(email) {
-  return new Promise((resolve, reject) => {
-    db.select("*")
-      .from("rendezvous")
-      .join("Coiffeur", "rendezvous.idCoiffeur", "=", "Coiffeur.idCoiffeur")
-      .where("Coiffeur.email", email)
-      .then((rows) => {
-        resolve(rows);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
+async function rendezvousCoiffeur(idCoiffeur) { // Correction : Ajout de l'async pour permettre l'attente de la requête
+  try {
+    const rendezVous = await db.select("idRendezvous", "dateRendezvous", "heureRendezvous") // Correction : Ajout de l'identifiant du rendez-vous
+      .from("Rendezvous")
+      .where("idCoiffeur", idCoiffeur);
+    return rendezVous; // Correction : Retourne directement les rendez-vous
+  } catch (error) {
+    throw error;
+  }
 }
+
+
 
 // GET: Obtenir les services d'un coiffeur
 router.get("/services", authentification, async (req, res) => {
