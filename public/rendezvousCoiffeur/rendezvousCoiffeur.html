@@ -1,38 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="stylesheet" type="text/css" href="rendezvousCoiffeur.css" />
-    <title>Rendez-Vous</title>
-  </head>
 
-  <body>
-    <div id="calendar">
-      <div class="month">
-        <ul>
-          <li id="prev">&#10094;</li>
-          <li id="month"></li>
-          <li id="year"></li>
-          <li id="next">&#10095;</li>
-        </ul>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link rel="stylesheet" type="text/css" href="rendezvousCoiffeur.css" />
+  <title>Pure CSS & JavaScript Calendar</title>
+  <link rel="icon" href="../logo/2.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+  <div class="header">
+    <div class="nav">
+      <div class="nav-items nav-items-left">
       </div>
+      <div class="logo" style="color: black;"> <a href="../accueil/accueil.html">East Cutz</a></div>
 
-      <ul id="weekdays">
-        <li>Mon</li>
-        <li>Tue</li>
-        <li>Wed</li>
-        <li>Thu</li>
-        <li>Fri</li>
-        <li>Sat</li>
-        <li>Sun</li>
-      </ul>
-
-      <ul id="days"></ul>
-
-      <div>You have clicked on: <span id="select"></span></div>
+      <div class="nav-items nav-items-right">
+        <div class="nav-button">
+          <div class="btn-wrap">
+            <button id="btnPriseRdv" onclick="location.href='../book.html'" style="color: white;">PRENDRE
+              RENDEZ-VOUS</button>
+          </div>
+        </div>
+        <div class="nav-button">
+          <div class="btn-wrap">
+            <button id="btnDeconnexion" style="color: white;">DECONNEXION</button>
+          </div>
+        </div>
+      </div>
     </div>
-    <script src="rendezvousCoiffeur.js"></script>
-  </body>
+  </div>
+  <div id="calendar">
+    <div class="month">
+      <ul>
+        <li id="prev">&#10094;</li>
+        <li id="month"></li>
+        <li id="year"></li>
+        <li id="next">&#10095;</li>
+      </ul>
+    </div>
+
+    <ul id="weekdays">
+      <li>Lu</li>
+      <li>Ma</li>
+      <li>Me</li>
+      <li>Je</li>
+      <li>Ve</li>
+      <li>Sa</li>
+      <li>Di</li>
+    </ul>
+
+    <ul id="days"></ul>
+
+    <div>You have clicked on: <span id="select"></span></div>
+  </div>
+  <script src="rendezvousCoiffeur.js"></script>
+</body>
+
 </html>
