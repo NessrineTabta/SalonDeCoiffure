@@ -326,3 +326,15 @@ body {
     -ms-grid-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
   }
 }
+
+/*la maniere que les rdv vont etre affiché*/
+.appointment-info {
+  padding: 5px;
+  margin-top: 2px;
+  color: white;
+  font-size: 12px;  
+  border-radius: 4px; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
+  white-space: nowrap; 
+}

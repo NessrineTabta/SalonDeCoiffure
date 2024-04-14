@@ -108,6 +108,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.getElementById("next").addEventListener("click", next);
     document.getElementById("prev").addEventListener("click", previous);
 
+    today.setHours(0, 0, 0, 0); // Normalise la date pour enlever l'heure
     // Fetch pour récupérer les rendez-vous du coiffeur
     const token = sessionStorage.getItem("token");
     try {
@@ -128,15 +129,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         // Afficher les rendez-vous sur le calendrier
         rendezVous.forEach(appointment => {
-            const date = new Date(appointment.dateRendezvous);
-            const cell = document.querySelector(`[data-day="${date.getDate()}"][data-month="${date.getMonth()}"][data-year="${date.getFullYear()}"]`);
+            const dateRendezvous = new Date(appointment.dateRendezvous);
+            const cell = document.querySelector(`[data-day="${dateRendezvous.getDate()}"][data-month="${dateRendezvous.getMonth()}"][data-year="${dateRendezvous.getFullYear()}"]`);
+
             if (cell) {
-                cell.classList.add("has-appointment");
-                cell.innerHTML = `${cell.innerHTML} <span class="appointment-time">${appointment.heureRendezvous}</span> <span class="delete-appointment" data-id="${appointment.idRendezvous}" style="cursor: pointer;">🗑️</span>`;
+                if (dateRendezvous < today) {
+                    // Si la date du rendez-vous est passée
+                    cell.style.backgroundColor = "#cccccc"; // Gris clair pour les dates passées
+                    cell.innerHTML = `Rendez-vous passé: ${appointment.heureRendezvous}h`;
+                } else {
+                    // Si la date du rendez-vous est future ou actuelle
+                    cell.style.backgroundColor = "rgb(52, 52, 52)"; // Couleur normale pour les rendez-vous futurs
+                    cell.innerHTML = `Rendez-vous pris: ${appointment.heureRendezvous}h <span class="delete-appointment" data-id="${appointment.idRendezvous}" style="cursor: pointer;">🗑️</span>`;
+
+                    const deleteButton = cell.querySelector('.delete-appointment');
+                    deleteButton.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        if (confirm("Êtes-vous sûr de vouloir annuler ce rendez-vous ?")) {
+                            deleteAppointment(appointment.idRendezvous);
+                        }
+                    });
+                }
             }
         });
-
-
     } catch (error) {
         console.error("Erreur lors de la récupération des rendez-vous du coiffeur:", error);
     }
@@ -172,7 +187,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             alert("Erreur lors de la suppression du rendez-vous.");
         }
     }
-    
+
 
 });
 

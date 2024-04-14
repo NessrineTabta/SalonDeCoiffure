@@ -129,12 +129,29 @@ document.addEventListener("DOMContentLoaded", async function () {
         // Afficher les rendez-vous sur le calendrier
         rendezVous.forEach(appointment => {
             const { dateRendezvous, heureRendezvous } = appointment;
-            const cell = document.querySelector(`[data-day="${new Date(dateRendezvous).getDate()}"][data-month="${new Date(dateRendezvous).getMonth()}"][data-year="${new Date(dateRendezvous).getFullYear()}"]`);
+            const appointmentDate = new Date(dateRendezvous);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Normaliser pour ignorer l'heure actuelle
+
+            const cell = document.querySelector(`[data-day="${appointmentDate.getDate()}"][data-month="${appointmentDate.getMonth()}"][data-year="${appointmentDate.getFullYear()}"]`);
+
             if (cell) {
-                cell.style.backgroundColor = "turquoise";
-                cell.innerHTML = "Rendez-vous pris: " + heureRendezvous;
+                const appointmentDiv = document.createElement('div');
+                appointmentDiv.className = 'appointment-info';
+                appointmentDiv.textContent = `Rendez-vous à ${heureRendezvous}h`;
+
+                // Vérifier si la date du rendez-vous est passée
+                if (appointmentDate < today) {
+                    appointmentDiv.style.backgroundColor = "#cccccc"; // Gris clair pour les dates passées
+                } else {
+                    appointmentDiv.style.backgroundColor = "rgb(52,52,52)"; // Couleur normale pour les rendez-vous futurs
+                }
+
+                // Ajouter le div du rendez-vous à la cellule du calendrier
+                cell.appendChild(appointmentDiv);
             }
         });
+
 
     } catch (error) {
         console.error("Erreur lors de la récupération des rendez-vous du coiffeur:", error);
@@ -145,24 +162,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const token = sessionStorage.getItem("token");
     //redirection si pas de compte
     if (!token) {
-      window.location.href = "../connexion.html"; 
-      return;
+        window.location.href = "../connexion.html";
+        return;
     }
-  
+
     const loginType = sessionStorage.getItem("loginType");
     updateNavigationBar(loginType);
-  
+
     document.getElementById('btnDeconnexion').addEventListener('click', deconnexion);
-  });
-  
-  // modifier le navbar en fonction du type de user (client ou coiffeur)
-  function updateNavigationBar(loginType) {
+});
+
+// modifier le navbar en fonction du type de user (client ou coiffeur)
+function updateNavigationBar(loginType) {
     let navContent = "";
     const navContainer = document.querySelector(".nav .nav-items"); // Sélectionner le conteneur de la barre de navigation
     const prendreRdv = document.getElementById('btnPriseRdv');
-  
+
     if (loginType === "client") {
-      navContent = `
+        navContent = `
       <a href="../accueil/accueil.html#section-about">À propos</a>
       <a href="../accueil/accueil.html#section-contact">Contact</a>
           <a href="../avis.html">Avis</a>
@@ -171,21 +188,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
           `;
     } else if (loginType === "coiffeur") {
-      prendreRdv.style.display = 'none'
-      navContent = `
+        prendreRdv.style.display = 'none'
+        navContent = `
           <a href="../CoiffeurProfil/portfolio.html">Profil</a>
           <a href="../AfficherAvis/afficherAvis.html">Tous les avis</a>
           <a href="../rendezvousCoiffeur/rendezvousCoiffeur.html">Afficher mes rendez vous</a>
           `;
     }
-  
+
     // Mettre à jour le contenu de la barre de navigation
     navContainer.innerHTML = navContent;
-  }
-  
+}
 
-  function deconnexion() {
+
+function deconnexion() {
     sessionStorage.removeItem("token");
     window.location.href = "../connexion.html";
-  }
-  
+}

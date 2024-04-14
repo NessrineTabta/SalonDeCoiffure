@@ -328,7 +328,7 @@
   }
 
   #days li.has-appointment {
-    background-color: rgb(100, 103, 142); /* ou toute autre couleur de votre choix */
+    background-color: rgb(52, 52, 52); /* ou toute autre couleur de votre choix */
     color: white;
     font-weight: bold;
 }
@@ -340,11 +340,11 @@
 /*------Pour supprimer le rendez-vous-------*/
 .delete-appointment {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  bottom: 2px;
+  right: 2px;
   background-color: rgb(255, 0, 0); /* Fond gris */
   color: black; /* Icône noire */
-  padding: 5px;
+  padding: 2px;
   border-radius: 7px; 
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Petite ombre pour du relief */
