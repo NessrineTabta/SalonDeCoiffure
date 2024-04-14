@@ -16,9 +16,9 @@ document.addEventListener("DOMContentLoaded", function () {
     .querySelector(".right-side")
     .addEventListener("submit", async function (event) {
       if (event.target && event.target.id === "inscriptionForm") {
-        event.preventDefault(); // Prevent the form from submitting normally
+        event.preventDefault(); 
 
-        // Extract form data
+        // extraire donnees
         const formData = new FormData(event.target);
         const requestData = {
           email: formData.get("email"),
@@ -28,9 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
           password: formData.get("password"),
           salon: formData.get("salonSelect"),
         };
-
-        // Log form data for debugging
-        console.log("Form data submitted:", requestData);
 
         try {
           let endpoint = "";
@@ -62,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
           console.log(JSON.stringify(payload));
 
-          // Send request to the server
+          // request au serveur
           const response = await fetch(endpoint, {
             method: "POST",
             headers: {
@@ -72,7 +69,6 @@ document.addEventListener("DOMContentLoaded", function () {
           });
 
           if (response.ok) {
-            // Handle success
             const responseData = await response.json();
             alert("vous avez reussi a vous inscrire!")
             console.log("Success:", responseData.message);
@@ -164,7 +160,6 @@ function getFormulaireInscription(isCoiffeur = false) {
 
   // Ajout du dropdown pour le coiffeur
   if (isCoiffeur) {
-    // Récupération dynamique des noms de salon via une requête fetch
     fetch("/nomsSalons")
       .then((response) => response.json())
       .then((data) => {

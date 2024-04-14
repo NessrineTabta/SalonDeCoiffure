@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById('btnDeconnexion').addEventListener('click', deconnexion);
+
   const salonSelect = document.getElementById("salonSelect");
   const coiffeurSelect = document.getElementById("coiffeurSelect");
   const reviewForm = document.getElementById("reviewForm");
-  // Correct placement of loadSalons
   function loadSalons() {
     fetch("/nomsSalons")
       .then((response) => response.json())
@@ -17,11 +18,10 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((error) => console.error("Error fetching salon data:", error));
   }
 
-  // Call loadSalons here to populate the salonSelect dropdown on page load
   loadSalons();
 
   salonSelect.addEventListener("change", function () {
-    fetchCoiffeursForSalon(this.value); // Corrected function call
+    fetchCoiffeursForSalon(this.value); 
   });
 
   function fetchCoiffeursForSalon(salonId) {
@@ -40,8 +40,8 @@ document.addEventListener("DOMContentLoaded", function () {
         coiffeurSelect.disabled = false;
         coiffeurs.forEach((coiffeur) => {
           const option = document.createElement("option");
-          option.value = coiffeur.idCoiffeur; // Assuming you have idCoiffeur in your coiffeur objects
-          option.textContent = `${coiffeur.nomCoiffeur} ${coiffeur.prenomCoiffeur}`; // Adjust based on your object structure
+          option.value = coiffeur.idCoiffeur; 
+          option.textContent = `${coiffeur.nomCoiffeur} ${coiffeur.prenomCoiffeur}`;
           coiffeurSelect.appendChild(option);
         });
       })
@@ -73,9 +73,9 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   reviewForm.addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent the default form submission behavior
+    event.preventDefault(); 
 
-    // Extracting form data
+    // Extraire du donnee
     const nombreEtoile = parseInt(
       document.querySelector(".rating input").value,
       10
@@ -84,19 +84,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const description = document.querySelector(
       "textarea[name='opinion']"
-    ).value; // Extracting the text from the textarea
-
-    // Assuming you have a session token stored
+    ).value; 
     const token = sessionStorage.getItem("token");
     console.log("session storage token:", token);
-    // Directly retrieving the token here
-    /*console.log({
-      nombreEtoile: nombreEtoile,
-      description: description,
-      idSalon: salonId,
-    });*/
-
-    // Use the data to make a fetch request to your server
 
     fetch("http://localhost:3000/avis", {
       method: "POST",
@@ -119,11 +109,56 @@ document.addEventListener("DOMContentLoaded", function () {
       .then((data) => {
         console.log("Review submitted successfully", data);
         alert("⭐⭐⭐⭐⭐ Avis envoyé avec succès ⭐⭐⭐⭐⭐")
-        // Here, you might want to clear the form or provide feedback to the user
       })
       .catch((error) => {
         console.error("Error submitting review:", error);
-        // Handle any errors that occurred during the fetch operation
       });
   });
 });
+
+document.addEventListener("DOMContentLoaded", function () {
+  const token = sessionStorage.getItem("token");
+  if (!token) {
+    window.location.href = "../connexion.html";
+    return;
+  }
+
+  const loginType = sessionStorage.getItem("loginType");
+  updateNavigationBar(loginType);
+
+  document.getElementById('btnDeconnexion').addEventListener('click', deconnexion);
+});
+
+// modifie le navbar en fonction du type de user (client ou coiffeur)
+function updateNavigationBar(loginType) {
+  let navContent = "";
+  const navContainer = document.querySelector(".nav .nav-items"); // Sélectionner le conteneur de la barre de navigation
+  const prendreRdv = document.getElementById('btnPriseRdv');
+
+  if (loginType === "client") {
+    navContent = `
+    <a href="../accueil/accueil.html#section-about">À propos</a>
+    <a href="../accueil/accueil.html#section-contact">Contact</a>
+        <a href="../avis.html">Avis</a>
+        <a href="../AfficherAvis/afficherAvis.html">Tous les avis</a>
+        <a href="../rendezvousClient/rendezvousClient.html">Mes rendez-vous</a>
+
+        `;
+  } else if (loginType === "coiffeur") {
+    prendreRdv.style.display = 'none'
+    navContent = `
+        <a href="../CoiffeurProfil/portfolio.html">Profil</a>
+        <a href="../AfficherAvis/afficherAvis.html">Tous les avis</a>
+        <a href="../rendezvousCoiffeur/rendezvousCoiffeur.html">Afficher mes rendez vous</a>
+        `;
+  }
+
+  // Mettre à jour le contenu de la barre de navigation
+  navContainer.innerHTML = navContent;
+}
+
+
+function deconnexion() {
+  sessionStorage.removeItem("token");
+  window.location.href = "../connexion.html";
+}

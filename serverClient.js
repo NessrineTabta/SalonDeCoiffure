@@ -191,10 +191,30 @@ router.post("/Rendezvous", authentification, async (req, res) => {
     });
   }
 });
+// afficher tous les rendez-vous dun client
+router.post("/rendezVousClients", authentification, async (req, res) => {
+  try {
+    const email = req.user.email; // Email de l'utilisateur extrait du token
+    const client = await db("Client").where("email", email).first(); // Récupérer les infos du client
+    if (!client) {
+      return res.status(404).json({ message: "Client non trouvé." });
+    }
+    const rendezVous = await db.select("idRendezvous", "dateRendezvous", "heureRendezvous")
+      .from("Rendezvous")
+      .where("idClient", client.idClient); // Récupérer les rendez-vous du client
+    res.json(rendezVous);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Une erreur s'est produite lors de la récupération des rendez-vous.",
+    });
+  }
+});
+
 // GET: Obtenir tous les rendez-vous d'un client
 router.get("/Rendezvous", authentification, async (req, res) => {
   try {
-    const clientEmail = req.user.email.email; // Email du client extrait du token
+    const clientEmail = req.user.email; // Email du client extrait du token
     const Rendezvous = await getClientRendezvous(clientEmail);
     res.json({
       Rendezvous: Rendezvous,
@@ -225,12 +245,13 @@ function getClientRendezvous(clientEmail) {
       });
   });
 }
-// DELETE: Supprimer/Annuler un rendez-vous
-router.delete("/Rendezvous", authentification, async (req, res) => {
-  try {
-    const { idRendezvous } = req.body; // Récupérer l'idRendezvous depuis le corps de la requête
 
-    // Vérifier si le rendez-vous existe
+// DELETE: Supprimer/Annuler un rendez-vous
+router.delete("/RendezVous/:idRendezvous", authentification, async (req, res) => {
+  try {
+    const idRendezvous = req.params.idRendezvous; // Récupérer id par url
+
+    // verifier si le rendez-vous existe
     const Rendezvous = await db("Rendezvous")
       .where("idRendezvous", idRendezvous)
       .first();
@@ -238,7 +259,7 @@ router.delete("/Rendezvous", authentification, async (req, res) => {
       return res.status(404).json({ message: "Rendez-vous non trouvé" });
     }
 
-    // Supprimer le rendez-vous de la table Rendezvous
+    // supprimer le rendez-vous de la table Rendezvous
     await db("Rendezvous").where("idRendezvous", idRendezvous).del();
     res.json({ message: "Rendez-vous supprimé avec succès" });
   } catch (error) {
@@ -249,6 +270,7 @@ router.delete("/Rendezvous", authentification, async (req, res) => {
     });
   }
 });
+
 
 // PUT: Modifier un rendez-vous existant d'un client
 router.put("/Rendezvous/:idRendezvous", authentification, async (req, res) => {

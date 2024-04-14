@@ -1,4 +1,151 @@
- /****** ******  ******  ******  ******  ******   ******* */
+/*---------------------------
+           HEADER
+-----------------------------*/
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    color: white;
+}
+
+.nav {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-items a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: 500;
+}
+
+.nav-items {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    color: rgb(0, 0, 0);
+    font-size: 14px;
+}
+
+.logo {
+    flex: 1;
+    text-align: center;
+    font-size: 40px;
+    font-family: "Orbitron", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.nav-button {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    color: rgb(0, 0, 0);
+    font-size: 13px;
+}
+
+.nav-button button {
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.btn-wrap {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-wrap::before,
+.btn-wrap::after {
+    content: '';
+    position: absolute;
+    background: rgb(0, 0, 0);
+}
+
+/* Bas */
+.btn-wrap::before {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+}
+
+/* Droite */
+.btn-wrap::after {
+    right: 0;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    transform: translateY(-100%);
+    transition: transform 0.25s ease 0.25s;
+}
+
+/* Haut et Gauche */
+.btn-wrap button::after,
+.btn-wrap button::before {
+    content: '';
+    position: absolute;
+    background: rgb(0, 0, 0);
+}
+
+/* Haut */
+.btn-wrap button::before {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transform: translateX(100%);
+    transition: transform 0.25s ease 0.5s;
+}
+
+/* Gauche */
+.btn-wrap button::after {
+    left: 0;
+    bottom: 0;
+    width: 2px;
+    height: 100%;
+    transform: translateY(100%);
+    transition: transform 0.25s ease 0.75s;
+}
+
+.btn-wrap:hover::before,
+.btn-wrap:hover::after,
+.btn-wrap:hover button::before,
+.btn-wrap:hover button::after {
+    transform: translateX(0);
+    transform: translateY(0);
+}
+
+
+.nav-items a:hover {
+    text-decoration: none; 
+}
+
+.logo a:hover {
+    text-decoration: none; 
+}
+
+/*---------------------------
+           HEADER FIN
+-----------------------------*/
+
+/****** ******  ******  ******  ******  ******   ******* */
 /******STYLE POUR LE PORTOFOLIOS (LES PHOTOS) ******* */
  /****** ******  ******  ******  ******      ******* */
  
@@ -42,7 +189,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
 }
 
 /*couleur du carré calendrier*/
@@ -124,31 +270,25 @@ header .current-date{
 
 .days li:hover,
 .days li:hover ~ .days li {
-    background-color: rgba(64, 224, 208, 0.5); /* Couleur turquoise avec une opacité de 50% */
+    background-color: rgba(64, 224, 208, 0.5);
     border-radius: 700px;
 
 }
 
-
-
 .days li:not(.active):hover::before{
   background: #f2f2f2;
 }
+
 #choisirDate {
-  border: 3px solid black; /* Ajoute une bordure noire de 2px */
-  width: 480px; /* Assurez-vous que la largeur correspond à celle de la boîte */
+  border: 3px solid black; 
+  width: 480px; 
   height: 420px;
-  background-color: rgb(255, 255, 255); /* Rend le fond transparent */
+  background-color: rgb(255, 255, 255);
 
-  position: absolute; /* Position absolue par rapport à son conteneur */
-  left: 450px; /* Déplace de 300px vers la gauche */
-  top: 0px; /* Déplace de 200px vers le haut */
+  position: absolute; 
+  left: 450px;
+  top: 0px;
 
-}
-
-body {
-    background: #f5f5f5;
-    margin-top: 20px;
 }
 
 .ui-w-80 {
@@ -167,9 +307,9 @@ label.btn {
 }
 
 .btn-outline-primary {
-    border-color: #26B4FF;
+    border-color: #1a2931;
     background  : transparent;
-    color       : #26B4FF;
+    color       : #0b222e;
 }
 
 .btn {
@@ -177,19 +317,7 @@ label.btn {
 }
 
 .text-light {
-    color: #babbbc !important;
-}
-
-.btn-facebook {
-    border-color: rgba(0, 0, 0, 0);
-    background  : #3B5998;
-    color       : #fff;
-}
-
-.btn-instagram {
-    border-color: rgba(0, 0, 0, 0);
-    background  : #000;
-    color       : #fff;
+    color: #000000 !important;
 }
 
 .card {
@@ -209,215 +337,9 @@ label.btn {
     opacity   : 0;
 }
 
-.account-settings-links .list-group-item.active {
-    font-weight: bold !important;
-}
-
-html:not(.dark-style) .account-settings-links .list-group-item.active {
-    background: transparent !important;
-}
-
-.account-settings-multiselect~.select2-container {
-    width: 100% !important;
-}
-
-.light-style .account-settings-links .list-group-item {
-    padding     : 0.85rem 1.5rem;
-    border-color: rgba(24, 28, 33, 0.03) !important;
-}
-
-.light-style .account-settings-links .list-group-item.active {
-    color: #4e5155 !important;
-}
-
-.material-style .account-settings-links .list-group-item {
-    padding     : 0.85rem 1.5rem;
-    border-color: rgba(24, 28, 33, 0.03) !important;
-}
-
-.material-style .account-settings-links .list-group-item.active {
-    color: #4e5155 !important;
-}
-
-.dark-style .account-settings-links .list-group-item {
-    padding     : 0.85rem 1.5rem;
-    border-color: rgba(255, 255, 255, 0.03) !important;
-}
-
-.dark-style .account-settings-links .list-group-item.active {
-    color: #fff !important;
-}
-
-.light-style .account-settings-links .list-group-item.active {
-    color: #4E5155 !important;
-}
-
-.light-style .account-settings-links .list-group-item {
-    padding     : 0.85rem 1.5rem;
-    border-color: rgba(24, 28, 33, 0.03) !important;
-}
-
-
-/*---------------------------
-           HEADER
------------------------------*/
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    color: white;
-}
-
-.nav {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.nav-items a {
-    color: black;
-    text-decoration: none;
-    margin: 0 10px;
-    font-weight: 500;
-}
-
-.nav-items {
-    flex: 1;
-    display: flex;
-    justify-content: flex-start;
-    font-family: "Raleway", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 100;
-    font-style: normal;
-    color: white;
-    font-size: 14px;
-}
-
-.logo {
-    flex: 1;
-    text-align: center;
-    font-size: 40px;
-    font-family: "Orbitron", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 500;
-    font-style: normal;
-}
-
-.nav-button {
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-    font-family: "Raleway", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 100;
-    font-style: normal;
-    color: white;
-    font-size: 13px;
-}
-
-.nav-button button {
-    border: none;
-    cursor: pointer;
-    background-color: transparent;
-}
-
-.btn-wrap {
-    display: inline-block;
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-wrap::before,
-.btn-wrap::after {
-    content: '';
-    position: absolute;
-    background: black;
-}
-
-/* Bas */
-.btn-wrap::before {
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    transform: translateX(-100%);
-    transition: transform 0.25s ease;
-}
-
-/* Droite */
-.btn-wrap::after {
-    right: 0;
-    top: 0;
-    width: 2px;
-    height: 100%;
-    transform: translateY(-100%);
-    transition: transform 0.25s ease 0.25s;
-}
-
-/* Haut et Gauche */
-.btn-wrap button::after,
-.btn-wrap button::before {
-    content: '';
-    position: absolute;
-    background: black;
-}
-
-/* Haut */
-.btn-wrap button::before {
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    transform: translateX(100%);
-    transition: transform 0.25s ease 0.5s;
-}
-
-/* Gauche */
-.btn-wrap button::after {
-    left: 0;
-    bottom: 0;
-    width: 2px;
-    height: 100%;
-    transform: translateY(100%);
-    transition: transform 0.25s ease 0.75s;
-}
-
-.btn-wrap:hover::before,
-.btn-wrap:hover::after,
-.btn-wrap:hover button::before,
-.btn-wrap:hover button::after {
-    transform: translateX(0);
-    transform: translateY(0);
-}
-
-.nav-items a {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-}
-
-.nav-items a::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    background-color: black;
-    transform: scaleX(0);
-    transition: transform .3s ease-in-out;
-}
-
-.nav-items a:hover::after {
-    transform: scaleX(1);
-}
-
-
-
 /* Style pour déplacer les cases à cocher et leurs heures vers la droite */
 input[type="checkbox"],
 label {
-  margin-left: 7px; /* Ajoute un espacement à gauche */
+  margin-left: 7px; 
 }
+

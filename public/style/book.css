@@ -1,6 +1,5 @@
-/* cyrillic-ext */
 body {
-    font-family: 'Source Serif Pro', Helvetica, sans-serif;
+  font-family: 'Source Serif Pro', Helvetica, sans-serif;
 }
 
 body,
@@ -24,27 +23,28 @@ html {
 }
 
 .left-side {
-  background-color: rgb(63, 63, 74);
+  background-color: rgb(49, 49, 49);
   padding: 40px;
   min-height: 100vh;
 }
 
 .right-side {
-  background-color: rgb(99, 105, 122);
+  background-image: url('https://i.pinimg.com/564x/bd/62/9c/bd629c7afd65382401bb9a46fce6a0dd.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
   display: flex;
   align-items: center;
   flex-direction: column;
-
   justify-content: center;
   padding: 20px;
-
 }
 
 #summary {
   width: 60%;
   max-width: 400px;
   padding: 20px;
-  background-color: rgb(63, 63, 74);
+  background-color: rgb(49, 49, 49);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: left;
 }
@@ -104,4 +104,77 @@ html {
   padding-right: 1.5em;
   cursor: pointer;
   color: rgb(149, 149, 149);
+}
+
+.select2-container--default .select2-results__option {
+  color: black;
+  /* Texte noir pour les options du dropdown */
+  font-weight: 300;
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animated-out-right {
+  animation: slideOutRight 0.5s forwards;
+}
+
+.animated-in-left {
+  animation: slideInLeft 0.5s forwards;
+}
+
+#dropdownResult,
+.select2-selection__rendered,
+.select2-results__option {
+  font-weight: 300;
+  /* Applique le texte en gras */
+}
+
+#dropdownResult {
+  display: none;
+  width: 50%;
+}
+
+#parSalon,
+#parCoiffeur,
+#parService {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 10px;
+  font-weight: 400;
+  color: white;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  font-size: 40px;
+  border-radius: 50%;
+  text-decoration: none;
 }

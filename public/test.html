@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Filtrage Dynamique de Recherches</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Italiana&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link rel="stylesheet" href="./style/book.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <style>
+        /* cyrillic-ext */
+        body {
+            font-family: 'Source Serif Pro', Helvetica, sans-serif;
+        }
+
+        body,
+        html {
+            min-height: 100vh;
+            margin: 0;
+            font-family: "Raleway", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 100;
+            font-style: normal;
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .half {
+            flex: 1;
+        }
+
+        .left-side {
+            background-color: rgb(49, 49, 49);
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .right-side {
+            background-image: url('https://i.pinimg.com/564x/bd/62/9c/bd629c7afd65382401bb9a46fce6a0dd.jpg');
+            background-repeat: no-repeat;
+            /* Empêche la répétition de l'image */
+            background-size: cover;
+            /* Couvre entièrement l'espace disponible sans distorsion */
+            background-position: center;
+            /* Centre l'image dans l'élément */
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #summary {
+            width: 60%;
+            max-width: 400px;
+            padding: 20px;
+            background-color: rgb(49, 49, 49);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+
+        #filters {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            height: 300px;
+            font-size: 20px;
+            text-align: left;
+            line-height: 1.5;
+        }
+
+        #dateSelection {
+            display: none;
+            width: 100%;
+        }
+
+        #dateSelection label {
+            display: block;
+        }
+
+        #moreTimesBtn {
+            position: relative;
+            display: inline-block;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            overflow: hidden;
+        }
+
+        #moreTimesBtn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background-color: currentColor;
+            transition: width 0.3s ease;
+        }
+
+        #moreTimesBtn:hover::after {
+            width: 100%;
+        }
+
+        .select select {
+            border: none;
+            box-shadow: none;
+            outline: none;
+            background: transparent;
+            border-bottom: 1px solid #ffffff;
+            padding-right: 1.5em;
+            cursor: pointer;
+            color: rgb(149, 149, 149);
+        }
+
+        .select2-container--default .select2-results__option {
+            color: black;
+            /* Texte noir pour les options du dropdown */
+            font-weight: 300;
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .animated-out-right {
+            animation: slideOutRight 0.5s forwards;
+        }
+
+        .animated-in-left {
+            animation: slideInLeft 0.5s forwards;
+        }
+
+        #dropdownResult,
+        .select2-selection__rendered,
+        .select2-results__option {
+            font-weight: 300;
+            /* Applique le texte en gras */
+        }
+
+        #dropdownResult {
+            display: none;
+            width: 50%;
+        }
+
+        #parSalon,
+        #parCoiffeur,
+        #parService {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 20px;
+            /* Ajustez selon les besoins de votre mise en page */
+            right: 20px;
+            /* Ajustez selon les besoins de votre mise en page */
+            padding: 10px;
+            font-weight: 400;
+            color: white;
+            /* Texte blanc */
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            font-size: 40px;
+            border-radius: 50%;
+            /* Optionnel: donne une forme ronde au bouton */
+            text-decoration: none;
+            /* Supprime le soulignement si c'est un lien */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="half left-side">
+            <h1 id="rdv" m
+                style="font-family: Italiana, sans-serif;font-weight: 400;font-style: normal; color: white; font-size: 90px;">
+                Prendre un rendez-vous</h1>
+            <h1 id="selecthoraire"
+                style="font-family: Italiana, sans-serif;font-weight: 400;font-style: normal; color: white; font-size: 90px; display: none;">
+                Selectionner une plage horaire</h1>
+            <div id="filters" class="field is-grouped">
+                <div class="control">
+                    Rechercher par salon de coiffure
+                    <br>
+                    <button id="parSalon" class="button is-black">Commencer la recherche</button>
+                    <select id="dropdownResult" style="width: 50%; display: none;"></select>
+                    <!-- S'assurer que ce dropdown est pour les salons -->
+                    <select id="dropdownCoiffeur" style="width: 50%; display: none;"></select>
+                    <!-- Ce dropdown est pour les coiffeurs -->
+                </div>
+                <br>
+                <div class="control">
+                    Rechercher par coiffeur
+                    <br>
+                    <button id="parCoiffeur" class="button is-black">Commencer la recherche</button>
+
+                </div>
+                <br>
+                <div class="control">
+                    Rechercher par service
+                    <br>
+                    <button id="parService" class="button is-black">Commencer la recherche</button>
+                </div>
+                <br>
+
+                <div class="control">
+                    <button id="nextStepBtn" class="button is-black" style="display: none;">Etape suivante</button>
+                </div>
+            </div>
+            <select id="dropdownResult" style="width: 50%; display: none;">
+
+            </select>
+
+            <div id="results"></div>
+            <div id="dateSelection"></div>
+            <button id="moreTimesBtn" class="button is-primary" style="display: none;">+ Voir plus de plages</button>
+        </div>
+        <div class="half right-side">
+            <a href="./accueil/accueil.html" class="close-button">X</a>
+        </div>
+    </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('.close-button').addEventListener('click', function () {
+                window.location.href = './accueil.html';  // Redirige vers la page d'accueil
+            });
+
+            $('#dropdownResult').select2({
+                placeholder: "Sélectionnez un salon...",
+                allowClear: true
+            }).on('select2:select', function (e) {
+                const salonId = e.params.data.id;
+                afficherCoiffeurParSalon(salonId);
+            });
+
+            $('#dropdownResult').next('.select2').css('display', 'none');
+            $('#dropdownCoiffeur').select2().next('.select2').css('display', 'none');
+
+            document.getElementById('parSalon').addEventListener('click', function () {
+                hideAllExceptSalonDropdown(); // Cacher tous les autres éléments
+                afficherSalon();
+            });
+
+            document.getElementById('parCoiffeur').addEventListener('click', function () {
+                afficherCoiffeur();
+                $('#dropdownCoiffeur').next('.select2').css('display', 'block');
+
+            });
+
+            document.getElementById('parService').addEventListener('click', function () {
+                afficherService();
+            });
+
+
+            function hideAllExceptSalonDropdown() {
+                // Cache tous les éléments sauf le dropdown pour la sélection des salons
+                const elementsToHide = document.querySelectorAll('#filters > .control:not(:first-child), #results, #dateSelection, #moreTimesBtn');
+                elementsToHide.forEach(element => {
+                    element.style.display = 'none';
+                });
+                // Affiche seulement le dropdown de salon
+                document.getElementById('dropdownResult').style.display = 'block';
+                $('#dropdownResult').next('.select2').css('display', 'block');
+            }
+
+            function afficherSalon() {
+                fetch("/nomsSalons")
+                    .then(response => response.json())
+                    .then(data => {
+                        populateDropdown('dropdownResult', data, 'nomSalon', 'idSalon');
+                    })
+                    .catch(error => console.error("Erreur lors du chargement des salons:", error));
+            }
+
+            function afficherCoiffeur() {
+                fetch("/coiffeurs") // Assurez-vous que cette URL est correcte
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Données chargées:", data); // Pour vérifier les données reçues
+                        if (data.coiffeurs && Array.isArray(data.coiffeurs)) { // Assurez-vous que 'coiffeurs' est bien un tableau
+                            populateDropdown('dropdownCoiffeur', data.coiffeurs, 'nomCoiffeur', 'idCoiffeur');
+                        } else {
+                            console.error("Les données attendues ne sont pas dans le format correct:", data);
+                        }
+                    })
+                    .catch(error => console.error("Erreur lors du chargement des coiffeurs:", error));
+            }
+
+
+            function afficherService() {
+                fetch("/services")
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log("Services loaded:", data);
+                    })
+                    .catch(error => console.error("Erreur lors du chargement des services:", error));
+            }
+
+            function afficherCoiffeurParSalon(salonId) {
+                fetch(`/coiffeursParSalon/${salonId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        populateDropdown('dropdownCoiffeur', data, 'nomCoiffeur', 'idCoiffeur');
+                        $('#dropdownCoiffeur').next('.select2').css('display', 'block');
+                    })
+                    .catch(error => console.error('Erreur lors du chargement des coiffeurs:', error));
+            }
+
+            function populateDropdown(dropdownId, items, nameField, idField) {
+                const dropdown = document.getElementById(dropdownId);
+                dropdown.innerHTML = '';  // Efface les options existantes
+                items.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item[idField];
+                    option.textContent = item[nameField];
+                    dropdown.appendChild(option);
+                });
+                $(`#${dropdownId}`).select2();  // Réinitialiser Select2 avec les nouvelles options
+            }
+        });
+
+    </script>
+</body>
+
+</html>

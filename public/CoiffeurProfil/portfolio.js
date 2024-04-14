@@ -619,3 +619,53 @@ async function getAndRenderServices() {
 
 // Appeler la fonction pour récupérer et afficher les services lors du chargement de la page
 document.addEventListener("DOMContentLoaded", getAndRenderServices);
+
+document.addEventListener("DOMContentLoaded", function () {
+  document.getElementById('btnDeconnexion').addEventListener('click', deconnexion);
+
+  const token = sessionStorage.getItem("token");
+  if (!token) {
+    window.location.href = "/conn"; // Assurez-vous que le chemin est correct
+    return;
+  }
+
+  const loginType = sessionStorage.getItem("loginType");
+  updateNavigationBar(loginType);
+
+  document.getElementById('btnDeconnexion').addEventListener('click', deconnexion);
+});
+
+
+// change le navbar en fonction du type de user (client ou coiffeur)
+function updateNavigationBar(loginType) {
+  let navContent = "";
+  const navContainer = document.querySelector(".nav .nav-items"); // Sélectionner le conteneur de la barre de navigation
+  const prendreRdv = document.getElementById('btnPriseRdv');
+
+  if (loginType === "client") {
+    navContent = `
+    <a href="../accueil/accueil.html#section-about">À propos</a>
+    <a href="../accueil/accueil.html#section-contact">Contact</a>
+        <a href="../avis.html">Avis</a>
+        <a href="../AfficherAvis/afficherAvis.html">Tous les avis</a>
+        <a href="../rendezvousClient/rendezvousClient.html">Mes rendez-vous</a>
+
+        `;
+  } else if (loginType === "coiffeur") {
+    prendreRdv.style.display = 'none'
+    navContent = `
+        <a href="../CoiffeurProfil/portfolio.html">Profil</a>
+        <a href="../AfficherAvis/afficherAvis.html">Tous les avis</a>
+        <a href="../rendezvousCoiffeur/rendezvousCoiffeur.html">Afficher mes rendez vous</a>
+        `;
+  }
+
+  // Mettre à jour le contenu de la barre de navigation
+  navContainer.innerHTML = navContent;
+}
+
+//suppression du token lors de la deconnexion
+function deconnexion() {
+  sessionStorage.removeItem("token");
+  window.location.href = "../connexion.html";
+}

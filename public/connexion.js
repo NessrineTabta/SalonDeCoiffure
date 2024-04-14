@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
   loginForm.addEventListener("submit", function (event) {
     event.preventDefault();
 
-    // Get user input
+    // recuperer le input
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 

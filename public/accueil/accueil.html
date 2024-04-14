@@ -5,68 +5,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" />
+    <link rel="stylesheet" href="accueil.css">
     <link rel="icon" href="../logo/2.png" />
-    <link rel="stylesheet" href="../style/accueil.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
     <div class="header">
         <div class="nav">
-            <div class="nav-items">
-                <a href="../CoiffeurProfil/portfolio.html">Portfolio</a>
-                <a href="#">À propos</a>
-                <a href="#">Contact</a>
-                <a href="#">Mes rendez-vous</a>
-                <a href="../avis.html">Mettre un Avis</a>
-                <a href="../AfficherAvis/afficherAvis.html">Afficher tout les avis</a>
+            <div class="nav-items nav-items-left">
+            </div>
+            <div class="logo" style="color: black;"> <a href="../accueil/accueil.html">East Cutz</a></div>
 
-            </div>
-            <div class="logo" style="color: black;"> <a href="./accueil.html">East Cutz</a></div>
-            <div class="nav-button">
-                <div class="btn-wrap">
-                    <button id="btnPriseRdv" onclick="location.href='./book.html'" style="color: white;">PRENDRE RENDEZ-VOUS</button>
+            <div class="nav-items nav-items-right">
+                <div class="nav-button">
+                    <div class="btn-wrap">
+                        <button id="btnPriseRdv" onclick="location.href='../book.html'" style="color: white;">PRENDRE
+                            RENDEZ-VOUS</button>
+                    </div>
                 </div>
-            </div>
-            <div class="nav-button">
-                <div class="btn-wrap">
-                    <button id="btnDeconnexion" style="color: white;">DECONNEXION</button>
+                <div class="nav-button">
+                    <div class="btn-wrap">
+                        <button id="btnDeconnexion" style="color: white;">DECONNEXION</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <section class="section section-bg-image" >
+    <section class="section section-bg-image">
         <h1 id="slogan">PLUS QU'UNE <br>SIMPLE COUPE DE <br>CHEVEUX</h1>
     </section>
     <section class="section section-white">
-        <h1 style="font-size: 50px; text-align: center; justify-content: center;">Nos Services</h1>
-        <div class="icons-container"
-            style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; padding: 20px;">
-            <div class="icon-item">
-                <span class="material-symbols-rounded" style="font-size: 200px;">content_cut</span>
-                <h3>Coupe de cheveux</h3>
+        <h1>Nos Services</h1>
+        <div class="services-container">
+            <div class="service-item">
+                <img src="https://cdn-icons-png.flaticon.com/128/1057/1057369.png" alt="Coupe de cheveux">
+                <p>Coupe de cheveux</p>
             </div>
-            <div class="icon-item">
-                <span class="material-symbols-rounded" style="font-size: 200px;">color_lens</span>
-                <h3>Teinture</h3>
+            <div class="service-item">
+                <img src="https://cdn-icons-png.flaticon.com/128/3461/3461786.png" alt="Tonte de barbe">
+                <p>Tonte de barbe</p>
             </div>
-            <div class="icon-item">
-                <span class="material-symbols-rounded" style="font-size: 200px;">face</span>
-                <h3>Barbe</h3>
+            <div class="service-item">
+                <img src="https://cdn-icons-png.flaticon.com/128/3684/3684532.png" alt="Tresse">
+                <p>Tresse</p>
+            </div>
+            <div class="service-item">
+                <img src="https://cdn-icons-png.flaticon.com/128/3461/3461906.png" alt="Lavage">
+                <p>Lavage</p>
+            </div>
+            <div class="service-item">
+                <img src="https://cdn-icons-png.flaticon.com/128/3461/3461848.png" alt="Extension de cheveux">
+                <p>Extension de cheveux</p>
+            </div>
+            <div class="service-item">
+                <img src="https://cdn-icons-png.flaticon.com/128/3460/3460069.png" alt="Coloration">
+                <p>Coloration</p>
+            </div>
+            <div class="service-item">
+                <img src="https://cdn-icons-png.flaticon.com/128/7305/7305184.png" alt="Décoloration">
+                <p>Décoloration</p>
+            </div>
+            <div class="service-item">
+                <img src="https://cdn-icons-png.flaticon.com/128/5498/5498789.png" alt="Botox capillaire">
+                <p>Botox capillaire</p>
+            </div>
+            <div class="service-item">
+                <img src="https://cdn-icons-png.flaticon.com/128/2763/2763384.png" alt="Soins masque">
+                <p>Soins masque</p>
+            </div>
+            <div class="service-item">
+                <img src="https://cdn-icons-png.flaticon.com/128/14437/14437121.png" alt="Balayage">
+                <p>Balayage</p>
             </div>
         </div>
     </section>
-    <section class="section section-beige">
+
+
+    <section class="section section-beige" id="section-contact">
         <div class="contact-container">
             <div class="contact-text">
-                <h2 style="font-size: 50px;">Contactez-nous</h2>
+                <h2 style="font-family:Montserrat, sans-serif;font-optical-sizing: auto;font-weight: 300;font-style: normal;font-size: 50px;">Contactez-nous</h2>
             </div>
             <form class="contact-form">
                 <div class="field">
@@ -82,6 +110,12 @@
                     <input type="email" id="email" name="email" required>
                 </div>
                 <div class="field">
+                    <label for="salon">Salon</label>
+                    <select id="salonSelect" name="salon">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="field">
                     <label for="message">Message</label>
                     <textarea id="message" name="message" rows="4" required></textarea>
                 </div>
@@ -91,10 +125,24 @@
             </form>
         </div>
     </section>
+    <section class="section section-gray" id="section-about">
+        <h1>À propos</h1>
+        <br>
+        <p>Nous sommes une équipe voulant faciliter la mise en relation entre les clients et les salons de coiffure à
+            Montréal.
+            La plateforme propose donc de simplifier et rendre plus efficace ce processus en offrant diverses
+            fonctionnalités telles que la prises
+            de rendez-vous, la recherche d’un coiffeur, d’un service ou bien d’un salon de coiffure, ainsi que la
+            gestion de vos rendez-vous.
+            En effet, notre équipe vous promet une planification simple et efficace de vos soins capillaires, vous
+            faisant ainsi économiser du temps
+            pour vous sentir et paraître à votre meilleur. Oubliez les tracas de la prise de rendez-vous traditionnelle
+            et plongez dans une expérience
+            révolutionnaire où beauté et technologie se rencontrent pour coiffer votre monde ! </p>
+    </section>
     <section class="section section-black">
         <div class="container">
             <div class="columns">
-                <!-- À propos -->
                 <div class="column">
                     <h3>À propos</h3>
                     <ul>

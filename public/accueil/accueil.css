@@ -3,7 +3,7 @@
 --------------------------------------------*/
 
 .header {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -20,17 +20,11 @@
     align-items: center;
 }
 
-.nav-items a {
-    color: rgb(255, 255, 255);
-    text-decoration: none;
-    margin: 0 10px;
-    font-weight: 500;
-}
-
 .nav-items {
     flex: 1;
     display: flex;
-    justify-content: flex-start;
+    margin-right: auto;
+    justify-content: center;
     font-family: "Raleway", sans-serif;
     font-optical-sizing: auto;
     font-weight: 100;
@@ -39,9 +33,47 @@
     font-size: 14px;
 }
 
+.nav-items-left {
+    justify-content: flex-start;
+}
+
+.nav-items-right {
+    justify-content: flex-end;
+}
+
+.nav-items a {
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    margin: 0 10px;
+    font-weight: 500;
+}
+
+.nav-items a {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.nav-items a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: rgb(255, 255, 255);
+    transform: scaleX(0);
+    transition: transform .3s ease-in-out;
+}
+
+.nav-items a:hover::after {
+    transform: scaleX(1);
+}
+
 .logo {
     flex: 1;
     text-align: center;
+    z-index: 1;
     font-size: 40px;
     font-family: "Orbitron", sans-serif;
     font-optical-sizing: auto;
@@ -53,6 +85,7 @@
     flex: 1;
     display: flex;
     justify-content: flex-end;
+    margin-left: auto;
     font-family: "Raleway", sans-serif;
     font-optical-sizing: auto;
     font-weight: 100;
@@ -137,32 +170,6 @@
     transform: translateY(0);
 }
 
-.nav-items a {
-    position: relative;
-    overflow: hidden;
-    display: inline-block;
-}
-
-.nav-items a::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    background-color: rgb(255, 255, 255);
-    /* Ou une autre couleur de votre choix */
-    transform: scaleX(0);
-    transition: transform .3s ease-in-out;
-}
-
-.nav-items a:hover::after {
-    transform: scaleX(1);
-}
-
-
-
-
 /*-------------------------------------------
                 HEADERS FIN
 --------------------------------------------*/
@@ -174,6 +181,9 @@ html {
     padding-bottom: 0;
     width: 100%;
     height: 100%;
+}
+html {
+    scroll-behavior: smooth;
 }
 
 .section {
@@ -190,19 +200,117 @@ html {
     background-size: cover;
     background-position: center;
 }
-
+/*-------SECTION SERVICES--------*/
 .section-white {
-    background-color: white;
+    background: linear-gradient(120deg, #bdbdbd, #8f8f8f);
     color: black;
+    padding: 50px 0 20px; /* Ajoute du padding en haut et en bas de la section */
+    text-align: center;
+    display: flex;
     height: 700px;
+    flex-direction: column; /* Organise le contenu en colonne */
+    align-items: center; /* Centre horizontalement les éléments */
+    justify-content: flex-start; /* Alignement vertical au début de la section */
+}
+.section-white > h1 {
+    width: 100%; /* Assure que le titre prend toute la largeur pour le centrage */
+    margin-bottom: 30px; /* Espacement entre le titre et les services */
+    font-size: 36px; /* Taille de la police du titre */
+}
+.section-white h1 {
+    margin-bottom: 20px;
+    /* Ajoute un espace entre le titre et le paragraphe */
+    font-size: 36px;
+    /* Augmente la taille de la police pour le titre */
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+.services-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    width: 100%; /* Utilise toute la largeur disponible pour le conteneur */
+
 }
 
+.service-item {
+    flex: 0 1 18%; /* Flex-grow à 0, Flex-shrink à 1 et base à 18% */
+    margin: 10px; /* Espacement autour de chaque boîte */
+    box-shadow: 10px 10px 8px rgba(0,0,0,0.1); /* Ombre portée légère */
+    background-color: #fbfbfb; /* Fond clair pour chaque boîte */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 180px; /* Largeur fixe pour la cohérence */
+    height: 250px; /* Hauteur fixe pour la cohérence */
+    border-radius: 8px; /* Bords arrondis pour l'esthétique */
+}
+
+.service-item img {
+    max-width: 200px; /* Limite la taille des icônes */
+    height: auto;
+}
+
+.service-item p {
+    margin-top: 40px;
+    color: #000000; /* Couleur du texte plus foncée pour une meilleure lisibilité */
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+    font-size: 20px;
+}
+/*--------------------------------------------*/
+
+.section-black {
+    background-color: #000000;
+    padding: 50px 0;
+    height: 350px;
+}
+
+/*--------------SECTION A PROPOS--------------*/
+.section-gray {
+    background: linear-gradient(120deg, #0a0a0a, #484848);
+    padding: 50px 20px;
+    color: white;
+    height: 500px;
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 300;
+    font-style: normal;
+    font-size: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.section-gray h1 {
+    font-size: 40px; 
+    color: #E8E8E8;  
+    margin-bottom: 25px;
+}
+
+.section-gray p {
+    font-size: 18px;
+    line-height: 1.6;  
+    max-width: 1000px; 
+    margin: auto; 
+}
+/*--------------------------------------*/
+
+/*-------------SECTION CONTACT-----------*/
 .section-beige {
     background-color: #4e4d4b;
     color: white;
     height: 600px;
 }
-
 .contact-container {
     display: flex;
     justify-content: center;
@@ -218,7 +326,19 @@ html {
 .contact-form .field {
     margin-bottom: 20px;
 }
+.contact-form select {
+    width: 500px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background-color: white;
+    color: black;
+}
 
+.contact-form select option{
+    color: #000000;
+}
 .contact-form label {
     display: block;
     margin-bottom: 5px;
@@ -248,27 +368,9 @@ html {
 .contact-form button:hover {
     background-color: darken(#393939, 10%);
 }
+/*-------------------------------------*/
 
-.section-black {
-    background-color: #000000;
-    padding: 50px 0;
-    height: 350px;
-}
-
-.container {
-    width: 80%;
-    margin: 0 auto;
-}
-
-.columns {
-    display: flex;
-    justify-content: space-between;
-}
-
-.column {
-    flex: 1;
-}
-
+/*-------DERNIERE SECTION NOIR---------*/
 h3 {
     color: #333;
     margin-bottom: 20px;
@@ -287,7 +389,9 @@ ul li {
 ul li:last-child {
     margin-bottom: 0;
 }
+/*------------------------------------*/
 
+/*pour le slogan au centre de la page*/
 #slogan {
     font-family: "Outfit", sans-serif;
     font-optical-sizing: auto;
