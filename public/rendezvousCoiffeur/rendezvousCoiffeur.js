@@ -2,8 +2,6 @@
  *   Calendrier dynamique avec les jours, semaines, mois, etc.
  * ------------------------ */
 document.addEventListener("DOMContentLoaded", async function () {
-    document.getElementById('btnDeconnexion').addEventListener('click', deconnexion);
-
     // Variables globales
     const calendarBody = document.getElementById("days");
     const months = [
@@ -91,6 +89,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         year = month === 11 ? year + 1 : year;
         month = (month + 1) % 12;
         showCalendar(month, year);
+        afficherRendezVous(month, year); // Afficher les rendez-vous pour le nouveau mois
     }
 
     // Fonction pour passer au mois précédent
@@ -98,64 +97,71 @@ document.addEventListener("DOMContentLoaded", async function () {
         year = month === 0 ? year - 1 : year;
         month = month === 0 ? 11 : month - 1;
         showCalendar(month, year);
+        afficherRendezVous(month, year); // Afficher les rendez-vous pour le nouveau mois
     }
 
-    // Afficher le calendrier
+    // Afficher le calendrier et les rendez-vous du mois actuel
     showCalendar(month, year);
+    afficherRendezVous(month, year);
 
     // Gestion des événements pour les boutons précédent et suivant
     document.getElementById("next").addEventListener("click", next);
     document.getElementById("prev").addEventListener("click", previous);
 
-    // Fetch pour récupérer les rendez-vous du coiffeur
-    const token = sessionStorage.getItem("token");
-    try {
-        const response = await fetch("/rendezVousCoiffeur", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                token: token
-            })
-        });
+    // Fonction pour afficher les rendez-vous du mois spécifié
+    async function afficherRendezVous(month, year) {
+        const token = sessionStorage.getItem("token");
+        try {
+            const response = await fetch("/rendezVousCoiffeur", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    token: token,
+                    month: month,
+                    year: year
+                })
+            });
 
-        if (!response.ok) {
-            throw new Error("Erreur lors de la récupération des rendez-vous du coiffeur");
-        }
-
-        const rendezVous = await response.json();
-
-        // Afficher les rendez-vous sur le calendrier
-        rendezVous.forEach(appointment => {
-            const { dateRendezvous, heureRendezvous } = appointment;
-            const appointmentDate = new Date(dateRendezvous);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0); // Normaliser pour ignorer l'heure actuelle
-
-            const cell = document.querySelector(`[data-day="${appointmentDate.getDate()}"][data-month="${appointmentDate.getMonth()}"][data-year="${appointmentDate.getFullYear()}"]`);
-
-            if (cell) {
-                const appointmentDiv = document.createElement('div');
-                appointmentDiv.className = 'appointment-info';
-                appointmentDiv.textContent = `Rendez-vous à ${heureRendezvous}h`;
-
-                // Vérifier si la date du rendez-vous est passée
-                if (appointmentDate < today) {
-                    appointmentDiv.style.backgroundColor = "#cccccc"; // Gris clair pour les dates passées
-                } else {
-                    appointmentDiv.style.backgroundColor = "rgb(52,52,52)"; // Couleur normale pour les rendez-vous futurs
-                }
-
-                // Ajouter le div du rendez-vous à la cellule du calendrier
-                cell.appendChild(appointmentDiv);
+            if (!response.ok) {
+                throw new Error("Erreur lors de la récupération des rendez-vous du coiffeur");
             }
-        });
 
+            const rendezVous = await response.json();
 
-    } catch (error) {
-        console.error("Erreur lors de la récupération des rendez-vous du coiffeur:", error);
+            // Afficher les rendez-vous sur le calendrier
+            rendezVous.forEach(appointment => {
+                const { dateRendezvous, heureRendezvous } = appointment;
+                const appointmentDate = new Date(dateRendezvous);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Normaliser pour ignorer l'heure actuelle
+
+                const cell = document.querySelector(`[data-day="${appointmentDate.getDate()}"][data-month="${appointmentDate.getMonth()}"][data-year="${appointmentDate.getFullYear()}"]`);
+
+                if (cell) {
+                    const appointmentDiv = document.createElement('div');
+                    appointmentDiv.className = 'appointment-info';
+                    appointmentDiv.textContent = `Rendez-vous à ${heureRendezvous}h`;
+
+                    // Vérifier si la date du rendez-vous est passée
+                    if (appointmentDate < today) {
+                        appointmentDiv.style.backgroundColor = "#cccccc"; // Gris clair pour les dates passées
+                    } else {
+                        appointmentDiv.style.backgroundColor = "rgb(52,52,52)"; // Couleur normale pour les rendez-vous futurs
+                    }
+
+                    // Ajouter le div du rendez-vous à la cellule du calendrier
+                    cell.appendChild(appointmentDiv);
+                }
+            });
+
+        } catch (error) {
+            console.error("Erreur lors de la récupération des rendez-vous du coiffeur:", error);
+        }
     }
+
+    // ... Votre code existant
 });
 
 document.addEventListener("DOMContentLoaded", function () {
