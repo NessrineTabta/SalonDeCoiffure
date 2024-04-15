@@ -61,11 +61,7 @@ function convertImageToBase64(imageFile) {
 
 
 
-/* ------------------------
- *    Au chargement mettre l'image
-      du coiffeur 
- * ------------------------ */
-// Au chargement de la page, mettre l'image du coiffeur
+
 /* ------------------------
  *    Au chargement mettre l'image
       du coiffeur 
@@ -100,7 +96,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 });
-
 
 /* ------------------------
  *   ON RETOURNE TOUT LES SALONS AU CHARGEMENT DE LA PAGE:
