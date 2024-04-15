@@ -21,6 +21,25 @@ const router = express.Router();
 // token.js pour stocker et invalider le token dans logout, ou le retourner dynamiquement
 const tokenModule = require("./token");
 
+/* stock image portfolio */
+const multer = require("multer");
+const path = require("path");
+
+// Multer pour le stockage des images téléchargées
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // Le répertoire où stocker les images
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+    );
+  },
+});
+const upload = multer({ storage: storage });
+
 /* ------------------------
  * Définition des routes
  * ------------------------ */
@@ -178,6 +197,52 @@ function getUserByEmail(email) {
   });
 }
 
+// GET: Route pour vérifier le type d'utilisateur
+router.get("/verifierTypeUtilisateur", authentification, async (req, res) => {
+  try {
+    const email = req.user.email;
+
+    // Vérification dans la table Coiffeur
+    const coiffeur = await db("Coiffeur").where("email", email).first();
+    if (coiffeur) {
+      return res.status(200).json({ isCoiffeur: true });
+    }
+
+    // Vérification dans la table Client
+    const client = await db("Client").where("email", email).first();
+    if (client) {
+      return res.status(200).json({ isCoiffeur: false });
+    }
+
+    // Si l'utilisateur n'est ni un coiffeur ni un client
+    return res.status(404).json({ message: "Type d'utilisateur inconnu" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la vérification du type d'utilisateur",
+    });
+  }
+});
+
+// GET: Route to get coiffeurs by salon ID
+router.get("/coiffeursParSalon/:idSalon", async (req, res) => {
+  try {
+    const { idSalon } = req.params; // Extracting idSalon from the request parameters
+    // Query to select coiffeurs where `idSalon` matches the provided ID
+    const coiffeurs = await db
+      .select("*")
+      .from("Coiffeur")
+      .where("idSalon", idSalon);
+    res.status(200).json(coiffeurs);
+  } catch (error) {
+    console.error("Une erreur s'est produite:", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des coiffeurs." });
+  }
+});
+
 // GET: Obtenir tous les coiffeurs
 router.get("/coiffeurs", async (req, res) => {
   try {
@@ -257,6 +322,12 @@ async function rendezvousCoiffeur(idCoiffeur) { // Correction : Ajout de l'async
     throw error;
   }
 }
+
+
+
+
+
+
 
 
 
@@ -356,6 +427,10 @@ router.get("/tousservices", async (req, res) => {
     });
   }
 });
+
+
+
+
 
 // GET: Obtenir tous les services
 router.get("/showServices", async (req, res) => {
@@ -555,6 +630,11 @@ router.delete("/CoiffeurService", authentification, async (req, res) => {
   }
 });
 
+
+
+
+
+
 // GET: Desponibilite
 router.get("/disponibilites", authentification, async (req, res) => {
   try {
@@ -599,6 +679,7 @@ function getDisponibilites(email) {
       });
   });
 }
+
 
 // POST: disponibilité
 router.post("/disponibilites", authentification, async (req, res) => {
@@ -693,58 +774,15 @@ router.delete("/disponibilites", authentification, async (req, res) => {
   }
 });
 
-// Route pour vérifier le type d'utilisateur
-router.get("/verifierTypeUtilisateur", authentification, async (req, res) => {
+
+
+
+// POST: Mettre à jour l'image du Portefeuille avec Multer
+router.post("/portfolio", authentification, upload.single("file"), async (req, res) => {
   try {
+    const urlPhoto = req.body.urlPhoto; // Chemin du fichier téléversé par Multer
     const email = req.user.email;
 
-    // Vérification dans la table Coiffeur
-    const coiffeur = await db("Coiffeur").where("email", email).first();
-    if (coiffeur) {
-      return res.status(200).json({ isCoiffeur: true });
-    }
-
-    // Vérification dans la table Client
-    const client = await db("Client").where("email", email).first();
-    if (client) {
-      return res.status(200).json({ isCoiffeur: false });
-    }
-
-    // Si l'utilisateur n'est ni un coiffeur ni un client
-    return res.status(404).json({ message: "Type d'utilisateur inconnu" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message:
-        "Une erreur s'est produite lors de la vérification du type d'utilisateur",
-    });
-  }
-});
-
-// GET: Route to get coiffeurs by salon ID
-router.get("/coiffeursParSalon/:idSalon", async (req, res) => {
-  try {
-    const { idSalon } = req.params; // Extracting idSalon from the request parameters
-    // Query to select coiffeurs where `idSalon` matches the provided ID
-    const coiffeurs = await db
-      .select("*")
-      .from("Coiffeur")
-      .where("idSalon", idSalon);
-    res.status(200).json(coiffeurs);
-  } catch (error) {
-    console.error("Une erreur s'est produite:", error);
-    res
-      .status(500)
-      .json({ message: "Erreur lors de la récupération des coiffeurs." });
-  }
-});
-
-// POST: Mettre à jour l'image du Portefeuille
-router.post("/portfolio", authentification, async (req, res) => {
-  const urlPhoto = req.body.imageUrl;
-  const email = req.user.email;
-
-  try {
     // Récupérer l'identifiant du coiffeur à partir de l'email
     const idCoiffeur = await getIdByEmail(email);
 
@@ -768,6 +806,7 @@ router.post("/portfolio", authentification, async (req, res) => {
     });
   }
 });
+
 
 // POST: Récupérer Image du portfolio
 router.post("/recupererphoto", authentification, async (req, res) => {
@@ -795,31 +834,8 @@ router.post("/recupererphoto", authentification, async (req, res) => {
   }
 });
 
-/* stock image portfolio */
-const multer = require("multer");
-const path = require("path");
-
-// Configuration de multer pour le stockage des images téléchargées
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Le répertoire où stocker les images
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
-    );
-  },
-});
-
-const upload = multer({ storage: storage });
-
-router.post(
-  "/portfolioimages",
-  authentification,
-  upload.array("images", 3),
-  async (req, res) => {
+//POST: Enregistrer les 3 images uploadé dans portfolio bio chacune leur tour
+router.post("/portfolioimages",authentification,upload.array("images", 3),async (req, res) => {
     const email = req.user.email;
 
     try {

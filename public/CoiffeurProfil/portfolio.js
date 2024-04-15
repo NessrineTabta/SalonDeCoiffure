@@ -1,64 +1,78 @@
+/* ------------------------
+ *    Variables
+ * ------------------------ */
+
 const televerserInput = document.getElementById("televerser");
 const imageTeleverser = document.getElementById("imageteleverser");
 
+// Convertir l'image en base64
+function convertImageToBase64(imageFile) {
+  return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(imageFile);
+  });
+}
+
+
+
+
+
 /* ------------------------
  *    Au chargement mettre l'image
       du coiffeur 
  * ------------------------ */
 
-// Quand quelqu'un clique sur le bouton ''Changer l'image'' cette event va se lancer
-televerserInput.addEventListener("change", function () {
-  const file = this.files[0];
-  if (file) {
-    // Si un utilisateur insère un fichier, cela va créer un lecteur de fichier
-    const reader = new FileReader();
-    // Ce lecteur de fichier va téléverser dans le src de <image>
-    reader.onload = function (e) {
-      // Obtenez l'URL de l'image directement depuis le fichier
-      const imageUrl = e.target.result;
-
-      // Convertir le blob en URL
-      const blobUrl = URL.createObjectURL(file);
-
-      // Utiliser l'URL convertie comme source de l'image **RESOUS LE PROBLEME DU RELOAD :)))))))))))))))))))))**
-      imageTeleverser.src = blobUrl;
-
-      // Envoi de l'image au serveur
-      const formData = new FormData();
-      formData.append("file", file);
-
+  // Ajouter un écouteur d'événements au bouton "televerserInput"
+  televerserInput.addEventListener("change", function () {
+    const file = this.files[0];
+    if (file) {
       const token = sessionStorage.getItem("token");
-      const data = {
-        token: token,
-        imageUrl: blobUrl, // Stocker le lien de téléchargement dans imageUrl
-      };
 
-      fetch("/portfolio", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          // Gérer la réponse du serveur ici si nécessaire
+      // Créer un lecteur de fichier pour lire les données binaires de l'image
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const imageUrl = e.target.result; // Obtenez l'URL locale de l'image
+        imageTeleverser.src = imageUrl; // Définir l'image prévisualisée
+
+        // Envoi des données au serveur
+        fetch("/portfolio", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            urlPhoto: imageUrl, // Envoyer l'URL locale de l'image
+            token: token
+          })
         })
-        .catch((error) => console.error(error));
-    };
-    // Le fichier sera lu GRACE A UNE URL
-    reader.readAsDataURL(file);
-  }
-});
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            // Gérer la réponse du serveur ici si nécessaire
+          })
+          .catch((error) => console.error(error));
+      };
+      // Lire les données binaires de l'image à partir du fichier
+      reader.readAsDataURL(file);
+    }
+  });
+
+
 
 /* ------------------------
  *    Au chargement mettre l'image
       du coiffeur 
  * ------------------------ */
-// Au chargement, mettre l'image du coiffeur
+// Au chargement de la page, mettre l'image du coiffeur
+/* ------------------------
+ *    Au chargement mettre l'image
+      du coiffeur 
+ * ------------------------ */
+// Au chargement de la page, mettre l'image du coiffeur
 document.addEventListener("DOMContentLoaded", async function () {
-  // Si la page est rechargé, on va modifier la photo par lancienne
+  // Si la page est rechargée, on va modifier la photo par l'ancienne
   if (performance.navigation.type === 1) {
     try {
       const token = sessionStorage.getItem("token");
@@ -75,22 +89,18 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (data && data.imageUrl) {
         const imageUrl = data.imageUrl;
 
-        // Définir la source de l'image avec l'URL créée
+        // Définir la source de l'image avec l'URL récupérée
         imageTeleverser.src = imageUrl;
       } else {
         // Si l'URL de l'image n'est pas disponible, charger une image de secours
-        console.error(
-          "Une erreur est survenue lors de la récupération de l'URL de l'image."
-        );
+        console.error("Une erreur est survenue lors de la récupération de l'URL de l'image.");
       }
     } catch (error) {
-      console.error(
-        "Une erreur est survenue lors de l'initialisation de l'image :",
-        error
-      );
+      console.error("Une erreur est survenue lors de l'initialisation de l'image :", error);
     }
   }
 });
+
 
 /* ------------------------
  *   ON RETOURNE TOUT LES SALONS AU CHARGEMENT DE LA PAGE:
@@ -495,6 +505,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+
+
+
 // Fonction pour récupérer et afficher tous les services
 async function getAndRenderServices() {
   try {
