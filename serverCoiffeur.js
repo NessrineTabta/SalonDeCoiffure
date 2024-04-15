@@ -636,7 +636,7 @@ router.delete("/CoiffeurService", authentification, async (req, res) => {
 
 
 // GET: Desponibilite
-router.get("/disponibilites", authentification, async (req, res) => {
+router.post("/afficherdisponibilites", authentification, async (req, res) => {
   try {
     const email = req.user.email; // Email de l'utilisateur extrait du token
     const disponibilites = await getDisponibilites(email);
@@ -862,11 +862,7 @@ router.post("/portfolioimages",authentification,upload.array("images", 3),async 
         .status(200)
         .json({ message: "Images du portfolio mises à jour avec succès" });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        error:
-          "Une erreur est survenue lors de la mise à jour des images du portfolio",
-      });
+      
     }
   }
 );

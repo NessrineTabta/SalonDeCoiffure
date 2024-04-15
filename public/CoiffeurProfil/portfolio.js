@@ -20,8 +20,7 @@ function convertImageToBase64(imageFile) {
 
 
 /* ------------------------
- *    Au chargement mettre l'image
-      du coiffeur 
+ *   le bouton input image permet de mettre une image 
  * ------------------------ */
 
   // Ajouter un écouteur d'événements au bouton "televerserInput"
@@ -70,6 +69,7 @@ function convertImageToBase64(imageFile) {
 document.addEventListener("DOMContentLoaded", async function () {
   // Si la page est rechargée, on va modifier la photo par l'ancienne
   if (performance.navigation.type === 1) {
+
     try {
       const token = sessionStorage.getItem("token");
       const response = await fetch("/recupererphoto", {
@@ -94,6 +94,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     } catch (error) {
       console.error("Une erreur est survenue lors de l'initialisation de l'image :", error);
     }
+
   }
 });
 
@@ -174,7 +175,6 @@ boutonEnregistrer.addEventListener("click", async () => {
     alert("Une erreur s'est produite Lors de l'insertion");
   }
 });
-
 /* ------------------------
  *   Calendrier dynamique avec les jours, semaines, mois, etc.
  * ------------------------ */
@@ -285,7 +285,7 @@ let heureSelectionnee = []; // Initialiser le tableau pour stocker les heures s�
 const days = document.querySelectorAll(".days li");
 
 // Fonction pour afficher les heures possibles et le bouton Envoyer
-function afficherHeuresPossibles() {
+async function afficherHeuresPossibles() {
   // Placeholder: Remplacez ce bloc avec la logique pour afficher les heures possibles
   const heuresPossibles = [
     "8:00",
@@ -309,25 +309,34 @@ function afficherHeuresPossibles() {
     input.type = "checkbox";
     input.name = "heure-disponible"; // Assure que les cases à cocher sont regroupées
     input.value = heure;
+    input.id= "dateheureselec";
 
     const label = document.createElement("label");
     label.textContent = heure;
 
-    input.addEventListener("change", () => {
-      // Mettre à jour les heures sélectionnées lorsque l'utilisateur change la sélection
-      if (input.checked) {
-        heureSelectionnee.push(input.value);
-      } else {
-        const index = heureSelectionnee.indexOf(input.value);
-        if (index !== -1) {
-          heureSelectionnee.splice(index, 1);
-        }
-      }
-    });
-
     choisirDate.appendChild(input);
     choisirDate.appendChild(label);
     choisirDate.appendChild(document.createElement("br"));
+  });
+
+  // Récupérer les disponibilités depuis le serveur
+  const token = sessionStorage.getItem("token");
+  const disponibilites = await getDisponibilites(token);
+
+  // Parcourir les disponibilités pour cocher les cases correspondantes
+  disponibilites.forEach((disponibilite) => {
+    const { dateDisponibilite, heureDisponibilite } = disponibilite;
+
+    // Vérifier si la disponibilité correspond à la date sélectionnée
+    if (dateDisponibilite === formatDateToISO(dateSelectionnee)) {
+      // Cocher la case à cocher correspondante à l'heure
+      const heureCheckbox = document.querySelector(
+        `input[value="${heureDisponibilite}"]`
+      );
+      if (heureCheckbox) {
+        heureCheckbox.checked = true;
+      }
+    }
   });
 
   // Créer le bouton Envoyer
@@ -394,6 +403,60 @@ const formatDateToISO = (date) => {
 };
 
 renderCalendar();
+
+/* ----------------
+--------
+*    Les checkboxes heure/date déja coché sont afficher directement 
+* ------------------------ */
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const token = sessionStorage.getItem("token");
+  const disponibilites = await getDisponibilites(token);
+
+  disponibilites.forEach((disponibilite) => {
+    const { dateDisponibilite, heureDisponibilite } = disponibilite;
+
+    // Cocher la case à cocher correspondante à la date
+    const dateCheckbox = document.querySelector(
+      `input[value="${dateDisponibilite}"]`
+    );
+    if (dateCheckbox) {
+      dateCheckbox.checked = true;
+    }
+
+    // Cocher la case à cocher correspondante à l'heure
+    const heureCheckbox = document.querySelector(
+      `input[value="${heureDisponibilite}"]`
+    );
+    if (heureCheckbox) {
+      heureCheckbox.checked = true;
+    }
+  });
+});
+
+async function getDisponibilites(token) {
+  try {
+    const response = await fetch("/afficherdisponibilites", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Erreur lors de la requête fetch");
+    }
+
+    const data = await response.json();
+    return data.disponibilites;
+  } catch (error) {
+    console.error("Erreur lors de la récupération des disponibilités:", error);
+    return [];
+  }
+}
+
+
 
 /* ----------------
 --------
