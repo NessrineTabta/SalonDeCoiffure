@@ -898,5 +898,27 @@ router.post('/favoris', authentification, async (req, res) => {
   }
 });
 
+// Route pour supprimer un favori
+router.delete('/favoris/:idFavoris', async (req, res) => {
+  try {
+    const { idFavoris } = req.params;
+    
+    // Vérifier si le favori existe
+    const favori = await db('Favoris').where({ idFavoris }).first();
+    if (!favori) {
+      return res.status(404).json({ error: 'Favori non trouvé' });
+    }
+    
+    // Supprimer le favori de la base de données
+    await db('Favoris').where({ idFavoris }).del();
+
+    res.json({ message: 'Favori supprimé avec succès' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression du favori :', error);
+    res.status(500).json({ error: 'Erreur lors de la suppression du favori' });
+  }
+});
+
+
 
 module.exports = router;

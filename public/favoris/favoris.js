@@ -77,7 +77,7 @@ async function ajouterAuxFavoris(coiffeur) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ idCoiffeur: coiffeur.idCoiffeur , token}) // Envoyer l'id du coiffeur à ajouter aux favoris
+            body: JSON.stringify({ idCoiffeur: coiffeur.idCoiffeur , token,}) // Envoyer l'id du coiffeur à ajouter aux favoris
         });
         if (!response.ok) {
             throw new Error('Erreur lors de l\'ajout du coiffeur aux favoris');
