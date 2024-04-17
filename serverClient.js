@@ -62,7 +62,7 @@ function getUserByUsername(email) {
       .where("email", email)
       .first()
       .then((row) => {
-        resolve(row);
+        resolverow();
       })
       .catch((err) => {
         reject(err);
@@ -482,4 +482,65 @@ router.get("/salon", async (req, res) => {
     }
   });
 
+
+
+
+  
+// Route pour obtenir tous les favoris
+router.get('/favoris', async (req, res) => {
+  try {
+    const favoris = await db('Favoris').select('*');
+    res.json(favoris);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des favoris :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des favoris' });
+  }
+});
+
+
+
+
+// Route pour ajouter un favori
+router.post('/favoris', authentification, async (req, res) => {
+  const email = req.user.email;
+
+  try {
+    const client = await getUserByUsername(email)
+    const idClient= client.idClient
+
+    const { idCoiffeur } = req.body; // Assurez-vous que les données sont envoyées dans le corps de la requête
+    if (!idCoiffeur || !idClient) {
+
+
+      return res.status(400).json({ error: 'Veuillez fournir un idCoiffeur et un idClient', idClient: idClient });
+    }
+    
+    const newFavori = await db('Favoris').insert({ idCoiffeur, idClient });
+    res.status(201).json({ message: 'Favori ajouté avec succès', favori: newFavori });
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout du favori :', error);
+    res.status(500).json({ error: 'Erreur lors de l\'ajout du favori' });
+  }
+});
+
+// Route pour supprimer un favori
+router.delete('/favoris/:idFavoris', async (req, res) => {
+  try {
+    const { idFavoris } = req.params;
+    
+    // Vérifier si le favori existe
+    const favori = await db('Favoris').where({ idFavoris }).first();
+    if (!favori) {
+      return res.status(404).json({ error: 'Favori non trouvé' });
+    }
+    
+    // Supprimer le favori de la base de données
+    await db('Favoris').where({ idFavoris }).del();
+
+    res.json({ message: 'Favori supprimé avec succès' });
+  } catch (error) {
+    console.error('Erreur lors de la suppression du favori :', error);
+    res.status(500).json({ error: 'Erreur lors de la suppression du favori' });
+  }
+});
 module.exports = router;

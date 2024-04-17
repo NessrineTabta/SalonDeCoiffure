@@ -16,7 +16,6 @@ async function getCoiffeursFromServer() {
 
 const token = sessionStorage.getItem("token");
 
-
 // Fonction pour afficher les coiffeurs filtrés par nom ou prénom
 async function afficherCoiffeurs() {
     try {
@@ -57,7 +56,8 @@ async function afficherCoiffeurs() {
             // Création et gestion du cœur de favoris
             const favoriteIcon = document.createElement("span");
             favoriteIcon.classList.add("favorite-icon");
-            favoriteIcon.innerHTML = coiffeur.favori ? "&#x2665;" : "&#x2661;"; // Par défaut, le cœur n'est pas en favori
+            favoriteIcon.innerHTML = coiffeur.favori ? "&#x2665;" : "&#x2661;"; // Utilisez la classe favorite-icon-active lorsque le coiffeur est dans les favoris
+            favoriteIcon.classList.toggle("favorite-icon-active", coiffeur.favori); // Ajoute ou supprime la classe favorite-icon-active
             favoriteIcon.addEventListener("click", (event) => toggleFavorite(event, coiffeur));
             coiffeurCard.appendChild(favoriteIcon);
 
@@ -77,7 +77,10 @@ async function ajouterAuxFavoris(coiffeur) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ idCoiffeur: coiffeur.idCoiffeur , token,}) // Envoyer l'id du coiffeur à ajouter aux favoris
+            body: JSON.stringify({ 
+                idCoiffeur: coiffeur.idCoiffeur ,
+                token,
+            }) // Envoyer l'id du coiffeur à ajouter aux favoris
         });
         if (!response.ok) {
             throw new Error('Erreur lors de l\'ajout du coiffeur aux favoris');
@@ -90,16 +93,30 @@ async function ajouterAuxFavoris(coiffeur) {
     }
 }
 
+// Fonction pour supprimer un coiffeur des favoris
+async function supprimerDesFavoris(coiffeur) {
+    try {
+        // Ajoutez votre logique pour supprimer le coiffeur des favoris ici
+    } catch (error) {
+        console.error(error);
+        // Gérer l'erreur ici
+    }
+}
+
 // Fonction pour basculer l'état de favori d'un coiffeur
 async function toggleFavorite(event, coiffeur) {
     // Ici, vous pouvez mettre à jour l'état de favori du coiffeur et l'interface utilisateur en conséquence
     coiffeur.favori = !coiffeur.favori;
     event.target.innerHTML = coiffeur.favori ? "&#x2665;" : "&#x2661;";
+    event.target.classList.toggle("favorite-icon-active", coiffeur.favori); // Ajoute ou supprime la classe favorite-icon-active
     event.stopPropagation(); // Pour éviter que le clic ne déclenche la fonction de clic de la carte
     
     // Si le coiffeur est maintenant en favori, l'ajouter aux favoris
     if (coiffeur.favori) {
         await ajouterAuxFavoris(coiffeur);
+    } else {
+        // Si le coiffeur est supprimé des favoris, vous pouvez également mettre en œuvre une fonction pour le supprimer de la table des favoris ici
+        await supprimerDesFavoris(coiffeur);
     }
 }
 
