@@ -113,5 +113,4 @@ CREATE IF NOT EXISTS Favoris (
     idFavoris INTEGER PRIMARY KEY,
     idCoiffeur INTEGER NOT NULL,
     idClient INTEGER NOT NULL
-
 )
