@@ -879,7 +879,9 @@ router.get('/favoris', async (req, res) => {
 });
 
 // Route pour ajouter un favori
-router.post('/favoris', async (req, res) => {
+router.post('/favoris', authentification, async (req, res) => {
+  const email = req.user.email;
+
   try {
     const idClient = await getIdByEmail(email);
 
