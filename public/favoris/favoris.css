@@ -1,0 +1,27 @@
+/* Styles pour la barre de recherche */
+.search-container {
+    margin-bottom: 20px;
+}
+
+/* Styles pour les cartes des coiffeurs */
+.coiffeur-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    position: relative;
+}
+
+.coiffeur-card:hover {
+    background-color: #f0f0f0;
+}
+
+/* Styles pour le cœur de favoris */
+.favorite-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    color: red;
+    cursor: pointer;
+}
