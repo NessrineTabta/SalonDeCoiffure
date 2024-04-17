@@ -35,7 +35,7 @@ async function afficherCoiffeurs() {
             
             // Création de l'élément pour la photo du coiffeur
             const photo = document.createElement("img");
-            photo.src = coiffeur.photo ? coiffeur.photo : "photo_generique.jpg"; // Si pas de photo spécifique, utiliser une photo générique
+            photo.src = coiffeur.photo ? coiffeur.photo : "../logo/R.png"; // Si pas de photo spécifique, utiliser une photo générique
             photo.alt = coiffeur.nomCoiffeur + " " + coiffeur.prenomCoiffeur; // Texte alternatif pour l'accessibilité
             photo.classList.add("coiffeur-photo");
             coiffeurCard.appendChild(photo);
@@ -65,7 +65,7 @@ async function afficherCoiffeurs() {
         // Gérer l'erreur ici
     }
 }
-
+    
 
 
 
