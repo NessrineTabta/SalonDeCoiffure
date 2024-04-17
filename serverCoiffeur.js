@@ -867,4 +867,34 @@ router.post("/portfolioimages",authentification,upload.array("images", 3),async 
   }
 );
 
+// Route pour obtenir tous les favoris
+router.get('/favoris', async (req, res) => {
+  try {
+    const favoris = await db('Favoris').select('*');
+    res.json(favoris);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des favoris :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des favoris' });
+  }
+});
+
+// Route pour ajouter un favori
+router.post('/favoris', async (req, res) => {
+  try {
+    const idClient = await getIdByEmail(email);
+
+    const { idCoiffeur } = req.body; // Assurez-vous que les données sont envoyées dans le corps de la requête
+    if (!idCoiffeur || !idClient) {
+      return res.status(400).json({ error: 'Veuillez fournir un idCoiffeur et un idClient' });
+    }
+    
+    const newFavori = await db('Favoris').insert({ idCoiffeur, idClient });
+    res.status(201).json({ message: 'Favori ajouté avec succès', favori: newFavori });
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout du favori :', error);
+    res.status(500).json({ error: 'Erreur lors de l\'ajout du favori' });
+  }
+});
+
+
 module.exports = router;
