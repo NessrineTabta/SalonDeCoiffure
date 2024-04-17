@@ -29,15 +29,32 @@ async function afficherCoiffeurs() {
 
         coiffeursContainer.innerHTML = "";
         filteredCoiffeurs.forEach(coiffeur => {
+            // Création de la carte de coiffeur
             const coiffeurCard = document.createElement("div");
             coiffeurCard.classList.add("coiffeur-card");
-            coiffeurCard.textContent = coiffeur.nomCoiffeur + " " + coiffeur.prenomCoiffeur;
-            coiffeurCard.addEventListener("click", () => afficherProfil(coiffeur));
+            
+            // Création de l'élément pour la photo du coiffeur
+            const photo = document.createElement("img");
+            photo.src = coiffeur.photo ? coiffeur.photo : "photo_generique.jpg"; // Si pas de photo spécifique, utiliser une photo générique
+            photo.alt = coiffeur.nomCoiffeur + " " + coiffeur.prenomCoiffeur; // Texte alternatif pour l'accessibilité
+            photo.classList.add("coiffeur-photo");
+            coiffeurCard.appendChild(photo);
+            
+            // Création de l'élément pour le nom et le prénom du coiffeur
+            const nomPrenomContainer = document.createElement("div");
+            nomPrenomContainer.classList.add("nom-prenom-container");
+            
+            const nomPrenomElement = document.createElement("div");
+            nomPrenomElement.textContent = coiffeur.nomCoiffeur + " " + coiffeur.prenomCoiffeur;
+            nomPrenomElement.classList.add("coiffeur-nom-prenom");
+            nomPrenomContainer.appendChild(nomPrenomElement);
+            
+            coiffeurCard.appendChild(nomPrenomContainer);
             
             // Création et gestion du cœur de favoris
             const favoriteIcon = document.createElement("span");
             favoriteIcon.classList.add("favorite-icon");
-            favoriteIcon.innerHTML = "&#x2661;"; // Par défaut, le cœur n'est pas en favori
+            favoriteIcon.innerHTML = coiffeur.favori ? "&#x2665;" : "&#x2661;"; // Par défaut, le cœur n'est pas en favori
             favoriteIcon.addEventListener("click", (event) => toggleFavorite(event, coiffeur));
             coiffeurCard.appendChild(favoriteIcon);
             
@@ -48,6 +65,9 @@ async function afficherCoiffeurs() {
         // Gérer l'erreur ici
     }
 }
+
+
+
 
 // Fonction pour afficher le profil complet d'un coiffeur
 function afficherProfil(coiffeur) {
