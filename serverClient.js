@@ -199,14 +199,16 @@ router.post("/rendezVousClients", authentification, async (req, res) => {
     if (!client) {
       return res.status(404).json({ message: "Client non trouvé." });
     }
-    const rendezVous = await db.select("idRendezvous", "dateRendezvous", "heureRendezvous")
+    const rendezVous = await db
+      .select("idRendezvous", "dateRendezvous", "heureRendezvous")
       .from("Rendezvous")
       .where("idClient", client.idClient); // Récupérer les rendez-vous du client
     res.json(rendezVous);
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      message: "Une erreur s'est produite lors de la récupération des rendez-vous.",
+      message:
+        "Une erreur s'est produite lors de la récupération des rendez-vous.",
     });
   }
 });
@@ -247,30 +249,33 @@ function getClientRendezvous(clientEmail) {
 }
 
 // DELETE: Supprimer/Annuler un rendez-vous
-router.delete("/RendezVous/:idRendezvous", authentification, async (req, res) => {
-  try {
-    const idRendezvous = req.params.idRendezvous; // Récupérer id par url
+router.delete(
+  "/RendezVous/:idRendezvous",
+  authentification,
+  async (req, res) => {
+    try {
+      const idRendezvous = req.params.idRendezvous; // Récupérer id par url
 
-    // verifier si le rendez-vous existe
-    const Rendezvous = await db("Rendezvous")
-      .where("idRendezvous", idRendezvous)
-      .first();
-    if (!Rendezvous) {
-      return res.status(404).json({ message: "Rendez-vous non trouvé" });
+      // verifier si le rendez-vous existe
+      const Rendezvous = await db("Rendezvous")
+        .where("idRendezvous", idRendezvous)
+        .first();
+      if (!Rendezvous) {
+        return res.status(404).json({ message: "Rendez-vous non trouvé" });
+      }
+
+      // supprimer le rendez-vous de la table Rendezvous
+      await db("Rendezvous").where("idRendezvous", idRendezvous).del();
+      res.json({ message: "Rendez-vous supprimé avec succès" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        message:
+          "Une erreur s'est produite lors de la suppression du rendez-vous",
+      });
     }
-
-    // supprimer le rendez-vous de la table Rendezvous
-    await db("Rendezvous").where("idRendezvous", idRendezvous).del();
-    res.json({ message: "Rendez-vous supprimé avec succès" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message:
-        "Une erreur s'est produite lors de la suppression du rendez-vous",
-    });
   }
-});
-
+);
 
 // PUT: Modifier un rendez-vous existant d'un client
 router.put("/Rendezvous/:idRendezvous", authentification, async (req, res) => {
@@ -468,79 +473,99 @@ router.get("/salon", async (req, res) => {
   }
 });
 
-  // GET: Route pour récupérer TOUT les salons disponibles
-  router.get("/nomsSalons", async (req, res) => {
-    try {
-      // Make sure to select both `idSalon` and `nomSalon` from the `Salon` table
-      const nomsSalons = await db.select("idSalon", "nomSalon").from("Salon");
-      res.status(200).json(nomsSalons);
-    } catch (error) {
-      console.error("Une erreur s'est produite:", error);
-      res
-        .status(500)
-        .json({ message: "Erreur lors de la récupération des noms de salons." });
-    }
-  });
-
-
-
-
-  
-// Route pour obtenir tous les favoris
-router.get('/favoris', async (req, res) => {
+// GET: Obtenir un salon par son ID à partir des paramètres de l'URL
+router.get("/salon/:id", async (req, res) => {
   try {
-    const favoris = await db('Favoris').select('*');
-    res.json(favoris);
+    const { id } = req.params; // Récupérer l'ID du salon à partir des paramètres de l'URL
+
+    // Requête pour obtenir le salon par son ID
+    const salon = await db("Salon").select("*").where("idSalon", id).first();
+
+    // Vérifier si le salon existe
+    if (!salon) {
+      return res.status(404).json({ message: "Salon non trouvé." });
+    }
+
+    res.status(200).json(salon); // Renvoyer les informations sur le salon
   } catch (error) {
-    console.error('Erreur lors de la récupération des favoris :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des favoris' });
+    console.error(error);
+    res.status(500).json({
+      message: "Une erreur s'est produite lors de la récupération du salon.",
+    });
   }
 });
 
+// GET: Route pour récupérer TOUT les salons disponibles
+router.get("/nomsSalons", async (req, res) => {
+  try {
+    // Make sure to select both `idSalon` and `nomSalon` from the `Salon` table
+    const nomsSalons = await db.select("idSalon", "nomSalon").from("Salon");
+    res.status(200).json(nomsSalons);
+  } catch (error) {
+    console.error("Une erreur s'est produite:", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des noms de salons." });
+  }
+});
 
-
+// Route pour obtenir tous les favoris
+router.get("/favoris", async (req, res) => {
+  try {
+    const favoris = await db("Favoris").select("*");
+    res.json(favoris);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des favoris :", error);
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la récupération des favoris" });
+  }
+});
 
 // Route pour ajouter un favori
-router.post('/favoris', authentification, async (req, res) => {
+router.post("/favoris", authentification, async (req, res) => {
   const email = req.user.email;
 
   try {
-    const client = await getUserByUsername(email)
-    const idClient= client.idClient
+    const client = await getUserByUsername(email);
+    const idClient = client.idClient;
 
     const { idCoiffeur } = req.body; // Assurez-vous que les données sont envoyées dans le corps de la requête
     if (!idCoiffeur || !idClient) {
-
-
-      return res.status(400).json({ error: 'Veuillez fournir un idCoiffeur et un idClient', idClient: idClient });
+      return res.status(400).json({
+        error: "Veuillez fournir un idCoiffeur et un idClient",
+        idClient: idClient,
+      });
     }
-    
-    const newFavori = await db('Favoris').insert({ idCoiffeur, idClient });
-    res.status(201).json({ message: 'Favori ajouté avec succès', favori: newFavori });
+
+    const newFavori = await db("Favoris").insert({ idCoiffeur, idClient });
+    res
+      .status(201)
+      .json({ message: "Favori ajouté avec succès", favori: newFavori });
   } catch (error) {
-    console.error('Erreur lors de l\'ajout du favori :', error);
-    res.status(500).json({ error: 'Erreur lors de l\'ajout du favori' });
+    console.error("Erreur lors de l'ajout du favori :", error);
+    res.status(500).json({ error: "Erreur lors de l'ajout du favori" });
   }
 });
 
 // Route pour supprimer un favori
-router.delete('/favoris/:idFavoris', async (req, res) => {
+router.delete("/favoris/:idFavoris", async (req, res) => {
   try {
     const { idFavoris } = req.params;
-    
-    // Vérifier si le favori existe
-    const favori = await db('Favoris').where({ idFavoris }).first();
-    if (!favori) {
-      return res.status(404).json({ error: 'Favori non trouvé' });
-    }
-    
-    // Supprimer le favori de la base de données
-    await db('Favoris').where({ idFavoris }).del();
 
-    res.json({ message: 'Favori supprimé avec succès' });
+    // Vérifier si le favori existe
+    const favori = await db("Favoris").where({ idFavoris }).first();
+    if (!favori) {
+      return res.status(404).json({ error: "Favori non trouvé" });
+    }
+
+    // Supprimer le favori de la base de données
+    await db("Favoris").where({ idFavoris }).del();
+
+    res.json({ message: "Favori supprimé avec succès" });
   } catch (error) {
-    console.error('Erreur lors de la suppression du favori :', error);
-    res.status(500).json({ error: 'Erreur lors de la suppression du favori' });
+    console.error("Erreur lors de la suppression du favori :", error);
+    res.status(500).json({ error: "Erreur lors de la suppression du favori" });
   }
 });
 module.exports = router;
