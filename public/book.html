@@ -14,7 +14,6 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
     <link rel="stylesheet" href="./style/book.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-
 </head>
 
 <body>
@@ -30,20 +29,21 @@
                 <div class="control">
                     Rechercher par salon de coiffure
                     <br>
-                    <button id="parSalon" class="button is-black">Commencer la recherche</button>
+                    <select id="dropdownResultSalon" style="width: 50%;"></select>
                 </div>
                 <br>
                 <div class="control">
                     Rechercher par coiffeur
                     <br>
-                    <button id="parCoiffeur" class="button is-black">Commencer la recherche</button>
+                    <select id="dropdownResultCoiffeur" style="width: 50%;" disabled></select>
                 </div>
                 <br>
                 <div class="control">
                     Rechercher par service
                     <br>
-                    <button id="parService" class="button is-black">Commencer la recherche</button>
+                    <select id="dropdownResultService" style="width: 50%;" disabled></select>
                 </div>
+
                 <br>
 
                 <div class="control">
@@ -60,7 +60,6 @@
         </div>
         <div class="half right-side">
             <a href="accueil/accueil.html" class="close-button">X</a>
-            </div>
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

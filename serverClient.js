@@ -468,18 +468,31 @@ router.get("/salon", async (req, res) => {
   }
 });
 
-  // GET: Route pour récupérer TOUT les salons disponibles
-  router.get("/nomsSalons", async (req, res) => {
-    try {
-      // Make sure to select both `idSalon` and `nomSalon` from the `Salon` table
-      const nomsSalons = await db.select("idSalon", "nomSalon").from("Salon");
-      res.status(200).json(nomsSalons);
-    } catch (error) {
-      console.error("Une erreur s'est produite:", error);
-      res
-        .status(500)
-        .json({ message: "Erreur lors de la récupération des noms de salons." });
-    }
+  // GET: Route pour récupérer TOUT les salons disponibles POUR BERIVAN
+// GET: Noms des salons disponibles
+router.get("/nomsSalons", async (req, res) => {
+  try {
+    const nomsSalons = await getNomsSalons();
+    res.status(200).json(nomsSalons);
+  } catch (error) {
+    console.error("Une erreur s'est produite:", error);
+    res.status(500).json({ message: "Erreur lors de la récupération des noms de salons." });
+  }
+});
+
+// Fonction: obtenir les noms de tous les salons
+function getNomsSalons() {
+  return new Promise((resolve, reject) => {
+    db.select("idSalon", "nomSalon")
+      .from("Salon")
+      .then((rows) => {
+        resolve(rows);
+      })
+      .catch((err) => {
+        reject(err);
+      });
   });
+}
+
 
 module.exports = router;

@@ -196,155 +196,165 @@
 
 
 // });
-
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelector('.close-button').addEventListener('click', function () {
-        window.history.back() //retourner a la page precedente
-    });
-
-    const buttons = {
-        parSalon: afficherSalon,
-        parCoiffeur: afficherCoiffeur,
-        parService: afficherService
-    };
-
-    $(document).ready(function () {
-        // Activation de Select2
-        $('#dropdownResult').select2({
-            placeholder: "Recherchez ici...", // Texte d'indication
-            allowClear: true // Permet de réinitialiser la sélection
-        });
-        $('#dropdownResult').next('.select2').css('display', 'none');
-
-    });
-
-    Object.keys(buttons).forEach(id => {
-        document.getElementById(id).addEventListener('click', function () {
-            console.log(`Button ${id} clicked`);
-            initializeSelect2AndShowDropdown(); // Initialisez Select2 et montre le dropdown
-            buttons[id](); // Exécutez la fonction pour charger les données
-        });
-    });
-
-    function initializeSelect2AndShowDropdown() {
-        // Initialiser Select2  si cest pas déjà fait
-        if (!$.data($('#dropdownResult')[0], 'select2')) {
-            $('#dropdownResult').select2({
-                placeholder: "Recherchez ici...", // Texte d'indication
-                allowClear: true // Permet de réinitialiser la sélection
-            });
+document.addEventListener('DOMContentLoaded', async function () {
+    try {
+        // Chargement des noms des salons
+        const responseSalons = await fetch("/nomsSalons");
+        if (!responseSalons.ok) {
+            throw new Error('Failed to fetch salons');
         }
-
-        // Cache le conteneur Select2 initialement
-        $('#dropdownResult').next('.select2').css('display', 'none');
-
-        // Appelle la fonction pour cacher les éléments
-        hideElements();
-    }
-
-    function hideElements() {
-        const filters = document.getElementById('filters');
-        const results = document.getElementById('results');
-        const dateSelection = document.getElementById('dateSelection');
-        const dropdown = document.getElementById('dropdownResult');
-
-        // Appliquer l'animation de sortie
-        filters.classList.add('animated-out-right');
-        results.classList.add('animated-out-right');
-        dateSelection.classList.add('animated-out-right');
-
-        setTimeout(() => {
-            filters.style.display = 'none';
-            results.style.display = 'none';
-            dateSelection.style.display = 'none';
-
-            dropdown.classList.add('animated-in-left');
-            dropdown.style.left = '0';  // Commence l'animation d'entrée
-            dropdown.style.opacity = 1;
-            $('#dropdownResult').next('.select2').css('display', 'block');
-        }, 500);  // Correspond à la durée de l'animation de sortie
-    }
-
-    function afficherSalon() {
-        fetch("/nomsSalons")
-            .then(response => response.json())
-            .then(data => {
-                console.log("Salons loaded:", data);
-                populateDropdown(data, 'nomSalon', 'idSalon');
-            })
-            .catch(error => console.error("Erreur lors du chargement des salons:", error));
-    }
-
-    function afficherCoiffeur() {
-        fetch("/coiffeurs")
-            .then(response => response.json())
-            .then(data => {
-                console.log("Coiffeurs loaded:", data);
-                populateDropdown(data.coiffeurs, 'prenomCoiffeur', 'nomCoiffeur', 'idCoiffeur');
-            })
-            .catch(error => console.error("Erreur lors du chargement des coiffeurs:", error));
-    }
-
-    function afficherService() {
-        fetch("/services")
-            .then(response => response.json())
-            .then(data => {
-                console.log("Service loaded:", data);
-                populateDropdown(data.services, 'nom', 'idService');
-            })
-            .catch(error => console.error("Erreur lors du chargement des services:", error));
-    }
-
-    const salonSelect = document.getElementById('parSalon');
-
-    salonSelect.addEventListener("change", function () {
-        fetchCoiffeursForSalon(this.value);
-    });
-
-    function fetchCoiffeursForSalon(salonId) {
-        if (!salonId) {
-            coiffeurSelect.innerHTML =
-                '<option value="">Choisir un coiffeur</option>';
-            coiffeurSelect.disabled = true;
+        const dataSalons = await responseSalons.json();
+        if (!dataSalons || dataSalons.length === 0) {
+            console.error("Aucun salon trouvé");
             return;
         }
+        populateDropdown(dataSalons, 'nomSalon', null, 'idSalon', '#dropdownResultSalon');
 
-        fetch(`/coiffeursParSalon/${salonId}`)
-            .then((response) => response.json())
-            .then((coiffeurs) => {
-                coiffeurSelect.innerHTML =
-                    '<option value="">Choisir un coiffeur</option>';
-                coiffeurSelect.disabled = false;
-                coiffeurs.forEach((coiffeur) => {
-                    const option = document.createElement("option");
-                    option.value = coiffeur.idCoiffeur;
-                    option.textContent = `${coiffeur.nomCoiffeur} ${coiffeur.prenomCoiffeur}`;
-                    coiffeurSelect.appendChild(option);
-                });
-            })
-            .catch((error) => console.error("Error fetching coiffeur data:", error));
-    }
+        // Chargement des coiffeurs
+        const responseCoiffeurs = await fetch(`/coiffeurs`);
+        if (!responseCoiffeurs.ok) {
+            throw new Error('Failed to fetch coiffeurs');
+        }
+        const dataCoiffeurs = await responseCoiffeurs.json();
+        if (!dataCoiffeurs || dataCoiffeurs.length === 0) {
+            console.error("Aucun coiffeur trouvé");
+            return;
+        }
+        populateDropdown(dataCoiffeurs, 'prenomCoiffeur', null, 'idCoiffeur', '#dropdownResultCoiffeur');
 
-    function populateDropdown(items, nameField1, nameField2, idField) {
-        const dropdown = document.getElementById('dropdownResult');
-        dropdown.innerHTML = '';
+        // Chargement des services d'un coiffeur
+        // Chargement des services d'un coiffeur
+        const idCoiffeur = document.getElementById('dropdownResultCoiffeur').value;
+        const responseServices = await fetch(`/servicess/${idCoiffeur}`);
 
-        // Ajout d'une option par défaut
-        const defaultOption = new Option("Sélectionnez une option", "", false, false);
-        defaultOption.disabled = true; // Rendre l'option non sélectionnable
-        defaultOption.selected = true; // Pré-sélectionner cette option par défaut
-        dropdown.add(defaultOption);
+        if (!responseServices.ok) {
+            throw new Error('Failed to fetch services');
+        }
+        const dataServices = await responseServices.json();
+        if (!dataServices || dataServices.length === 0) {
+            console.error("Aucun service trouvé pour ce coiffeur");
+            return;
+        }
+        populateDropdown(dataServices, 'nom', null, 'idService', '#dropdownResultService');
 
-        items.forEach(item => {
-            const optionText = item[nameField1] + ' ' + item[nameField2]; // Concaténer prénom et nom
-            const option = new Option(optionText, item[idField]);
-            dropdown.add(option);
+
+
+        // Gestion de l'écouteur pour le bouton de continuation
+        const nextStepBtn = document.getElementById('nextStepBtn');
+        nextStepBtn.addEventListener('click', async () => {
+            const selectedSalon = document.getElementById('dropdownResultSalon').value;
+            const selectedCoiffeur = document.getElementById('dropdownResultCoiffeur').value;
+            const selectedService = document.getElementById('dropdownResultService').value;
+
+            // Vérification que toutes les valeurs sont sélectionnées
+            if (selectedSalon && selectedCoiffeur && selectedService) {
+                // Cacher les éléments précédents
+                const filters = document.getElementById('filters');
+                if (filters) filters.style.display = 'none';
+
+                // Afficher le contenu pour les dates disponibles
+                const datesDisponibles = document.getElementById('datesDisponibles');
+                if (datesDisponibles) datesDisponibles.style.display = 'block';
+
+                // Chargement des disponibilités des coiffeurs
+                const responseDisponibilites = await fetch("/disponibilites");
+                if (!responseDisponibilites.ok) {
+                    throw new Error('Failed to fetch disponibilites');
+                }
+                const dataDisponibilites = await responseDisponibilites.json();
+                if (!dataDisponibilites || dataDisponibilites.length === 0) {
+                    console.error("Aucune disponibilité trouvée");
+                    return;
+                }
+                // Ici, vous pouvez traiter les données de disponibilité comme vous le souhaitez
+                console.log("Disponibilités des coiffeurs:", dataDisponibilites);
+            } else {
+                alert("Veuillez sélectionner un salon, un coiffeur et un service.");
+            }
         });
-        dropdown.disabled = false;
+
+        // Gestion de la sélection des dates disponibles
+        const datesSelection = document.getElementById('dateSelection');
+        datesSelection.addEventListener('change', () => {
+            const selectedDate = datesSelection.value;
+            if (selectedDate) {
+                // Cacher les éléments précédents
+                const datesDisponibles = document.getElementById('datesDisponibles');
+                if (datesDisponibles) datesDisponibles.style.display = 'none';
+
+                // Afficher le contenu pour les heures disponibles
+                const heuresDisponibles = document.getElementById('heuresDisponibles');
+                if (heuresDisponibles) heuresDisponibles.style.display = 'block';
+            }
+        });
+
+        // Gestion de la sélection de l'heure disponible
+        const heuresSelection = document.getElementById('heureSelection');
+        heuresSelection.addEventListener('change', () => {
+            const selectedHeure = heuresSelection.value;
+            if (selectedHeure) {
+                // Afficher le bouton de confirmation
+                const confirmBtn = document.getElementById('confirmBtn');
+                if (confirmBtn) confirmBtn.style.display = 'block';
+            }
+        });
+
+        // Gestion de la confirmation du rendez-vous
+        const confirmBtn = document.getElementById('confirmBtn');
+        confirmBtn.addEventListener('click', async () => {
+            const selectedSalon = document.getElementById('dropdownResultSalon').value;
+            const selectedCoiffeur = document.getElementById('dropdownResultCoiffeur').value;
+            const selectedService = document.getElementById('dropdownResultService').value;
+            const selectedDate = document.getElementById('dateSelection').value;
+            const selectedHeure = document.getElementById('heureSelection').value;
+
+            try {
+                const response = await fetch("/Rendezvous", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        dateRendezvous: selectedDate,
+                        heureRendezvous: selectedHeure,
+                        idCoiffeur: selectedCoiffeur
+                    })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    alert("Rendez-vous créé avec succès !");
+                } else {
+                    console.error("Échec de la création du rendez-vous.");
+                    alert("Échec de la création du rendez-vous. Veuillez réessayer.");
+                }
+            } catch (error) {
+                console.error("Erreur lors de la création du rendez-vous:", error);
+                alert("Une erreur s'est produite lors de la création du rendez-vous. Veuillez réessayer.");
+            }
+        });
+    } catch (error) {
+        console.error(error);
     }
 });
 
+// Fonction pour peupler un dropdown avec des données
+function populateDropdown(items, nameField1, nameField2, idField, selector) {
+    const dropdown = document.querySelector(selector);
+    dropdown.innerHTML = ''; // Vide le dropdown
 
+    for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const option = document.createElement('option');
+        option.value = item[idField];
+        if (nameField2) {
+            option.textContent = `${item[nameField1]} ${item[nameField2]}`;
+        } else {
+            option.textContent = item[nameField1];
+        }
+        dropdown.appendChild(option);
+    }
+    
+}
 
 
 
