@@ -3,69 +3,359 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Filtrage Dynamique de Recherches</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Italiana&display=swap" rel="stylesheet">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Italiana&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
-    <link rel="stylesheet" href="./style/book.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+    <title>Prise de Rendez-vous</title>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+    <link href='https://unpkg.com/fullcalendar@5 /main.min.css' rel='stylesheet' />
+    <script src='https://unpkg.com/fullcalendar@5/main.min.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
 
+        body {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        form,
+        #calendar {
+            background-color: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            background-color: rgb(141, 141, 141);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        select,
+        button {
+            padding: 10px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        button {
+            background-color: #0056b3;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #004494;
+        }
+
+        #results {
+            margin-top: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #calendar {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgb(141, 141, 141);
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #detailsRDV {
+            width: 100%;
+            max-width: 300px;
+            height: 350px;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: rgb(49, 49, 49);
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        .left-panel {
+            flex: 1;
+            background-color: #1f1f1f;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .right-panel {
+            flex: 1;
+            background: url('https://i.pinimg.com/564x/bd/62/9c/bd629c7afd65382401bb9a46fce6a0dd.jpg') center/cover no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .fc-daygrid-event {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .fc-daygrid-day-events {
+            overflow-y: auto;
+            max-height: 100px;
+        }
+
+        .close-button {
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            font-weight: 400;
+            color: white;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            font-size: 40px;
+            border-radius: 50%;
+            text-decoration: none;
+        }
+
+        #searchButton {
+            background-color: black;
+        }
+
+        #confirmButton {
+            background-color: black;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+        }
+
+        #detailsRDV {
+            color: white;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
-        <div class="half left-side">
-            <h1 id="rdv"
-                style="font-family: Italiana, sans-serif;font-weight: 400;font-style: normal; color: white; font-size: 90px;">
-                Prendre un rendez-vous</h1>
-            <h1 id="selecthoraire"
-                style="font-family: Italiana, sans-serif;font-weight: 400;font-style: normal; color: white; font-size: 90px; display: none;">
-                Selectionner une plage horaire</h1>
-            <div id="filters" class="field is-grouped">
-                <div class="control">
-                    Rechercher par salon de coiffure
-                    <br>
-                    <button id="parSalon" class="button is-black">Commencer la recherche</button>
-                </div>
-                <br>
-                <div class="control">
-                    Rechercher par coiffeur
-                    <br>
-                    <button id="parCoiffeur" class="button is-black">Commencer la recherche</button>
-                </div>
-                <br>
-                <div class="control">
-                    Rechercher par service
-                    <br>
-                    <button id="parService" class="button is-black">Commencer la recherche</button>
-                </div>
-                <br>
+        <div class="left-panel">
+            <form id="searchForm">
+                <select id="coiffeurSelect" style="width: 100%;">
+                    <option value="">Choisir un coiffeur</option>
+                </select>
+                <select id="salonSelect" style="width: 100%;">
+                    <option value="">Choisir un salon</option>
+                </select>
+                <select id="serviceSelect" style="width: 100%;">
+                    <option value="">Choisir un service</option>
+                </select>
 
-                <div class="control">
-                    <button id="nextStepBtn" class="button is-black" style="display: none;">Etape suivante</button>
-                </div>
-            </div>
-            <select id="dropdownResult" style="width: 50%; display: none;">
-
-            </select>
-
-            <div id="results"></div>
-            <div id="dateSelection"></div>
-            <button id="moreTimesBtn" class="button is-primary" style="display: none;">+ Voir plus de plages</button>
+                <button type="button" id="searchButton">Rechercher</button>
+            </form>
+            <div id="calendar"></div>
         </div>
-        <div class="half right-side">
-            <a href="accueil/accueil.html" class="close-button">X</a>
+        <div class="right-panel">
+            <div id="detailsRDV" style="display: none;">
+                <h2>Détails du Rendez-vous</h2>
+                <p id="detailCoiffeur"></p>
+                <p id="detailSalon"></p>
+                <p id="detailDateTime"></p>
+                <button id="confirmButton">Confirmer</button>
             </div>
+            <a href="accueil/accueil.html" class="close-button">X</a>
         </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <script src="book.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('.close-button').addEventListener('click', function () {
+                window.history.back() //retourner a la page precedente
+            });
+
+            fetchAndPopulateSelect('/nomsSalons', 'salonSelect', 'nomSalon', 'Chercher par salon');
+            fetchAndPopulateSelect('/coiffeurs', 'coiffeurSelect', 'nomCoiffeur', 'Chercher par coiffeur');
+            fetchAndPopulateSelect('/showServices', 'serviceSelect', 'nom', 'Chercher par service');
+
+            function fetchAndPopulateSelect(url, selectId, propertyName, placeholder) {
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.message) { // reponse en message
+                            data = data.coiffeurs || data.services;
+                        }
+                        loadSelectOptions(data, selectId, propertyName, placeholder);
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la récupération des données:', error);
+                    });
+            }
+
+            function loadSelectOptions(data, selectId, propertyName, placeholderText) {
+                const select = document.getElementById(selectId);
+                let optionsHtml = '<option></option>';  // option vide
+                data.forEach(item => {
+                    let value = item.id || item.idSalon || item.idCoiffeur || item.idService; 
+                    let text = item[propertyName];
+                    optionsHtml += `<option value="${value}">${text}</option>`;
+                });
+                select.innerHTML = optionsHtml;
+                $(`#${selectId}`).select2({
+                    placeholder: placeholderText,
+                    allowClear: true
+                });
+            }
+
+            // Initialiser le calendrier
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'fr',
+                eventClick: afficherDetailsRdv
+            });
+            calendar.render();
+
+            function fetchAvailabilitiesAndUpdateCalendar() {
+                const coiffeurId = document.getElementById('coiffeurSelect').value;
+                const salonId = document.getElementById('salonSelect').value;
+                const serviceId = document.getElementById('serviceSelect').value;
+                console.log(serviceId & "test")
+
+                const queryParams = new URLSearchParams();
+                // Ajoutez chaque paramètre seulement s'il est défini et non vide
+                if (coiffeurId) queryParams.set('idCoiffeur', coiffeurId);
+                if (salonId) queryParams.set('idSalon', salonId);
+                if (serviceId) queryParams.set('idService', serviceId);
+
+                const queryString = queryParams.toString();
+                console.log("Query String:", queryString); // Debug pour voir la chaîne de requête formée
+
+                // Continuez seulement si au moins un paramètre est défini
+                if (!queryString) {
+                    console.log("Aucun critère de recherche n'a été défini.");
+                    return;
+                }
+
+                fetch(`/disponibilites?${queryString}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error, status = ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.disponibilites && data.disponibilites.length > 0) {
+                            updateCalendar(data.disponibilites);
+                        } else {
+                            console.error('Aucune disponibilité trouvée ou données mal formées.', data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Failed to fetch availabilities:', error);
+                        alert("Erreur lors de la récupération des disponibilités.");
+                    });
+            }
+
+            document.getElementById('searchButton').addEventListener('click', function () {
+                fetchAvailabilitiesAndUpdateCalendar();
+            });
+
+            function updateCalendar(disponibilites) {
+                calendar.removeAllEvents();
+                const today = new Date();
+                today.setHours(0, 0, 0, 0); // Reset time to 00:00 for accurate comparison
+
+                disponibilites.forEach(disponibilite => {
+                    const startDateTime = new Date(disponibilite.dateDisponibilite);
+                    const startTime = disponibilite.heureDisponibilite.split(':'); // Assuming heureDisponibilite is like '15:00'
+                    startDateTime.setHours(parseInt(startTime[0]), parseInt(startTime[1]));
+
+                    if (startDateTime >= today) { // Only add to calendar if the date is today or in the future
+                        const eventTitle = `${disponibilite.nomCoiffeur} - ${disponibilite.nomSalon}`; // Format the title
+
+                        calendar.addEvent({
+                            title: eventTitle,
+                            start: startDateTime.toISOString(), // FullCalendar uses ISO strings for dates
+                            allDay: false,
+                            extendedProps: {
+                                nomCoiffeur: disponibilite.nomCoiffeur,
+                                nomSalon: disponibilite.nomSalon
+                            }
+                        });
+                    }
+                });
+            }
+
+            function afficherDetailsRdv(info) {
+                const event = info.event;
+                document.getElementById('detailCoiffeur').textContent = `Coiffeur: ${event.extendedProps.nomCoiffeur}`;
+                document.getElementById('detailSalon').textContent = `Salon: ${event.extendedProps.nomSalon}`;
+                document.getElementById('detailDateTime').textContent = `Date et Heure: ${event.start.toLocaleString()}`;
+                document.getElementById('detailsRDV').style.display = 'block';
+                document.getElementById('confirmButton').onclick = () => confirmerRdv(event);
+            }
+
+            function confirmerRdv(event) {
+                const coiffeurId = document.getElementById('coiffeurSelect').value; // Utilisez la valeur du select directement
+                const dateRendezvous = event.start.toISOString().split('T')[0];
+                const heureRendezvous = event.start.toISOString().split('T')[1].substring(0, 5);
+
+                const appointmentData = {
+                    dateRendezvous: dateRendezvous,
+                    heureRendezvous: heureRendezvous,
+                    idCoiffeur: coiffeurId
+                };
+
+                // Retrieve token from storage (localStorage or sessionStorage)
+                const token = sessionStorage.getItem('token') || localStorage.getItem('token');
+
+                fetch('/Rendezvous', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-auth-token': token  // Adjust the header name as per your server setup
+                    },
+                    body: JSON.stringify(appointmentData)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok: ' + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        alert(data.message); // Show success or error message from server
+                        document.getElementById('detailsRDV').style.display = 'none';
+                        // Optionally refresh or update the calendar or page here
+                    })
+                    .catch(error => {
+                        console.error('Error creating Rendezvous:', error);
+                        alert("Failed to create Rendezvous: " + error.message);
+                    });
+            }
+        });
+    </script>
 </body>
 
 </html>

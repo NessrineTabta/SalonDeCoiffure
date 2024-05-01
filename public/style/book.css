@@ -1,180 +1,72 @@
 body {
-  font-family: 'Source Serif Pro', Helvetica, sans-serif;
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  padding: 0;
+  background-color: #f4f4f4;
 }
 
-body,
-html {
-  min-height: 100vh;
-  margin: 0;
-  font-family: "Raleway", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 100;
-  font-style: normal;
+h1 {
+  color: #333;
+}
+
+form {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+select, button {
+  padding: 10px;
+  margin-right: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+button {
+  background-color: #0056b3;
   color: white;
+  cursor: pointer;
 }
 
+button:hover {
+  background-color: #004494;
+}
+
+#results {
+  margin-top: 20px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+#calendar {
+  margin-top: 20px;
+  padding: 10px;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#appointmentDetails {
+  background-color: white;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: none; /* Cache par défaut, affiché via JS */
+}
 .container {
   display: flex;
-  min-height: 100vh;
+  justify-content: space-between;
 }
 
-.half {
+.left-panel {
   flex: 1;
+  padding-right: 20px; /* Ajoute un peu d'espace entre les deux panneaux */
 }
 
-.left-side {
-  background-color: rgb(49, 49, 49);
-  padding: 40px;
-  min-height: 100vh;
-}
-
-.right-side {
-  background-image: url('https://i.pinimg.com/564x/bd/62/9c/bd629c7afd65382401bb9a46fce6a0dd.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-  padding: 20px;
-}
-
-#summary {
-  width: 60%;
-  max-width: 400px;
-  padding: 20px;
-  background-color: rgb(49, 49, 49);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: left;
-}
-
-
-#filters {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  height: 300px;
-  font-size: 20px;
-  text-align: left;
-  line-height: 1.5;
-}
-
-#dateSelection {
-  display: none;
-  width: 100%;
-}
-
-#dateSelection label {
-  display: block;
-}
-
-#moreTimesBtn {
-  position: relative;
-  display: inline-block;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
-  overflow: hidden;
-}
-
-#moreTimesBtn::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0%;
-  height: 2px;
-  background-color: currentColor;
-  transition: width 0.3s ease;
-}
-
-#moreTimesBtn:hover::after {
-  width: 100%;
-}
-
-.select select {
-  border: none;
-  box-shadow: none;
-  outline: none;
-  background: transparent;
-  border-bottom: 1px solid #ffffff;
-  padding-right: 1.5em;
-  cursor: pointer;
-  color: rgb(149, 149, 149);
-}
-
-.select2-container--default .select2-results__option {
-  color: black;
-  /* Texte noir pour les options du dropdown */
-  font-weight: 300;
-}
-
-@keyframes slideOutRight {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-
-  to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.animated-out-right {
-  animation: slideOutRight 0.5s forwards;
-}
-
-.animated-in-left {
-  animation: slideInLeft 0.5s forwards;
-}
-
-#dropdownResult,
-.select2-selection__rendered,
-.select2-results__option {
-  font-weight: 300;
-  /* Applique le texte en gras */
-}
-
-#dropdownResult {
-  display: none;
-  width: 50%;
-}
-
-#parSalon,
-#parCoiffeur,
-#parService {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.close-button {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 10px;
-  font-weight: 400;
-  color: white;
-  font-size: 14px;
-  border: none;
-  cursor: pointer;
-  font-size: 40px;
-  border-radius: 50%;
-  text-decoration: none;
+.right-panel {
+  flex: 1;
+  max-width: 750px; /* Ajuste selon tes besoins pour la largeur du panneau de détails */
 }

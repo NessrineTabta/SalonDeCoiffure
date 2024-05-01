@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <link rel="stylesheet" href="style/avantPremiere.css">
+
+</head>
+
+<body>
+    <div class="left-side"></div>
+    <div class="right-side">
+        <div class="form-container">
+            <img src="logo/2-Photoroom.png-Photoroom.png" alt="" style="padding-bottom: 100px;">
+
+            <div class="field buttons has-addons is-centered">
+                <p class="control">
+                    <button class="button is-fullwidth is-black" id="btnClient">Client</button>
+                </p>
+                <p class="control">
+                    <button class="button is-fullwidth" id="btnCoiffeur">Coiffeur</button>
+                </p>
+            </div>
+            <br>
+
+            <form id="formConnexion">              
+                <div class="field">
+                    <div class="control">
+                        <input class="input" placeholder="E-mail" type="email" id="email" name="email" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <input class="input" placeholder="Mot de passe" type="password" id="password" name="password"
+                            required>
+                    </div>
+                </div>
+                <br>
+                <div class="control">
+                    <input class="button is-black is-fullwidth" type="submit" value="Se connecter" id="btnConnexion">
+                </div>
+            </form>
+            <br>
+            <div><a href="/public/avantPremiere.html" class="link">Créer un compte</a></div>
+        </div>
+    </div>
+
+    <script src="AP.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('formConnexion');
+    
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+    
+                // Get user input
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+    
+                // Perform basic validation
+                if (!email || !password) {
+                    alert('Veuillez saisir votre e-mail et votre mot de passe.');
+                    return;
+                }
+    
+                // Determine the login route based on button clicked
+                const loginRoute = document.getElementById('btnClient').classList.contains('is-black') ? '/loginClient' : '/loginCoiffeur';
+    
+                // Send login credentials to the server
+                fetch(loginRoute, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erreur de connexion.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle successful login
+                    // For example, you can store the token in local storage and redirect the user
+                    localStorage.setItem('token', data.token);
+                    alert('Connexion réussie ! Bienvenue, ' + email);
+                    // Redirect to the appropriate page based on user type
+                    if (loginRoute === '/loginClient') {
+                        window.location.href = '/pageClient.html';
+                    } else {
+                        window.location.href = '/pageCoiffeur.html';
+                    }
+                })
+                .catch(error => {
+                    // Handle errors, e.g., display error message
+                    console.error('Erreur :', error);
+                    alert('Échec de la connexion. Veuillez réessayer.');
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

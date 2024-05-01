@@ -60,4 +60,5 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Échec de la connexion. Veuillez réessayer.");
       });
   });
+
 });

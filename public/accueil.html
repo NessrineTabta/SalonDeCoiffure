@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css" />
+    <link rel="icon" href="./logo/2.png" />
+    <link rel="stylesheet" href="./style/accueil.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="header">
+        <div class="nav">
+            <div class="nav-items">
+                <a href="./CoiffeurProfil/index.html">Portfolio</a>
+                <a href="#">À propos</a>
+                <a href="#">Contact</a>
+                <a href="#">Mes rendez-vous</a>
+                <a href="./avis.html">Avis</a>
+            </div>
+            <div class="logo" style="color: black;"> <a href="./accueil.html">East Cutz</a></div>
+            <div class="nav-button">
+                <div class="btn-wrap">
+                    <button onclick="location.href='./book.html'" style="color: white;">PRENDRE RENDEZ-VOUS</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="section section-bg-image">
+        <h1 id="slogan">PLUS QU'UNE <br>SIMPLE COUPE DE <br>CHEVEUX</h1>
+    </section>
+    <section class="section section-white">
+        <h1 style="font-size: 50px; text-align: center; justify-content: center;">Nos Services</h1>
+        <div class="icons-container"
+            style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; padding: 20px;">
+            <div class="icon-item">
+                <span class="material-symbols-rounded" style="font-size: 200px;">content_cut</span>
+                <h3>Coupe de cheveux</h3>
+            </div>
+            <div class="icon-item">
+                <span class="material-symbols-rounded" style="font-size: 200px;">color_lens</span>
+                <h3>Teinture</h3>
+            </div>
+            <div class="icon-item">
+                <span class="material-symbols-rounded" style="font-size: 200px;">face</span>
+                <h3>Barbe</h3>
+            </div>
+        </div>
+    </section>
+    <section class="section section-beige">
+        <div class="contact-container">
+            <div class="contact-text">
+                <h2 style="font-size: 50px;">Contactez-nous</h2>
+            </div>
+            <form class="contact-form">
+                <div class="field">
+                    <label for="name">Nom complet</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="field">
+                    <label for="phone">Numéro de téléphone</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                <div class="field">
+                    <label for="email">Courriel</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="field">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="4" required></textarea>
+                </div>
+                <div class="field">
+                    <button type="submit">Envoyer</button>
+                </div>
+            </form>
+        </div>
+    </section>
+    <section class="section section-black">
+        <div class="container">
+            <div class="columns">
+                <!-- À propos -->
+                <div class="column">
+                    <h3>À propos</h3>
+                    <ul>
+                        <li>EAST CUTZ</li>
+                        <li>MEDICART</li>
+                        <li>SERVICES</li>
+                        <li>SALONS DE COIFFURE</li>
+                        <li>MÉDIAS</li>
+                        <li>CARRIÈRES</li>
+                        <li>BOURSES D’ÉTUDES</li>
+                        <li>FAQ</li>
+                    </ul>
+                </div>
+
+                <!-- Liens utiles -->
+                <div class="column">
+                    <h3>Liens utiles</h3>
+                    <ul>
+                        <li>POLITIQUE DE CONFIDENTIALITÉ</li>
+                        <li>POLITIQUE DE COOKIES</li>
+                        <li>AVIS LÉGAL</li>
+                        <li>PLAN DU SITE</li>
+                    </ul>
+                </div>
+
+                <!-- Suivez-nous -->
+                <div class="column">
+                    <h3>Suivez-nous</h3>
+                    <ul>
+                        <li>FACEBOOK</li>
+                        <li>INSTAGRAM</li>
+                        <li>TIKTOK</li>
+                        <li>YOUTUBE</li>
+                        <li>LINKEDIN</li>
+                        <li>INFOLETTRE</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

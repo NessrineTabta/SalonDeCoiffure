@@ -1,75 +1,65 @@
-/* ------------------------
- *    Variables
- * ------------------------ */
-
 const televerserInput = document.getElementById("televerser");
 const imageTeleverser = document.getElementById("imageteleverser");
-
-// Convertir l'image en base64
-function convertImageToBase64(imageFile) {
-  return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result.split(',')[1]);
-      reader.onerror = error => reject(error);
-      reader.readAsDataURL(imageFile);
-  });
-}
-
-
-
-
-
-/* ------------------------
- *   le bouton input image permet de mettre une image 
- * ------------------------ */
-
-  // Ajouter un écouteur d'événements au bouton "televerserInput"
-  televerserInput.addEventListener("change", function () {
-    const file = this.files[0];
-    if (file) {
-      const token = sessionStorage.getItem("token");
-
-      // Créer un lecteur de fichier pour lire les données binaires de l'image
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const imageUrl = e.target.result; // Obtenez l'URL locale de l'image
-        imageTeleverser.src = imageUrl; // Définir l'image prévisualisée
-
-        // Envoi des données au serveur
-        fetch("/portfolio", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            urlPhoto: imageUrl, // Envoyer l'URL locale de l'image
-            token: token
-          })
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-            // Gérer la réponse du serveur ici si nécessaire
-          })
-          .catch((error) => console.error(error));
-      };
-      // Lire les données binaires de l'image à partir du fichier
-      reader.readAsDataURL(file);
-    }
-  });
-
-
-
 
 /* ------------------------
  *    Au chargement mettre l'image
       du coiffeur 
  * ------------------------ */
-// Au chargement de la page, mettre l'image du coiffeur
-document.addEventListener("DOMContentLoaded", async function () {
-  // Si la page est rechargée, on va modifier la photo par l'ancienne
-  if (performance.navigation.type === 1) {
 
+// Quand quelqu'un clique sur le bouton ''Changer l'image'' cette event va se lancer
+televerserInput.addEventListener("change", function () {
+  const file = this.files[0];
+  if (file) {
+    // Si un utilisateur insère un fichier, cela va créer un lecteur de fichier
+    const reader = new FileReader();
+    // Ce lecteur de fichier va téléverser dans le src de <image>
+    reader.onload = function (e) {
+      // Obtenez l'URL de l'image directement depuis le fichier
+      const imageUrl = e.target.result;
+
+      // Convertir le blob en URL
+      const blobUrl = URL.createObjectURL(file);
+
+      // Utiliser l'URL convertie comme source de l'image **RESOUS LE PROBLEME DU RELOAD :)))))))))))))))))))))**
+      imageTeleverser.src = blobUrl;
+
+      // Envoi de l'image au serveur
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const token = sessionStorage.getItem("token");
+      const data = {
+        token: token,
+        imageUrl: blobUrl, // Stocker le lien de téléchargement dans imageUrl
+      };
+
+      fetch("/portfolio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          // Gérer la réponse du serveur ici si nécessaire
+        })
+        .catch((error) => console.error(error));
+    };
+    // Le fichier sera lu GRACE A UNE URL
+    reader.readAsDataURL(file);
+  }
+});
+
+/* ------------------------
+ *    Au chargement mettre l'image
+      du coiffeur 
+ * ------------------------ */
+// Au chargement, mettre l'image du coiffeur
+document.addEventListener("DOMContentLoaded", async function () {
+  // Si la page est rechargé, on va modifier la photo par lancienne
+  if (performance.navigation.type === 1) {
     try {
       const token = sessionStorage.getItem("token");
       const response = await fetch("/recupererphoto", {
@@ -85,16 +75,20 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (data && data.imageUrl) {
         const imageUrl = data.imageUrl;
 
-        // Définir la source de l'image avec l'URL récupérée
+        // Définir la source de l'image avec l'URL créée
         imageTeleverser.src = imageUrl;
       } else {
         // Si l'URL de l'image n'est pas disponible, charger une image de secours
-        console.error("Une erreur est survenue lors de la récupération de l'URL de l'image.");
+        console.error(
+          "Une erreur est survenue lors de la récupération de l'URL de l'image."
+        );
       }
     } catch (error) {
-      console.error("Une erreur est survenue lors de l'initialisation de l'image :", error);
+      console.error(
+        "Une erreur est survenue lors de l'initialisation de l'image :",
+        error
+      );
     }
-
   }
 });
 
@@ -175,8 +169,6 @@ boutonEnregistrer.addEventListener("click", async () => {
     alert("Une erreur s'est produite Lors de l'insertion");
   }
 });
-
-
 
 /* ------------------------
  *   Calendrier dynamique avec les jours, semaines, mois, etc.
@@ -275,7 +267,6 @@ function selectDate(element) {
   afficherHeuresPossibles();
 }
 
-
 /* ----------------
 --------
 *    Choisir une heure, date de disponibilité et l'envoyer au serveur dans table Disponibilite
@@ -289,7 +280,7 @@ let heureSelectionnee = []; // Initialiser le tableau pour stocker les heures s�
 const days = document.querySelectorAll(".days li");
 
 // Fonction pour afficher les heures possibles et le bouton Envoyer
-async function afficherHeuresPossibles() {
+function afficherHeuresPossibles() {
   // Placeholder: Remplacez ce bloc avec la logique pour afficher les heures possibles
   const heuresPossibles = [
     "8:00",
@@ -313,7 +304,6 @@ async function afficherHeuresPossibles() {
     input.type = "checkbox";
     input.name = "heure-disponible"; // Assure que les cases à cocher sont regroupées
     input.value = heure;
-    input.id= "dateheureselec";
 
     const label = document.createElement("label");
     label.textContent = heure;
@@ -334,41 +324,7 @@ async function afficherHeuresPossibles() {
     choisirDate.appendChild(label);
     choisirDate.appendChild(document.createElement("br"));
   });
-  
 
-
-
-
-
-//////////////////////////////////////////***AFFICHER LES DISPONIBILITÉS DEJA EXISTANTES //////////////////////////////// */
- // Récupérer les disponibilités depuis le serveur
- const token = sessionStorage.getItem("token");
- const disponibilites = await getDisponibilites(token);
-
- // Parcourir les disponibilités pour cocher les cases correspondantes
- disponibilites.forEach((disponibilite) => {
-   const { dateDisponibilite, heureDisponibilite } = disponibilite;
-
-   // Vérifier si la disponibilité correspond à la date sélectionnée
-   if (dateDisponibilite === formatDateToISO(dateSelectionnee)) {
-     // Cocher la case à cocher correspondante à l'heure
-     const heureCheckbox = document.querySelector(
-       `input[value="${heureDisponibilite}"]`
-     );
-     if (heureCheckbox) {
-       heureCheckbox.checked = true;
-     }
-   }
- });
-//////////////////////////////////////////*************************************************//////////////////////////////// */
-
-
-
-
-
-
-
-  
   // Créer le bouton Envoyer
   const boutonEnvoyer = document.createElement("button");
   boutonEnvoyer.textContent = "Envoyer les disponibilités";
@@ -433,63 +389,6 @@ const formatDateToISO = (date) => {
 };
 
 renderCalendar();
-
-
-
-
-/* ----------------
---------
-*    Les checkboxes heure/date déja coché sont afficher directement 
-* ------------------------ */
-
-  document.addEventListener("DOMContentLoaded", async () => {
-    const token = sessionStorage.getItem("token");
-    const disponibilites = await getDisponibilites(token);
-
-    disponibilites.forEach((disponibilite) => {
-      const { dateDisponibilite, heureDisponibilite } = disponibilite;
-
-      // Cocher la case à cocher correspondante à la date
-      const dateCheckbox = document.querySelector(
-        `input[value="${dateDisponibilite}"]`
-      );
-      if (dateCheckbox) {
-        dateCheckbox.checked = true;
-      }
-
-      // Cocher la case à cocher correspondante à l'heure
-      const heureCheckbox = document.querySelector(
-        `input[value="${heureDisponibilite}"]`
-      );
-      if (heureCheckbox) {
-        heureCheckbox.checked = true;
-      }
-    });
-  });
-
-  async function getDisponibilites(token) {
-    try {
-      const response = await fetch("/afficherdisponibilites", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Erreur lors de la requête fetch");
-      }
-
-      const data = await response.json();
-      return data.disponibilites;
-    } catch (error) {
-      console.error("Erreur lors de la récupération des disponibilités:", error);
-      return [];
-    }
-  }
-
-
 
 /* ----------------
 --------
@@ -596,10 +495,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
-
-
-
 // Fonction pour récupérer et afficher tous les services
 async function getAndRenderServices() {
   try {
@@ -749,12 +644,12 @@ function updateNavigationBar(loginType) {
 
   if (loginType === "client") {
     navContent = `
-    <a href="../accueil/accueil.html#section-about">À propos</a>
-    <a href="../accueil/accueil.html#section-contact">Contact</a>
+      <a href="../accueil/accueil.html#section-contact">Contact</a>
         <a href="../avis.html">Avis</a>
         <a href="../AfficherAvis/afficherAvis.html">Tous les avis</a>
+        <a href="../favoris/favoris.html">Favoris</a>
+        <a href="../RechercheCoiffeur/rechercheCoiffeur.html">Coiffeurs</a>
         <a href="../rendezvousClient/rendezvousClient.html">Mes rendez-vous</a>
-
         `;
   } else if (loginType === "coiffeur") {
     prendreRdv.style.display = 'none'

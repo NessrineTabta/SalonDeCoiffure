@@ -137,12 +137,12 @@ function updateNavigationBar(loginType) {
 
   if (loginType === "client") {
     navContent = `
-    <a href="../accueil/accueil.html#section-about">À propos</a>
-    <a href="../accueil/accueil.html#section-contact">Contact</a>
+      <a href="../accueil/accueil.html#section-contact">Contact</a>
         <a href="../avis.html">Avis</a>
         <a href="../AfficherAvis/afficherAvis.html">Tous les avis</a>
+        <a href="../favoris/favoris.html">Favoris</a>
+        <a href="../RechercheCoiffeur/rechercheCoiffeur.html">Coiffeurs</a>
         <a href="../rendezvousClient/rendezvousClient.html">Mes rendez-vous</a>
-
         `;
   } else if (loginType === "coiffeur") {
     prendreRdv.style.display = 'none'
