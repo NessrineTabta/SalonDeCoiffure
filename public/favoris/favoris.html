@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favoris</title>
+    <!-- Intégration de Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Lien vers votre fichier CSS personnalisé -->
+    <link rel="stylesheet" href="favoris.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Barre de recherche Bootstrap -->
+        <div class="row my-3">
+            <div class="col">
+                <input type="text" id="searchInput" class="form-control" placeholder="Rechercher par nom..." onkeyup="searchByName()">
+            </div>
+        </div>
+
+        <!-- Conteneur des cartes de coiffeurs Bootstrap -->
+        <div id="coiffeurs-container" class="row">
+            <!-- Les cartes des coiffeurs seront insérées ici par JavaScript -->
+        </div>
+    </div>
+    
+    <!-- Intégration de jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Intégration de Bootstrap JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Votre script JavaScript -->
+    <script src="favoris.js"></script>
+</body>
+</html>

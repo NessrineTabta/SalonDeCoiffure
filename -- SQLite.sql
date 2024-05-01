@@ -106,3 +106,11 @@ CREATE TABLE IF NOT EXISTS Coiffeur_Service (
     idCoiffeur INTEGER NOT NULL,
     idService INTEGER NOT NULL
 );
+
+
+-- Création de la table Favoris
+CREATE IF NOT EXISTS Favoris (
+    idFavoris INTEGER PRIMARY KEY,
+    idCoiffeur INTEGER NOT NULL,
+    idClient INTEGER NOT NULL
+)
