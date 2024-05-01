@@ -376,6 +376,28 @@ function servicesCoiffeur(email) {
   });
 }
 
+// GET: Services d'un coiffeur
+router.get("/servicess/:idCoiffeur", async (req, res) => {
+  const { idCoiffeur } = req.params;
+  try {
+    const services = await db.select("Service.*")
+      .from("Service")
+      .join("Coiffeur_Service", "Service.idService", "=", "Coiffeur_Service.idService")
+      .where("Coiffeur_Service.idCoiffeur", idCoiffeur);
+
+    if (services.length > 0) {
+      res.status(200).json(services);
+    } else {
+      res.status(404).json({ message: "Aucun service trouvé pour ce coiffeur." });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la récupération des services du coiffeur :", error);
+    res.status(500).json({
+      message: "Une erreur s'est produite lors de la récupération des services."
+    });
+  }
+});
+
 // GET: Obtenir tous les Coiffeur_Service
 router.get("/showCoiffeur_Service", async (req, res) => {
   try {
@@ -681,6 +703,40 @@ function getDisponibilites(email) {
 }
 
 
+// GET: Disponibilite de tout les coiffeurs
+router.get("/disponibilites", async (req, res) => {
+  try {
+    const disponibilites = await getAllDisponibilites();
+    res.json({
+      disponibilites: disponibilites,
+      message: "Liste des disponibilités de tous les coiffeurs",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la récupération des disponibilités.",
+    });
+  }
+});
+
+// Fonction: obtenir toutes les disponibilités
+function getAllDisponibilites() {
+  return new Promise((resolve, reject) => {
+    db.select("Disponibilite.*")
+      .from("Disponibilite")
+      .then((rows) => {
+        resolve(rows);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+
+
+
 // POST: disponibilité
 router.post("/disponibilites", authentification, async (req, res) => {
   try {
@@ -746,6 +802,45 @@ async function insererDisponibilite(
     throw error;
   }
 }
+
+// GET: Disponibilités d'un coiffeur pour BERIVAN
+router.get("/disponibilites/:idCoiffeur", async (req, res) => {
+  try {
+    const { idCoiffeur } = req.params;
+    const disponibilites = await getCoiffeurDisponibilites(idCoiffeur);
+    res.json({
+      disponibilites: disponibilites,
+      message: "Liste des disponibilités du coiffeur avec l'ID " + idCoiffeur,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Une erreur s'est produite lors de la récupération des disponibilités du coiffeur.",
+    });
+  }
+});
+
+// Fonction: obtenir les disponibilités d'un coiffeur
+function getCoiffeurDisponibilites(idCoiffeur) {
+  return new Promise((resolve, reject) => {
+    db.select("Disponibilite.*")
+      .from("Disponibilite")
+      .join(
+        "Coiffeur_Disponibilite",
+        "Disponibilite.idDisponibilite",
+        "=",
+        "Coiffeur_Disponibilite.idDisponibilite"
+      )
+      .where("Coiffeur_Disponibilite.idCoiffeur", idCoiffeur)
+      .then((rows) => {
+        resolve(rows);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
 
 // DELETE: Supprimer une disponibilité
 router.delete("/disponibilites", authentification, async (req, res) => {
@@ -866,5 +961,8 @@ router.post("/portfolioimages",authentification,upload.array("images", 3),async 
     }
   }
 );
+
+
+
 
 module.exports = router;

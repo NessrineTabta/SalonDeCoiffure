@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 document.addEventListener("DOMContentLoaded", function () {
     const token = sessionStorage.getItem("token");
     //rediriger vers connexion si pas de compte
@@ -49,6 +50,8 @@ document.addEventListener("DOMContentLoaded", function () {
     window.location.href = "../connexion.html";
   }
   
+=======
+>>>>>>> 4a5a2972e15eeed7f75d3a0a7d1d0e4b47b6d64e
 // Fonction pour récupérer les coiffeurs depuis le serveur
 async function getCoiffeursFromServer() {
   try {

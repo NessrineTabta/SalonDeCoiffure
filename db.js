@@ -154,5 +154,18 @@ updateTable('Avis', async () => {
   });
 });
 
+// Création de la table Favoris
+updateTable('Favoris', async () => {
+  await db.schema.createTable('Favoris', table => {
+    table.increments('idFavoris').primary();
+    table.integer('idCoiffeur').unsigned().notNullable();
+    table.integer('idClient').unsigned().notNullable();
+    table.foreign('idCoiffeur').references('Coiffeur.idCoiffeur'); // Assurez-vous que la référence est correcte
+    table.foreign('idClient').references('Client.idClient');
+  });
+});
+
+
+
 //exporation de cette base de donnée
 module.exports = db;
