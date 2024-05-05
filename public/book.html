@@ -216,7 +216,7 @@
                 const select = document.getElementById(selectId);
                 let optionsHtml = '<option></option>';  // option vide
                 data.forEach(item => {
-                    let value = item.id || item.idSalon || item.idCoiffeur || item.idService; 
+                    let value = item.id || item.idSalon || item.idCoiffeur || item.idService;
                     let text = item[propertyName];
                     optionsHtml += `<option value="${value}">${text}</option>`;
                 });
@@ -288,20 +288,21 @@
 
                 disponibilites.forEach(disponibilite => {
                     const startDateTime = new Date(disponibilite.dateDisponibilite);
-                    const startTime = disponibilite.heureDisponibilite.split(':'); // Assuming heureDisponibilite is like '15:00'
+                    const startTime = disponibilite.heureDisponibilite.split(':'); // Split hours and minutes
                     startDateTime.setHours(parseInt(startTime[0]), parseInt(startTime[1]));
 
-                    if (startDateTime >= today) { // Only add to calendar if the date is today or in the future
+                    if (startDateTime >= today) { 
                         const eventTitle = `${disponibilite.nomCoiffeur} - ${disponibilite.nomSalon}`; // Format the title
 
                         calendar.addEvent({
                             title: eventTitle,
-                            start: startDateTime.toISOString(), // FullCalendar uses ISO strings for dates
+                            start: startDateTime.toISOString(), 
                             allDay: false,
                             extendedProps: {
                                 nomCoiffeur: disponibilite.nomCoiffeur,
                                 nomSalon: disponibilite.nomSalon
                             }
+
                         });
                     }
                 });
@@ -309,11 +310,11 @@
 
             function afficherDetailsRdv(info) {
                 const event = info.event;
+                console.log("Event clicked:", event.extendedProps); // Vérifiez les propriétés étendues lors du clic
                 document.getElementById('detailCoiffeur').textContent = `Coiffeur: ${event.extendedProps.nomCoiffeur}`;
                 document.getElementById('detailSalon').textContent = `Salon: ${event.extendedProps.nomSalon}`;
                 document.getElementById('detailDateTime').textContent = `Date et Heure: ${event.start.toLocaleString()}`;
                 document.getElementById('detailsRDV').style.display = 'block';
-                document.getElementById('confirmButton').onclick = () => confirmerRdv(event);
             }
 
             function confirmerRdv(event) {

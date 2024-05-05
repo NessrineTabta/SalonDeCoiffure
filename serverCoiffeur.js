@@ -17,6 +17,7 @@ const jwt = require("jsonwebtoken");
 const TOKEN_SECRET_KEY = "WEB_4D2_00003"; //ajout de chaine pour completer le sign token
 
 const authentification = require("./authentification");
+const authentification2 = require("./authentification2");
 const router = express.Router();
 // token.js pour stocker et invalider le token dans logout, ou le retourner dynamiquement
 const tokenModule = require("./token");
@@ -869,6 +870,88 @@ router.delete("/disponibilites", authentification, async (req, res) => {
   }
 });
 
+
+router.get("/lesdisponibilites", authentification2, async (req, res) => {
+  try {
+    const email = req.user.email; // Email de l'utilisateur extrait du token
+    const disponibilites = await getDisponibilites(email);
+    res.json({
+      disponibilites: disponibilites,
+      message: "Liste des disponibilités pour le coiffeur " + req.user.email,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message:
+        "Une erreur s'est produite lors de la récupération des disponibilités.",
+    });
+  }
+});
+
+// Fonction:  obtenir les disponibilités d'un coiffeur
+function getDisponibilites(email) {
+  return new Promise((resolve, reject) => {
+    db.select("Disponibilite.*")
+      .from("Disponibilite")
+      .join(
+        "Coiffeur_Disponibilite",
+        "Disponibilite.idDisponibilite",
+        "=",
+        "Coiffeur_Disponibilite.idDisponibilite"
+      )
+      .join(
+        "Coiffeur",
+        "Coiffeur_Disponibilite.idCoiffeur",
+        "=",
+        "Coiffeur.idCoiffeur"
+      )
+      .where("Coiffeur.email", email)
+      .then((rows) => {
+        resolve(rows);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+// Route GET modifiée pour accepter des filtres multiples
+router.get("/disponibilites", async (req, res) => {
+  try {
+      const { idCoiffeur, idSalon, idService } = req.query;
+      let query = db.select(
+          'Disponibilite.dateDisponibilite',
+          'Disponibilite.heureDisponibilite',
+          'Coiffeur.nomCoiffeur',
+          'Salon.nomSalon'
+      )
+      .from('Disponibilite')
+      .join('Coiffeur_Disponibilite', 'Disponibilite.idDisponibilite', '=', 'Coiffeur_Disponibilite.idDisponibilite')
+      .join('Coiffeur', 'Coiffeur.idCoiffeur', '=', 'Coiffeur_Disponibilite.idCoiffeur')
+      .join('Salon', 'Salon.idSalon', '=', 'Coiffeur.idSalon');
+
+      if (idCoiffeur) {
+          query.where('Coiffeur.idCoiffeur', idCoiffeur);
+      }
+      if (idSalon) {
+          query.where('Salon.idSalon', idSalon);
+      }
+      if (idService) {
+          query.join('Coiffeur_Service', 'Coiffeur.idCoiffeur', '=', 'Coiffeur_Service.idCoiffeur')
+              .where('Coiffeur_Service.idService', idService);
+      }
+
+      const disponibilites = await query;
+      if (disponibilites.length > 0) {
+          res.json({ disponibilites });
+      } else {
+          res.status(404).json({ message: "Aucune disponibilité trouvée pour les critères fournis." });
+      }
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Une erreur s'est produite lors de la récupération des disponibilités." });
+  }
+});
 
 
 
