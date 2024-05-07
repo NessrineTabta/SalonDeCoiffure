@@ -311,7 +311,6 @@
             }
             var selectedEventId = null; 
 
-
             function afficherDetailsRdv(info) {
                 const event = info.event;
                 selectedEventId = event.id;
@@ -366,12 +365,8 @@
                         console.error('Error creating Rendezvous:', error);
                         alert("Failed to create Rendezvous: " + error.message);
                     });
-
             }
-
             document.getElementById('confirmButton').addEventListener('click', confirmerRdv);
-
-
         });
     </script>
 </body>

@@ -495,28 +495,54 @@ function getNomsSalons() {
   });
 }
 
+// router.post("/Rendezvous", authentification2, async (req, res) => {
+//   try {
+//     const clientEmail = req.user.email;
+//     const { dateRendezvous, heureRendezvous, idCoiffeur, idDisponibilite } = req.body; // Ajouter idDisponibilite
+
+//     const client = await db("Client").where("email", clientEmail).first();
+//     if (!client) {
+//       return res.status(404).json({ message: "Client non trouvé." });
+//     }
+
+//     // Insérer le rendez-vous
+//     const [idRendezvous] = await db("Rendezvous").insert({
+//       dateRendezvous,
+//       heureRendezvous,
+//       idClient: client.idClient,
+//       idCoiffeur,
+//     });
+
+//     // Supprimer la disponibilité correspondante
+//     await db("Disponibilite").where("idDisponibilite", idDisponibilite).delete();
+
+//     res.status(201).json({ message: "Rendez-vous créé avec succès et disponibilité supprimée.", idRendezvous });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       message: "Une erreur s'est produite lors de la création du rendez-vous.",
+//     });
+//   }
+// });
+
 router.post("/Rendezvous", authentification2, async (req, res) => {
   try {
     const clientEmail = req.user.email;
-    const { dateRendezvous, heureRendezvous, idCoiffeur, idDisponibilite } = req.body; // Ajouter idDisponibilite
-
+    const { dateRendezvous, heureRendezvous, idCoiffeur } = req.body;
+    // Fetch the client ID based on the email
     const client = await db("Client").where("email", clientEmail).first();
     if (!client) {
       return res.status(404).json({ message: "Client non trouvé." });
     }
 
-    // Insérer le rendez-vous
     const [idRendezvous] = await db("Rendezvous").insert({
       dateRendezvous,
       heureRendezvous,
       idClient: client.idClient,
       idCoiffeur,
     });
-
-    // Supprimer la disponibilité correspondante
     await db("Disponibilite").where("idDisponibilite", idDisponibilite).delete();
-
-    res.status(201).json({ message: "Rendez-vous créé avec succès et disponibilité supprimée.", idRendezvous });
+    res.status(201).json({ message: "Rendez-vous créé avec succès.", idRendezvous });
   } catch (error) {
     console.error(error);
     res.status(500).json({
