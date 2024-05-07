@@ -12,6 +12,7 @@ const tokenModule = require("./token"); // Importer le module token
 
 function authentification(req, res, next) {
   const token = req.body.token;
+  
 
   // Vérifie la validée du token grace au tableau de token.js
   const verifierToken = tokenModule.verifierToken(token);
@@ -25,6 +26,7 @@ function authentification(req, res, next) {
     }
 
     req.user = user;
+    console.log("req",req.body);
     next(); // va executer le prochain code
   });
 }

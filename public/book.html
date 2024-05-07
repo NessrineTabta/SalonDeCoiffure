@@ -301,7 +301,11 @@
                             allDay: false,
                             extendedProps: {
                                 nomCoiffeur: disponibilite.nomCoiffeur,
-                                nomSalon: disponibilite.nomSalon
+                                nomSalon: disponibilite.nomSalon,
+                                idDisponibilite: disponibilite.idDisponibilite,
+                                idCoiffeur: disponibilite.idCoiffeur
+                
+                               
                             }
                         });
                     }
@@ -309,7 +313,7 @@
                 calendar.render();
 
             }
-            var selectedEventId = null; 
+            var selectedEventId = null;
 
             function afficherDetailsRdv(info) {
                 const event = info.event;
@@ -333,39 +337,40 @@
                 const dateRendezvous = event.start.toISOString().split('T')[0];
                 const heureRendezvous = event.start.toISOString().split('T')[1].substring(0, 5);
                 const idDisponibilite = event.extendedProps.idDisponibilite;
+                const idClient = sessionStorage.getItem('idClient'); 
+                const idCoiffeur = event.extendedProps.idCoiffeur;  
 
-                const token = sessionStorage.getItem('token') || localStorage.getItem('token');
                 const appointmentData = {
-                    dateRendezvous: dateRendezvous,
-                    heureRendezvous: heureRendezvous,
-                    idCoiffeur: document.getElementById('coiffeurSelect').value,
-                    idDisponibilite: idDisponibilite,
-                    token: token
+                    idDisponibilite,
+                    idClient,
+                    idCoiffeur,
+                    token: sessionStorage.getItem('token')
                 };
 
-                fetch('/Rendezvous', {
+                console.log(appointmentData);  // Log pour vérifier les données
+
+                fetch('/creerRendezVous', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'x-auth-token': token
                     },
                     body: JSON.stringify(appointmentData)
                 })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok: ' + response.statusText);
-                        }
-                        return response.json();
-                    })
+                    .then(response => response.json())
                     .then(data => {
                         alert(data.message);
-                        document.getElementById('detailsRDV').style.display = 'none';
+                        if (data.idRendezvous) {
+                            document.getElementById('detailsRDV').style.display = 'none';
+                            calendar.refetchEvents();  // Rafraîchir les événements du calendrier si nécessaire
+                        }
                     })
                     .catch(error => {
                         console.error('Error creating Rendezvous:', error);
                         alert("Failed to create Rendezvous: " + error.message);
                     });
             }
+
+
             document.getElementById('confirmButton').addEventListener('click', confirmerRdv);
         });
     </script>

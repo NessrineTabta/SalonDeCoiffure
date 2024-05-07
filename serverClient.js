@@ -473,6 +473,7 @@ router.get("/salon", async (req, res) => {
 // GET: Noms des salons disponibles
 router.get("/nomsSalons", async (req, res) => {
   try {
+    console.log(req.user);
     const nomsSalons = await getNomsSalons();
     res.status(200).json(nomsSalons);
   } catch (error) {
@@ -525,30 +526,46 @@ function getNomsSalons() {
 //   }
 // });
 
-router.post("/Rendezvous", authentification2, async (req, res) => {
-  try {
-    const clientEmail = req.user.email;
-    const { dateRendezvous, heureRendezvous, idCoiffeur } = req.body;
-    // Fetch the client ID based on the email
-    const client = await db("Client").where("email", clientEmail).first();
-    if (!client) {
-      return res.status(404).json({ message: "Client non trouvé." });
-    }
+// POST: Créer un rendez-vous et supprimer la disponibilité utilisée
+router.post("/creerRendezVous", authentification, async (req, res) => {
+  const { idDisponibilite, idCoiffeur } = req.body;
+  // const idClient=req.user.idClient;
+  
 
-    const [idRendezvous] = await db("Rendezvous").insert({
-      dateRendezvous,
-      heureRendezvous,
-      idClient: client.idClient,
-      idCoiffeur,
-    });
-    await db("Disponibilite").where("idDisponibilite", idDisponibilite).delete();
-    res.status(201).json({ message: "Rendez-vous créé avec succès.", idRendezvous });
+  if (!idDisponibilite || !idClient || !idCoiffeur) {
+      return res.status(400).json({ message: "Informations incomplètes pour créer un rendez-vous." });
+  }
+
+  try {
+      const disponibilite = await db('Disponibilite')
+          .where('idDisponibilite', idDisponibilite)
+          .first();
+
+      if (!disponibilite) {
+          return res.status(404).json({ message: "Disponibilité non trouvée." });
+      }
+
+      const transactionResult = await db.transaction(async trx => {
+          const idRendezvous = await trx('Rendezvous').insert({
+              dateRendezvous: disponibilite.dateDisponibilite,
+              heureRendezvous: disponibilite.heureDisponibilite,
+              idClient: idClient,
+              idCoiffeur: idCoiffeur
+          });
+
+          await trx('Disponibilite')
+              .where('idDisponibilite', idDisponibilite)
+              .del();
+
+          return idRendezvous;
+      });
+
+      res.json({ message: "Rendez-vous créé et disponibilité supprimée avec succès.", idRendezvous: transactionResult });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Une erreur s'est produite lors de la création du rendez-vous.",
-    });
+      console.error("Erreur lors de la création du rendez-vous :", error);
+      res.status(500).json({ message: "Une erreur s'est produite lors de la création du rendez-vous." });
   }
 });
+
 
 module.exports = router;
