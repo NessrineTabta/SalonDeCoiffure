@@ -177,8 +177,10 @@
                 <p id="detailCoiffeur"></p>
                 <p id="detailSalon"></p>
                 <p id="detailDateTime"></p>
+                <p id="detailTime"></p> <!-- Nouvel élément pour l'heure -->
                 <button id="confirmButton">Confirmer</button>
             </div>
+
             <a href="accueil/accueil.html" class="close-button">X</a>
         </div>
     </div>
@@ -217,7 +219,7 @@
                 let optionsHtml = '<option></option>';  // option vide
                 data.forEach(item => {
                     let value = item.id || item.idSalon || item.idCoiffeur || item.idService;
-                    let text = item[propertyName];
+                    let text = item.prenomCoiffeur ? `${item.prenomCoiffeur} ${item[propertyName]}` : item[propertyName]; // concaténer prénom et nom si prénom existe
                     optionsHtml += `<option value="${value}">${text}</option>`;
                 });
                 select.innerHTML = optionsHtml;
@@ -243,7 +245,7 @@
                 console.log(serviceId & "test")
 
                 const queryParams = new URLSearchParams();
-                // Ajoutez chaque paramètre seulement s'il est défini et non vide
+                // Ajoute chaque paramètre seulement s'il est défini et non vide
                 if (coiffeurId) queryParams.set('idCoiffeur', coiffeurId);
                 if (salonId) queryParams.set('idSalon', salonId);
                 if (serviceId) queryParams.set('idService', serviceId);
@@ -251,7 +253,7 @@
                 const queryString = queryParams.toString();
                 console.log("Query String:", queryString); // Debug pour voir la chaîne de requête formée
 
-                // Continuez seulement si au moins un paramètre est défini
+                // Continue seulement si au moins un paramètre est défini
                 if (!queryString) {
                     console.log("Aucun critère de recherche n'a été défini.");
                     return;
@@ -265,12 +267,14 @@
                         return response.json();
                     })
                     .then(data => {
+                        console.log("Data received:", data); // Affiche les données reçues du serveur
                         if (data.disponibilites && data.disponibilites.length > 0) {
                             updateCalendar(data.disponibilites);
                         } else {
                             console.error('Aucune disponibilité trouvée ou données mal formées.', data);
                         }
                     })
+
                     .catch(error => {
                         console.error('Failed to fetch availabilities:', error);
                         alert("Erreur lors de la récupération des disponibilités.");
@@ -282,60 +286,69 @@
             });
 
             function updateCalendar(disponibilites) {
+                console.log("Updating calendar with:", disponibilites);
                 calendar.removeAllEvents();
                 const today = new Date();
-                today.setHours(0, 0, 0, 0); // Reset time to 00:00 for accurate comparison
+                today.setHours(0, 0, 0, 0);
 
                 disponibilites.forEach(disponibilite => {
-                    const startDateTime = new Date(disponibilite.dateDisponibilite);
-                    const startTime = disponibilite.heureDisponibilite.split(':'); // Split hours and minutes
-                    startDateTime.setHours(parseInt(startTime[0]), parseInt(startTime[1]));
-
-                    if (startDateTime >= today) { 
-                        const eventTitle = `${disponibilite.nomCoiffeur} - ${disponibilite.nomSalon}`; // Format the title
-
+                    const startDateTime = new Date(disponibilite.dateDisponibilite + 'T' + disponibilite.heureDisponibilite);
+                    if (startDateTime >= today) {
+                        const eventTitle = `${disponibilite.nomCoiffeur} - ${disponibilite.nomSalon}`;
                         calendar.addEvent({
                             title: eventTitle,
-                            start: startDateTime.toISOString(), 
+                            start: startDateTime.toISOString(),
                             allDay: false,
                             extendedProps: {
                                 nomCoiffeur: disponibilite.nomCoiffeur,
                                 nomSalon: disponibilite.nomSalon
                             }
-
                         });
                     }
                 });
+                calendar.render();
+
             }
+            var selectedEventId = null; 
+
 
             function afficherDetailsRdv(info) {
                 const event = info.event;
-                console.log("Event clicked:", event.extendedProps); // Vérifiez les propriétés étendues lors du clic
+                selectedEventId = event.id;
                 document.getElementById('detailCoiffeur').textContent = `Coiffeur: ${event.extendedProps.nomCoiffeur}`;
                 document.getElementById('detailSalon').textContent = `Salon: ${event.extendedProps.nomSalon}`;
-                document.getElementById('detailDateTime').textContent = `Date et Heure: ${event.start.toLocaleString()}`;
+                const formattedDate = event.start.toLocaleDateString('fr-CA');
+                const formattedTime = event.start.toLocaleTimeString('fr-CA', { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('detailDateTime').textContent = `Date: ${formattedDate}`;
+                document.getElementById('detailTime').textContent = `Heure: ${formattedTime}`;
                 document.getElementById('detailsRDV').style.display = 'block';
             }
 
-            function confirmerRdv(event) {
-                const coiffeurId = document.getElementById('coiffeurSelect').value; // Utilisez la valeur du select directement
+            function confirmerRdv() {
+                const event = calendar.getEventById(selectedEventId);
+                if (!event || !event.start) {
+                    console.error("No event selected or event start date is undefined.");
+                    return;
+                }
+
                 const dateRendezvous = event.start.toISOString().split('T')[0];
                 const heureRendezvous = event.start.toISOString().split('T')[1].substring(0, 5);
+                const idDisponibilite = event.extendedProps.idDisponibilite;
 
+                const token = sessionStorage.getItem('token') || localStorage.getItem('token');
                 const appointmentData = {
                     dateRendezvous: dateRendezvous,
                     heureRendezvous: heureRendezvous,
-                    idCoiffeur: coiffeurId
+                    idCoiffeur: document.getElementById('coiffeurSelect').value,
+                    idDisponibilite: idDisponibilite,
+                    token: token
                 };
-
-                // Retrieve token from storage (localStorage or sessionStorage)
-                const token = sessionStorage.getItem('token') || localStorage.getItem('token');
 
                 fetch('/Rendezvous', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'x-auth-token': token  // Adjust the header name as per your server setup
+                        'x-auth-token': token
                     },
                     body: JSON.stringify(appointmentData)
                 })
@@ -346,15 +359,19 @@
                         return response.json();
                     })
                     .then(data => {
-                        alert(data.message); // Show success or error message from server
+                        alert(data.message);
                         document.getElementById('detailsRDV').style.display = 'none';
-                        // Optionally refresh or update the calendar or page here
                     })
                     .catch(error => {
                         console.error('Error creating Rendezvous:', error);
                         alert("Failed to create Rendezvous: " + error.message);
                     });
+
             }
+
+            document.getElementById('confirmButton').addEventListener('click', confirmerRdv);
+
+
         });
     </script>
 </body>

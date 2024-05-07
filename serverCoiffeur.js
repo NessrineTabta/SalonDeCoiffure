@@ -654,10 +654,6 @@ router.delete("/CoiffeurService", authentification, async (req, res) => {
 });
 
 
-
-
-
-
 // GET: Desponibilite
 router.post("/afficherdisponibilites", authentification, async (req, res) => {
   try {
@@ -705,37 +701,71 @@ function getDisponibilites(email) {
 
 
 // GET: Disponibilite de tout les coiffeurs
+// router.get("/disponibilites", async (req, res) => {
+//   try {
+//     const disponibilites = await getAllDisponibilites();
+//     res.json({
+//       disponibilites: disponibilites,
+//       message: "Liste des disponibilités de tous les coiffeurs",
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       message:
+//         "Une erreur s'est produite lors de la récupération des disponibilités.",
+//     });
+//   }
+// });
+
+// // Fonction: obtenir toutes les disponibilités
+// function getAllDisponibilites() {
+//   return new Promise((resolve, reject) => {
+//     db.select("Disponibilite.*")
+//       .from("Disponibilite")
+//       .then((rows) => {
+//         resolve(rows);
+//       })
+//       .catch((err) => {
+//         reject(err);
+//       });
+//   });
+// }
 router.get("/disponibilites", async (req, res) => {
   try {
-    const disponibilites = await getAllDisponibilites();
-    res.json({
-      disponibilites: disponibilites,
-      message: "Liste des disponibilités de tous les coiffeurs",
-    });
+      const { idCoiffeur, idSalon, idService } = req.query;
+      let query = db.select(
+          'Disponibilite.dateDisponibilite',
+          'Disponibilite.heureDisponibilite',
+          'Coiffeur.nomCoiffeur',
+          'Salon.nomSalon'
+      )
+      .from('Disponibilite')
+      .join('Coiffeur_Disponibilite', 'Disponibilite.idDisponibilite', '=', 'Coiffeur_Disponibilite.idDisponibilite')
+      .join('Coiffeur', 'Coiffeur_Disponibilite.idCoiffeur', '=', 'Coiffeur.idCoiffeur')
+      .join('Salon', 'Salon.idSalon', '=', 'Coiffeur.idSalon')
+      .modify((queryBuilder) => {
+          if (idCoiffeur) {
+              queryBuilder.where('Coiffeur.idCoiffeur', idCoiffeur);
+          }
+          if (idSalon) {
+              queryBuilder.where('Salon.idSalon', idSalon);
+          }
+          if (idService) {
+              queryBuilder.where('Service.idService', idService);
+          }
+      });
+
+      const disponibilites = await query;
+      if (disponibilites.length > 0) {
+          res.json({ disponibilites });
+      } else {
+          res.status(404).json({ message: "Aucune disponibilité trouvée pour les critères fournis." });
+      }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message:
-        "Une erreur s'est produite lors de la récupération des disponibilités.",
-    });
+      console.error(error);
+      res.status(500).json({ message: "Une erreur s'est produite lors de la récupération des disponibilités." });
   }
 });
-
-// Fonction: obtenir toutes les disponibilités
-function getAllDisponibilites() {
-  return new Promise((resolve, reject) => {
-    db.select("Disponibilite.*")
-      .from("Disponibilite")
-      .then((rows) => {
-        resolve(rows);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-}
-
-
 
 
 // POST: disponibilité
@@ -915,46 +945,6 @@ function getDisponibilites(email) {
   });
 }
 
-// Route GET modifiée pour accepter des filtres multiples
-router.get("/disponibilites", async (req, res) => {
-  try {
-      const { idCoiffeur, idSalon, idService } = req.query;
-      let query = db.select(
-          'Disponibilite.dateDisponibilite',
-          'Disponibilite.heureDisponibilite',
-          'Coiffeur.nomCoiffeur',
-          'Salon.nomSalon'
-      )
-      .from('Disponibilite')
-      .join('Coiffeur_Disponibilite', 'Disponibilite.idDisponibilite', '=', 'Coiffeur_Disponibilite.idDisponibilite')
-      .join('Coiffeur', 'Coiffeur.idCoiffeur', '=', 'Coiffeur_Disponibilite.idCoiffeur')
-      .join('Salon', 'Salon.idSalon', '=', 'Coiffeur.idSalon');
-
-      if (idCoiffeur) {
-          query.where('Coiffeur.idCoiffeur', idCoiffeur);
-      }
-      if (idSalon) {
-          query.where('Salon.idSalon', idSalon);
-      }
-      if (idService) {
-          query.join('Coiffeur_Service', 'Coiffeur.idCoiffeur', '=', 'Coiffeur_Service.idCoiffeur')
-              .where('Coiffeur_Service.idService', idService);
-      }
-
-      const disponibilites = await query;
-      if (disponibilites.length > 0) {
-          res.json({ disponibilites });
-      } else {
-          res.status(404).json({ message: "Aucune disponibilité trouvée pour les critères fournis." });
-      }
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Une erreur s'est produite lors de la récupération des disponibilités." });
-  }
-});
-
-
-
 // POST: Mettre à jour l'image du Portefeuille avec Multer
 router.post("/portfolio", authentification, upload.single("file"), async (req, res) => {
   try {
@@ -1044,8 +1034,5 @@ router.post("/portfolioimages",authentification,upload.array("images", 3),async 
     }
   }
 );
-
-
-
 
 module.exports = router;

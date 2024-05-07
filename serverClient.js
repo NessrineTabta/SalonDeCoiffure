@@ -17,6 +17,7 @@ const jwt = require("jsonwebtoken");
 const TOKEN_SECRET_KEY = "WEB_4D2_00003"; //ajout de chaine pour completer le sign token
 
 const authentification = require("./authentification");
+const authentification2 = require("./authentification2");
 const router = express.Router();
 
 /* ------------------------
@@ -164,33 +165,33 @@ router.get("/client/:idClient", async (req, res) => {
 });
 
 // POST: Create a new Rendezvous
-router.post("/Rendezvous", authentification, async (req, res) => {
-  try {
-    const clientEmail = req.user.email;
-    const { dateRendezvous, heureRendezvous, idCoiffeur } = req.body;
-    // Fetch the client ID based on the email
-    const client = await db("Client").where("email", clientEmail).first();
-    if (!client) {
-      return res.status(404).json({ message: "Client non trouvé." });
-    }
+// router.post("/Rendezvous", authentification, async (req, res) => {
+//   try {
+//     const clientEmail = req.user.email;
+//     const { dateRendezvous, heureRendezvous, idCoiffeur } = req.body;
+//     // Fetch the client ID based on the email
+//     const client = await db("Client").where("email", clientEmail).first();
+//     if (!client) {
+//       return res.status(404).json({ message: "Client non trouvé." });
+//     }
 
-    const [idRendezvous] = await db("Rendezvous").insert({
-      dateRendezvous,
-      heureRendezvous,
-      idClient: client.idClient,
-      idCoiffeur,
-    });
+//     const [idRendezvous] = await db("Rendezvous").insert({
+//       dateRendezvous,
+//       heureRendezvous,
+//       idClient: client.idClient,
+//       idCoiffeur,
+//     });
 
-    res
-      .status(201)
-      .json({ message: "Rendez-vous créé avec succès.", idRendezvous });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Une erreur s'est produite lors de la création du rendez-vous.",
-    });
-  }
-});
+//     res
+//       .status(201)
+//       .json({ message: "Rendez-vous créé avec succès.", idRendezvous });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       message: "Une erreur s'est produite lors de la création du rendez-vous.",
+//     });
+//   }
+// });
 // afficher tous les rendez-vous dun client
 router.post("/rendezVousClients", authentification, async (req, res) => {
   try {
@@ -494,5 +495,34 @@ function getNomsSalons() {
   });
 }
 
+router.post("/Rendezvous", authentification2, async (req, res) => {
+  try {
+    const clientEmail = req.user.email;
+    const { dateRendezvous, heureRendezvous, idCoiffeur, idDisponibilite } = req.body; // Ajouter idDisponibilite
+
+    const client = await db("Client").where("email", clientEmail).first();
+    if (!client) {
+      return res.status(404).json({ message: "Client non trouvé." });
+    }
+
+    // Insérer le rendez-vous
+    const [idRendezvous] = await db("Rendezvous").insert({
+      dateRendezvous,
+      heureRendezvous,
+      idClient: client.idClient,
+      idCoiffeur,
+    });
+
+    // Supprimer la disponibilité correspondante
+    await db("Disponibilite").where("idDisponibilite", idDisponibilite).delete();
+
+    res.status(201).json({ message: "Rendez-vous créé avec succès et disponibilité supprimée.", idRendezvous });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Une erreur s'est produite lors de la création du rendez-vous.",
+    });
+  }
+});
 
 module.exports = router;
