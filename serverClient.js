@@ -473,7 +473,7 @@ router.get("/salon", async (req, res) => {
 // GET: Noms des salons disponibles
 router.get("/nomsSalons", async (req, res) => {
   try {
-    console.log(req.user);
+
     const nomsSalons = await getNomsSalons();
     res.status(200).json(nomsSalons);
   } catch (error) {
@@ -529,7 +529,7 @@ function getNomsSalons() {
 // POST: Créer un rendez-vous et supprimer la disponibilité utilisée
 router.post("/creerRendezVous", authentification, async (req, res) => {
   const { idDisponibilite, idCoiffeur } = req.body;
-  // const idClient=req.user.idClient;
+  const idClient=req.user.id;
   
 
   if (!idDisponibilite || !idClient || !idCoiffeur) {
