@@ -11,13 +11,12 @@ const jwt = require("jsonwebtoken"); // Assurez-vous d'importer jsonwebtoken cor
 const tokenModule = require("./token"); // Importer le module token
 
 function authentification(req, res, next) {
-  const token = req.body.token
-  console.log("user", req.user.id);
+  const token = req.body.token;
 
   // Vérifie la validée du token grace au tableau de token.js
   const verifierToken = tokenModule.verifierToken(token);
   if (!token) {
-    return res.status(400).json({ message: "Accès non autorisé" ,});
+    return res.status(400).json({ message: "Accès non autorisé" });
   }
 
   jwt.verify(token, TOKEN_SECRET_KEY, (err, user) => {
@@ -26,7 +25,7 @@ function authentification(req, res, next) {
     }
 
     req.user = user;
-    console.log("req",req.body);
+    console.log("user", req.user.email);
     next(); // va executer le prochain code
   });
 }
