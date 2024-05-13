@@ -93,57 +93,60 @@ function insertUser(email, nom, prenom, numeroTelephone, passwordHashed) {
 router.post("/loginClient", async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(password);
+    console.log("Password reçu:", password);
 
     const user = await getUserByUsername(email);
-    console.log(user);
+    console.log("Utilisateur trouvé:", user);
 
-    //si l'utilisateur existe pas on peut pas le LOGIN
+    // Vérifier si l'utilisateur n'existe pas
     if (!user) {
-      return res.status(400).json({ message: "Username/Password invalide 1 " }); //return quitte la route, le serveur retourne toujours 1 reponse
+      return res.status(400).json({ message: "Email ou mot de passe invalide." });
     }
 
-    //on verifie si false que son mot de passe decrypter = a ce quil a ecrit
+    // Comparer le mot de passe saisi avec le mot de passe chiffré stocké
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      return res.status(400).json({ message: "Username/Password invalide 2 " });
+      return res.status(400).json({ message: "Email ou mot de passe invalide." });
     }
 
-    // initialiser token
+    // Générer un token JWT
     const token = jwt.sign(
       { id: user.idClient, email: user.email },
       TOKEN_SECRET_KEY,
       { expiresIn: 3600 }
     );
 
-    res
-      .status(200)
-      .json({ message: "Connexion réussie.", token, expireDans: 3600 });
+    // Retourner le token et l'idClient
+    res.status(200).json({ 
+      message: "Connexion réussie.",
+      token: token,
+      idClient: user.idClient, // Ajouter idClient à la réponse
+      expireDans: 3600 
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Erreur lors de la connexion:", error);
     res.status(500).json({
-      message:
-        "Une erreur s'est produite lors de la connexion de l'utilisateur.",
+      message: "Une erreur s'est produite lors de la connexion de l'utilisateur.",
     });
   }
 });
+
+// Fonction pour récupérer un utilisateur par email
 function getUserByUsername(email) {
   return new Promise((resolve, reject) => {
-    //on retourne une promesse au await
     db("Client")
       .select("*")
-      .from("Client")
       .where("email", email)
       .first()
       .then((row) => {
         resolve(row);
       })
       .catch((err) => {
-        reject();
+        console.error("Erreur de base de données:", err);
+        reject(err);
       });
   });
 }
-
 // GET: Obtenir les détails d'un client par son ID
 router.get("/client/:idClient", async (req, res) => {
   try {
@@ -164,34 +167,6 @@ router.get("/client/:idClient", async (req, res) => {
   }
 });
 
-// POST: Create a new Rendezvous
-// router.post("/Rendezvous", authentification, async (req, res) => {
-//   try {
-//     const clientEmail = req.user.email;
-//     const { dateRendezvous, heureRendezvous, idCoiffeur } = req.body;
-//     // Fetch the client ID based on the email
-//     const client = await db("Client").where("email", clientEmail).first();
-//     if (!client) {
-//       return res.status(404).json({ message: "Client non trouvé." });
-//     }
-
-//     const [idRendezvous] = await db("Rendezvous").insert({
-//       dateRendezvous,
-//       heureRendezvous,
-//       idClient: client.idClient,
-//       idCoiffeur,
-//     });
-
-//     res
-//       .status(201)
-//       .json({ message: "Rendez-vous créé avec succès.", idRendezvous });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       message: "Une erreur s'est produite lors de la création du rendez-vous.",
-//     });
-//   }
-// });
 // afficher tous les rendez-vous dun client
 router.post("/rendezVousClients", authentification, async (req, res) => {
   try {
@@ -502,35 +477,6 @@ function getNomsSalons() {
   });
 }
 
-// router.post("/Rendezvous", authentification2, async (req, res) => {
-//   try {
-//     const clientEmail = req.user.email;
-//     const { dateRendezvous, heureRendezvous, idCoiffeur, idDisponibilite } = req.body; // Ajouter idDisponibilite
-
-//     const client = await db("Client").where("email", clientEmail).first();
-//     if (!client) {
-//       return res.status(404).json({ message: "Client non trouvé." });
-//     }
-
-//     // Insérer le rendez-vous
-//     const [idRendezvous] = await db("Rendezvous").insert({
-//       dateRendezvous,
-//       heureRendezvous,
-//       idClient: client.idClient,
-//       idCoiffeur,
-//     });
-
-//     // Supprimer la disponibilité correspondante
-//     await db("Disponibilite").where("idDisponibilite", idDisponibilite).delete();
-
-//     res.status(201).json({ message: "Rendez-vous créé avec succès et disponibilité supprimée.", idRendezvous });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       message: "Une erreur s'est produite lors de la création du rendez-vous.",
-//     });
-//   }
-// });
 // Fonction: récupérer l'ID du coiffeur à partir de l'e-mail
 async function getIdByEmail(email) {
   try {
@@ -550,9 +496,9 @@ async function getIdByEmail(email) {
 
 // POST: Créer un rendez-vous et supprimer la disponibilité utilisée
 router.post("/creerRendezVous", authentification, async (req, res) => {
-  const { idDisponibilite, idCoiffeur } = req.body;
-  const idClient = getIdByEmail(req.user.email);
+  const { idDisponibilite, idCoiffeur, idClient } = req.body; // Ajout de idClient dans le destructuring
 
+  // Vérifiez que tous les paramètres requis sont présents
   if (!idDisponibilite || !idClient || !idCoiffeur) {
     return res
       .status(400)
@@ -560,6 +506,7 @@ router.post("/creerRendezVous", authentification, async (req, res) => {
   }
 
   try {
+    // Vérifiez que la disponibilité existe
     const disponibilite = await db("Disponibilite")
       .where("idDisponibilite", idDisponibilite)
       .first();
@@ -568,13 +515,14 @@ router.post("/creerRendezVous", authentification, async (req, res) => {
       return res.status(404).json({ message: "Disponibilité non trouvée." });
     }
 
+    // Effectuer la transaction pour créer le rendez-vous et supprimer la disponibilité
     const transactionResult = await db.transaction(async (trx) => {
       const idRendezvous = await trx("Rendezvous").insert({
         dateRendezvous: disponibilite.dateDisponibilite,
         heureRendezvous: disponibilite.heureDisponibilite,
         idClient: idClient,
         idCoiffeur: idCoiffeur,
-      });
+      }, ['idRendezvous']); // Précisez les colonnes retournées
 
       await trx("Disponibilite")
         .where("idDisponibilite", idDisponibilite)
@@ -585,17 +533,15 @@ router.post("/creerRendezVous", authentification, async (req, res) => {
 
     res.json({
       message: "Rendez-vous créé et disponibilité supprimée avec succès.",
-      idRendezvous: transactionResult,
+      idRendezvous: transactionResult[0], // Assurez-vous que l'ID est bien retourné
     });
   } catch (error) {
     console.error("Erreur lors de la création du rendez-vous :", error);
-    res
-      .status(500)
-      .json({
-        message:
-          "Une erreur s'est produite lors de la création du rendez-vous.",
-      });
+    res.status(500).json({
+      message: "Une erreur s'est produite lors de la création du rendez-vous.",
+    });
   }
 });
+
 
 module.exports = router;

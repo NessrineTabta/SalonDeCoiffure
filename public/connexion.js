@@ -2,17 +2,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const btnClient = document.getElementById("btnClient");
   const btnCoiffeur = document.getElementById("btnCoiffeur");
 
-  // Ajouter un écouteur d'événements click aux boutons
   btnClient.addEventListener("click", function () {
     btnClient.classList.add("is-black");
     btnCoiffeur.classList.remove("is-black");
-    sessionStorage.setItem("loginType", "client"); // Enregistrer le type de connexion dans sessionStorage
+    sessionStorage.setItem("loginType", "client");
   });
 
   btnCoiffeur.addEventListener("click", function () {
     btnCoiffeur.classList.add("is-black");
     btnClient.classList.remove("is-black");
-    sessionStorage.setItem("loginType", "coiffeur"); // Enregistrer le type de connexion dans sessionStorage
+    sessionStorage.setItem("loginType", "coiffeur");
   });
 
   const loginForm = document.getElementById("formConnexion");
@@ -20,7 +19,6 @@ document.addEventListener("DOMContentLoaded", function () {
   loginForm.addEventListener("submit", function (event) {
     event.preventDefault();
 
-    // recuperer le input
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
@@ -47,11 +45,13 @@ document.addEventListener("DOMContentLoaded", function () {
         return response.json();
       })
       .then((data) => {
+        sessionStorage.setItem("token", data.token);
 
-        sessionStorage.setItem("token", data.token); // Stocker le token dans sessionStorage
         if (loginType === "client") {
+          sessionStorage.setItem("idClient", data.idClient); // Stocker idClient
           window.location.href = "./accueil/accueil.html";
         } else {
+          sessionStorage.setItem("idCoiffeur", data.idCoiffeur); // Stocker idCoiffeur si nécessaire
           window.location.href = "./accueil/accueil.html";
         }
       })
@@ -60,5 +60,4 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Échec de la connexion. Veuillez réessayer.");
       });
   });
-
 });

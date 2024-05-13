@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <title>Prise de Rendez-vous</title>
@@ -151,6 +152,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="left-panel">
@@ -238,24 +240,13 @@
                 const coiffeurId = document.getElementById('coiffeurSelect').value;
                 const salonId = document.getElementById('salonSelect').value;
                 const serviceId = document.getElementById('serviceSelect').value;
-                console.log("Coiffeur ID:", coiffeurId);
-                console.log("Salon ID:", salonId);
-                console.log("Service ID:", serviceId);
 
                 const queryParams = new URLSearchParams();
-                // Ajoute chaque paramètre seulement s'il est défini et non vide
                 if (coiffeurId) queryParams.set('idCoiffeur', coiffeurId);
                 if (salonId) queryParams.set('idSalon', salonId);
                 if (serviceId) queryParams.set('idService', serviceId);
 
                 const queryString = queryParams.toString();
-                console.log("Query String:", queryString); // Debug pour voir la chaîne de requête formée
-
-                // Continue seulement si au moins un paramètre est défini
-                if (!queryString) {
-                    console.log("Aucun critère de recherche n'a été défini.");
-                    return;
-                }
 
                 fetch(`/disponibilites?${queryString}`)
                     .then(response => {
@@ -265,11 +256,11 @@
                         return response.json();
                     })
                     .then(data => {
-                        console.log("Data received:", data); // Affiche les données reçues du serveur
+                        console.log("Data received:", data);
                         if (data.disponibilites && data.disponibilites.length > 0) {
                             updateCalendar(data.disponibilites);
                         } else {
-                            console.error('Aucune disponibilité trouvée ou données mal formées.', data);
+                            console.error('No availabilities found or data is malformed.', data);
                         }
                     })
                     .catch(error => {
@@ -290,9 +281,13 @@
 
                 disponibilites.forEach(disponibilite => {
                     const startDateTime = new Date(disponibilite.dateDisponibilite + 'T' + disponibilite.heureDisponibilite);
+                    console.log("Adding event:", disponibilite);
+
+                    // Check if the date and time are correct
                     if (startDateTime >= today) {
                         const eventTitle = `${disponibilite.nomCoiffeur} - ${disponibilite.nomSalon}`;
                         calendar.addEvent({
+                            id: `${disponibilite.idDisponibilite}-${disponibilite.heureDisponibilite}`, // Ensure unique ID
                             title: eventTitle,
                             start: startDateTime.toISOString(),
                             allDay: false,
@@ -307,6 +302,7 @@
                 });
                 calendar.render();
             }
+
             var selectedEventId = null;
 
             function afficherDetailsRdv(info) {
@@ -321,7 +317,6 @@
                 document.getElementById('detailTime').textContent = `Heure: ${formattedTime}`;
                 document.getElementById('detailsRDV').style.display = 'block';
             }
-            
 
             function confirmerRdv() {
                 const event = calendar.getEventById(selectedEventId);
@@ -330,31 +325,35 @@
                     alert("Erreur: Les informations du rendez-vous sont incomplètes.");
                     return;
                 }
-            
-                const dateRendezvous = event.start.toISOString().split('T')[0];
-                const heureRendezvous = event.start.toISOString().split('T')[1].substring(0, 5);
+
+                const dateRendezvous = event.start.toISOString().split('T')[0]; // Date au format YYYY-MM-DD
+                const heureRendezvous = event.start.toISOString().split('T')[1].substring(0, 5); // Heure au format HH:MM
+
                 const idDisponibilite = event.extendedProps.idDisponibilite;
-                const idClient = sessionStorage.getItem('idClient'); 
-                const idCoiffeur = event.extendedProps.idCoiffeur;  
-            
-                if (!idDisponibilite || !idCoiffeur) {
-                    console.error("Disponibilité ou coiffeur ID manquant.", {
+                const idClient = sessionStorage.getItem('idClient');
+                const idCoiffeur = event.extendedProps.idCoiffeur;
+
+                if (!idDisponibilite || !idCoiffeur || !idClient) {
+                    console.error("Disponibilité, coiffeur ou client ID manquant.", {
                         idDisponibilite,
-                        idCoiffeur
+                        idCoiffeur,
+                        idClient
                     });
-                    alert("Erreur: Disponibilité ou coiffeur ID manquant.");
+                    alert("Erreur: Disponibilité, coiffeur ou client ID manquant.");
                     return;
                 }
-            
+
                 const appointmentData = {
                     idDisponibilite,
                     idClient,
                     idCoiffeur,
+                    dateRendezvous,
+                    heureRendezvous,
                     token: sessionStorage.getItem('token')
                 };
-            
-                console.log(appointmentData); 
-            
+
+                console.log("Appointment Data:", appointmentData);
+
                 fetch('/creerRendezVous', {
                     method: 'POST',
                     headers: {
@@ -369,7 +368,7 @@
                         }
                         if (data.idRendezvous) {
                             document.getElementById('detailsRDV').style.display = 'none';
-                            calendar.refetchEvents();  // Rafraîchir les événements du calendrier si nécessaire
+                            calendar.refetchEvents();
                         }
                     })
                     .catch(error => {
@@ -377,10 +376,24 @@
                         alert("Failed to create Rendezvous: " + error.message);
                     });
             }
-            
 
             document.getElementById('confirmButton').addEventListener('click', confirmerRdv);
+
+            // Vérification de la session
+            function checkSessionStorage() {
+                const idClient = sessionStorage.getItem('idClient');
+                if (!idClient) {
+                    console.warn("idClient n'est pas défini dans sessionStorage.");
+                    alert("Vous devez être connecté pour prendre un rendez-vous.");
+                    // Rediriger l'utilisateur vers la page de connexion ou afficher un message
+                } else {
+                    console.log("idClient trouvé dans sessionStorage:", idClient);
+                }
+            }
+
+            checkSessionStorage();
         });
     </script>
 </body>
+
 </html>

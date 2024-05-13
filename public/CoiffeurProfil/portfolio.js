@@ -281,37 +281,28 @@ const days = document.querySelectorAll(".days li");
 
 // Fonction pour afficher les heures possibles et le bouton Envoyer
 function afficherHeuresPossibles() {
-  // Placeholder: Remplacez ce bloc avec la logique pour afficher les heures possibles
   const heuresPossibles = [
-    "8:00",
-    "9:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
+    "8:00", "9:00", "10:00", "11:00", "12:00",
+    "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"
   ];
   const choisirDate = document.getElementById("choisirDate");
   choisirDate.innerHTML = ""; // Efface le contenu précédent
+  heureSelectionnee = []; // Réinitialiser le tableau des heures sélectionnées
 
-  // Crée des cases à cocher pour chaque heure possible
   heuresPossibles.forEach((heure) => {
     const input = document.createElement("input");
     input.type = "checkbox";
-    input.name = "heure-disponible"; // Assure que les cases à cocher sont regroupées
+    input.name = "heure-disponible";
     input.value = heure;
 
     const label = document.createElement("label");
     label.textContent = heure;
 
     input.addEventListener("change", () => {
-      // Mettre à jour les heures sélectionnées lorsque l'utilisateur change la sélection
       if (input.checked) {
-        heureSelectionnee.push(input.value);
+        if (!heureSelectionnee.includes(input.value)) {
+          heureSelectionnee.push(input.value);
+        }
       } else {
         const index = heureSelectionnee.indexOf(input.value);
         if (index !== -1) {
@@ -325,19 +316,13 @@ function afficherHeuresPossibles() {
     choisirDate.appendChild(document.createElement("br"));
   });
 
-  // Créer le bouton Envoyer
   const boutonEnvoyer = document.createElement("button");
   boutonEnvoyer.textContent = "Envoyer les disponibilités";
   boutonEnvoyer.setAttribute("class", "button is-danger");
   boutonEnvoyer.setAttribute("id", "boutonEnvoyer");
 
-  // Ajouter un écouteur d'événement au bouton Envoyer
   boutonEnvoyer.addEventListener("click", async () => {
-    if (
-      !dateSelectionnee ||
-      !heureSelectionnee ||
-      heureSelectionnee.length === 0
-    ) {
+    if (!dateSelectionnee || heureSelectionnee.length === 0) {
       console.error("Veuillez sélectionner une date et au moins une heure.");
       return;
     }
@@ -368,15 +353,16 @@ function afficherHeuresPossibles() {
       });
 
       const results = await Promise.all(responsePromises);
-      alert("Disponibilités mis a jour");
+      alert("Disponibilités mises à jour");
       console.log("Disponibilités envoyées avec succès:", results);
     } catch (error) {
       console.error("Erreur lors de l'envoi des disponibilités:", error);
     }
   });
 
-  choisirDate.appendChild(boutonEnvoyer); // Ajouter le bouton Envoyer au conteneur
+  choisirDate.appendChild(boutonEnvoyer);
 }
+
 
 // Fonction pour formater la date en format ISO
 const formatDateToISO = (date) => {
