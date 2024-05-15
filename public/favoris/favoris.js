@@ -1,23 +1,20 @@
-// Fonction pour récupérer les coiffeurs depuis le serveur
 async function getCoiffeursFromServer() {
   try {
-    const response = await fetch("/coiffeurs"); // Effectuer une requête GET vers l'endpoint '/coiffeurs'
+    const response = await fetch("/coiffeurs");
     if (!response.ok) {
       throw new Error("Erreur lors de la récupération des coiffeurs");
     }
-    const data = await response.json(); // Convertir la réponse en JSON
-    return data.coiffeurs; // Retourner les coiffeurs récupérés
+    const data = await response.json();
+    return data.coiffeurs;
   } catch (error) {
     console.error(error);
-    // Gérer l'erreur ici
     return [];
   }
 }
 
-// Fonction pour récupérer les informations sur le salon depuis le serveur
 async function getSalonFromServer(idSalon) {
   try {
-    const response = await fetch(`/salon/${idSalon}`); // Utilisez la route pour récupérer le salon par son ID
+    const response = await fetch(`/salon/${idSalon}`);
     if (!response.ok) {
       throw new Error(
         "Erreur lors de la récupération des informations sur le salon"
@@ -31,20 +28,41 @@ async function getSalonFromServer(idSalon) {
   }
 }
 
-// Fonction pour retirer un coiffeur des favoris
+async function getPhotoCoiffeurFromServer(email) {
+  try {
+    const token = sessionStorage.getItem("token");
+    const response = await fetch(`/recupererphoto/${email}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token: token }),
+    });
+    if (!response.ok) {
+      throw new Error("Erreur lors de la récupération de la photo du coiffeur");
+    }
+    const data = await response.json();
+    return data.imageUrl;
+  } catch (error) {
+    console.error(error);
+    return "../logo/R.png";
+  }
+}
+
+
 async function retirerDesFavoris(event, coiffeur) {
   try {
-    const favoris = await getFavorisFromServer(); // Récupérer les favoris du serveur
+    const favoris = await getFavorisFromServer();
     const favoriToDelete = favoris.find(
       (favori) => favori.idCoiffeur === coiffeur.idCoiffeur
-    ); // Trouver le favori correspondant au coiffeur
+    );
 
     if (!favoriToDelete) {
-      throw new Error("Favori non trouvé"); // Si le favori n'est pas trouvé, générer une erreur
+      throw new Error("Favori non trouvé");
     }
 
     const response = await fetch(`/favoris/${favoriToDelete.idFavoris}`, {
-      method: "DELETE", // Utiliser la méthode DELETE pour retirer un favori
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
@@ -55,15 +73,13 @@ async function retirerDesFavoris(event, coiffeur) {
     }
 
     const data = await response.json();
-    console.log(data.message); // Afficher un message de confirmation dans la console
-    afficherCoiffeurs(); // Actualiser l'affichage des coiffeurs après le retrait des favoris
+    console.log(data.message);
+    afficherCoiffeurs();
   } catch (error) {
     console.error(error);
-    // Gérer l'erreur ici
   }
 }
 
-// Fonction pour récupérer les favoris du client depuis le serveur
 async function getFavorisFromServer() {
   try {
     const response = await fetch("/favoris");
@@ -80,7 +96,6 @@ async function getFavorisFromServer() {
 
 const token = sessionStorage.getItem("token");
 
-// Fonction pour afficher les coiffeurs filtrés par nom ou prénom
 async function afficherCoiffeurs() {
   try {
     const coiffeurs = await getCoiffeursFromServer();
@@ -95,7 +110,6 @@ async function afficherCoiffeurs() {
     coiffeursContainer.innerHTML = "";
 
     for (const coiffeur of coiffeurs) {
-      // Filtrer les coiffeurs en fonction du nom ou du prénom
       const fullName = (
         coiffeur.nomCoiffeur +
         " " +
@@ -105,21 +119,19 @@ async function afficherCoiffeurs() {
         continue;
       }
 
-      // Récupérer les informations sur le salon du coiffeur
+      const photoUrl = await getPhotoCoiffeurFromServer(coiffeur.email);
+
       const salon = await getSalonFromServer(coiffeur.idSalon);
 
-      // Créer la carte du coiffeur
       const coiffeurCard = document.createElement("div");
       coiffeurCard.classList.add("coiffeur-card");
 
-      // Ajouter la photo du coiffeur
       const photo = document.createElement("img");
-      photo.src = coiffeur.photo ? coiffeur.photo : "../logo/R.png";
+      photo.src = photoUrl;
       photo.alt = coiffeur.nomCoiffeur + " " + coiffeur.prenomCoiffeur;
       photo.classList.add("coiffeur-photo");
       coiffeurCard.appendChild(photo);
 
-      // Ajouter le nom et prénom du coiffeur
       const nomPrenomContainer = document.createElement("div");
       nomPrenomContainer.classList.add("nom-prenom-container");
       const nomPrenomElement = document.createElement("div");
@@ -129,7 +141,6 @@ async function afficherCoiffeurs() {
       nomPrenomContainer.appendChild(nomPrenomElement);
       coiffeurCard.appendChild(nomPrenomContainer);
 
-      // Ajouter le numéro de téléphone, l'email et l'adresse du salon
       const infoContainer = document.createElement("div");
       infoContainer.classList.add("coiffeur-info");
       const salonInfo = document.createElement("div");
@@ -137,7 +148,6 @@ async function afficherCoiffeurs() {
       infoContainer.appendChild(salonInfo);
       coiffeurCard.appendChild(infoContainer);
 
-      // Ajouter le bouton de favori
       const favoriteButton = document.createElement("button");
       favoriteButton.classList.add("favorite-button");
       const isFavorite = favoris.some(
@@ -155,7 +165,6 @@ async function afficherCoiffeurs() {
       });
       coiffeurCard.appendChild(favoriteButton);
 
-      // Ajouter la carte du coiffeur au conteneur principal
       coiffeursContainer.appendChild(coiffeurCard);
     }
   } catch (error) {
@@ -163,9 +172,8 @@ async function afficherCoiffeurs() {
   }
 }
 
-// Fonction pour ajouter un coiffeur aux favoris
 async function ajouterAuxFavoris(event, coiffeur) {
-  const token = sessionStorage.getItem("token"); // Obtenir le token depuis la session
+  const token = sessionStorage.getItem("token");
 
   try {
     const response = await fetch("/favoris", {
@@ -175,42 +183,35 @@ async function ajouterAuxFavoris(event, coiffeur) {
       },
       body: JSON.stringify({
         idCoiffeur: coiffeur.idCoiffeur,
-        token: token, // Passer le token dans la requête
+        token: token,
       }),
     });
     if (!response.ok) {
       throw new Error("Erreur lors de l'ajout du coiffeur aux favoris");
     }
     const data = await response.json();
-    console.log(data.message); // Afficher un message de confirmation dans la console
-    afficherCoiffeurs(); // Actualiser l'affichage des coiffeurs après l'ajout aux favoris
+    console.log(data.message);
+    afficherCoiffeurs();
   } catch (error) {
     console.error(error);
-    // Gérer l'erreur ici
   }
 }
 
-// Fonction pour basculer l'état de favori d'un coiffeur
 async function toggleFavorite(event, coiffeur) {
-  // Ici, vous pouvez mettre à jour l'état de favori du coiffeur et l'interface utilisateur en conséquence
   coiffeur.favori = !coiffeur.favori;
   event.target.innerHTML = coiffeur.favori ? "&#x2665;" : "&#x2661;";
-  event.target.classList.toggle("favorite-icon-active", coiffeur.favori); // Ajoute ou supprime la classe favorite-icon-active
-  event.stopPropagation(); // Pour éviter que le clic ne déclenche la fonction de clic de la carte
+  event.target.classList.toggle("favorite-icon-active", coiffeur.favori);
+  event.stopPropagation();
 
-  // Si le coiffeur est maintenant en favori, l'ajouter aux favoris
   if (coiffeur.favori) {
     await ajouterAuxFavoris(coiffeur);
   } else {
-    // Si le coiffeur est supprimé des favoris, vous pouvez également mettre en œuvre une fonction pour le supprimer de la table des favoris ici
-    // await supprimerDesFavoris(coiffeur);
+    // Ajouter la logique pour supprimer des favoris
   }
 }
 
-// Appel initial pour afficher tous les coiffeurs
 afficherCoiffeurs();
 
-// Fonction pour filtrer les coiffeurs par nom depuis la barre de recherche
 function searchByName() {
-  afficherCoiffeurs(); // Appel à la fonction d'affichage des coiffeurs pour appliquer le filtre
+  afficherCoiffeurs();
 }

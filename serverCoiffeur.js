@@ -998,6 +998,33 @@ router.post("/recupererphoto", authentification, async (req, res) => {
   }
 });
 
+// POST: Récupérer Image du portfolio
+router.post("/recupererphoto/:email", authentification, async (req, res) => {
+  try {
+    const email = req.params.email;
+    const idCoiffeur = await getIdByEmail(email);
+    const portfolio = await db("Portfolio")
+      .select("urlPhoto")
+      .where("idCoiffeur", idCoiffeur)
+      .orderBy("idPortfolio", "desc")
+      .first();
+    if (portfolio) {
+      res.json({ imageUrl: portfolio.urlPhoto });
+    } else {
+      throw new Error("Aucune photo trouvée pour ce coiffeur");
+    }
+  } catch (error) {
+    console.error(
+      "Une erreur est survenue lors de la récupération de la photo :",
+      error
+    );
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la récupération de la photo." });
+  }
+});
+
+
 //POST: Enregistrer les 3 images uploadé dans portfolio bio chacune leur tour
 router.post(
   "/portfolioimages",
