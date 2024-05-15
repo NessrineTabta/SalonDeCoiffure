@@ -17,7 +17,6 @@ const jwt = require("jsonwebtoken");
 const TOKEN_SECRET_KEY = "WEB_4D2_00003"; //ajout de chaine pour completer le sign token
 
 const authentification = require("./authentification");
-const authentification2 = require("./authentification2");
 const router = express.Router();
 // token.js pour stocker et invalider le token dans logout, ou le retourner dynamiquement
 const tokenModule = require("./token");
@@ -907,23 +906,6 @@ router.delete("/disponibilites", authentification, async (req, res) => {
     res.status(500).json({
       message:
         "Une erreur s'est produite lors de la suppression de la disponibilité",
-    });
-  }
-});
-
-router.get("/lesdisponibilites", authentification2, async (req, res) => {
-  try {
-    const email = req.user.email; // Email de l'utilisateur extrait du token
-    const disponibilites = await getDisponibilites(email);
-    res.json({
-      disponibilites: disponibilites,
-      message: "Liste des disponibilités pour le coiffeur " + req.user.email,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message:
-        "Une erreur s'est produite lors de la récupération des disponibilités.",
     });
   }
 });

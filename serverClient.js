@@ -17,7 +17,6 @@ const jwt = require("jsonwebtoken");
 const TOKEN_SECRET_KEY = "WEB_4D2_00003"; //ajout de chaine pour completer le sign token
 
 const authentification = require("./authentification");
-const authentification2 = require("./authentification2");
 const router = express.Router();
 
 /* ------------------------
