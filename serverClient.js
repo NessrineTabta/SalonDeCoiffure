@@ -17,7 +17,6 @@ const jwt = require("jsonwebtoken");
 const TOKEN_SECRET_KEY = "WEB_4D2_00003"; //ajout de chaine pour completer le sign token
 
 const authentification = require("./authentification");
-const authentification2 = require("./authentification2");
 const router = express.Router();
 
 /* ------------------------
@@ -100,13 +99,17 @@ router.post("/loginClient", async (req, res) => {
 
     // Vérifier si l'utilisateur n'existe pas
     if (!user) {
-      return res.status(400).json({ message: "Email ou mot de passe invalide." });
+      return res
+        .status(400)
+        .json({ message: "Email ou mot de passe invalide." });
     }
 
     // Comparer le mot de passe saisi avec le mot de passe chiffré stocké
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      return res.status(400).json({ message: "Email ou mot de passe invalide." });
+      return res
+        .status(400)
+        .json({ message: "Email ou mot de passe invalide." });
     }
 
     // Générer un token JWT
@@ -117,16 +120,17 @@ router.post("/loginClient", async (req, res) => {
     );
 
     // Retourner le token et l'idClient
-    res.status(200).json({ 
+    res.status(200).json({
       message: "Connexion réussie.",
       token: token,
       idClient: user.idClient, // Ajouter idClient à la réponse
-      expireDans: 3600 
+      expireDans: 3600,
     });
   } catch (error) {
     console.error("Erreur lors de la connexion:", error);
     res.status(500).json({
-      message: "Une erreur s'est produite lors de la connexion de l'utilisateur.",
+      message:
+        "Une erreur s'est produite lors de la connexion de l'utilisateur.",
     });
   }
 });
@@ -517,12 +521,15 @@ router.post("/creerRendezVous", authentification, async (req, res) => {
 
     // Effectuer la transaction pour créer le rendez-vous et supprimer la disponibilité
     const transactionResult = await db.transaction(async (trx) => {
-      const idRendezvous = await trx("Rendezvous").insert({
-        dateRendezvous: disponibilite.dateDisponibilite,
-        heureRendezvous: disponibilite.heureDisponibilite,
-        idClient: idClient,
-        idCoiffeur: idCoiffeur,
-      }, ['idRendezvous']); // Précisez les colonnes retournées
+      const idRendezvous = await trx("Rendezvous").insert(
+        {
+          dateRendezvous: disponibilite.dateDisponibilite,
+          heureRendezvous: disponibilite.heureDisponibilite,
+          idClient: idClient,
+          idCoiffeur: idCoiffeur,
+        },
+        ["idRendezvous"]
+      ); // Précisez les colonnes retournées
 
       await trx("Disponibilite")
         .where("idDisponibilite", idDisponibilite)
@@ -542,6 +549,100 @@ router.post("/creerRendezVous", authentification, async (req, res) => {
     });
   }
 });
+// GET: Obtenir un salon par son ID à partir des paramètres de l'URL
+router.get("/salon/:id", async (req, res) => {
+  try {
+    const { id } = req.params; // Récupérer l'ID du salon à partir des paramètres de l'URL
 
+    // Requête pour obtenir le salon par son ID
+    const salon = await db("Salon").select("*").where("idSalon", id).first();
+
+    // Vérifier si le salon existe
+    if (!salon) {
+      return res.status(404).json({ message: "Salon non trouvé." });
+    }
+
+    res.status(200).json(salon); // Renvoyer les informations sur le salon
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Une erreur s'est produite lors de la récupération du salon.",
+    });
+  }
+});
+
+// GET: Route pour récupérer TOUT les salons disponibles
+router.get("/nomsSalons", async (req, res) => {
+  try {
+    // Make sure to select both `idSalon` and `nomSalon` from the `Salon` table
+    const nomsSalons = await db.select("idSalon", "nomSalon").from("Salon");
+    res.status(200).json(nomsSalons);
+  } catch (error) {
+    console.error("Une erreur s'est produite:", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des noms de salons." });
+  }
+});
+
+// Route pour obtenir tous les favoris
+router.get("/favoris", async (req, res) => {
+  try {
+    const favoris = await db("Favoris").select("*");
+    res.json(favoris);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des favoris :", error);
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la récupération des favoris" });
+  }
+});
+
+// Route pour ajouter un favori
+router.post("/favoris", authentification, async (req, res) => {
+  const email = req.user.email;
+
+  try {
+    const client = await getUserByUsername(email);
+    const idClient = client.idClient;
+
+    const { idCoiffeur } = req.body; // Assurez-vous que les données sont envoyées dans le corps de la requête
+    if (!idCoiffeur || !idClient) {
+      return res.status(400).json({
+        error: "Veuillez fournir un idCoiffeur et un idClient",
+        idClient: idClient,
+      });
+    }
+
+    const newFavori = await db("Favoris").insert({ idCoiffeur, idClient });
+    res
+      .status(201)
+      .json({ message: "Favori ajouté avec succès", favori: newFavori });
+  } catch (error) {
+    console.error("Erreur lors de l'ajout du favori :", error);
+    res.status(500).json({ error: "Erreur lors de l'ajout du favori" });
+  }
+});
+
+// Route pour supprimer un favori
+router.delete("/favoris/:idFavoris", async (req, res) => {
+  try {
+    const { idFavoris } = req.params;
+
+    // Vérifier si le favori existe
+    const favori = await db("Favoris").where({ idFavoris }).first();
+    if (!favori) {
+      return res.status(404).json({ error: "Favori non trouvé" });
+    }
+
+    // Supprimer le favori de la base de données
+    await db("Favoris").where({ idFavoris }).del();
+
+    res.json({ message: "Favori supprimé avec succès" });
+  } catch (error) {
+    console.error("Erreur lors de la suppression du favori :", error);
+    res.status(500).json({ error: "Erreur lors de la suppression du favori" });
+  }
+});
 
 module.exports = router;

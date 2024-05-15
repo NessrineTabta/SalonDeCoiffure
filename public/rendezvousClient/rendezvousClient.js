@@ -73,6 +73,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         showCalendar(month, year);
         fetchAppointments(month, year);
     }
+
     showCalendar(month, year);
     document.getElementById("next").addEventListener("click", next);
     document.getElementById("prev").addEventListener("click", previous);
@@ -98,15 +99,16 @@ document.addEventListener("DOMContentLoaded", async function () {
             console.log("Fetched Appointments:", rendezVous);
 
             rendezVous.forEach(appointment => {
-                // Adjust for time zone differences
                 const [hour, minute] = appointment.heureRendezvous.split(':');
-                const dateRendezvous = new Date(appointment.dateRendezvous);
-                dateRendezvous.setHours(hour, minute);
+                const dateRendezvous = new Date(`${appointment.dateRendezvous}T${hour}:${minute}:00`);
 
-                const cell = document.querySelector(`[data-day="${dateRendezvous.getDate()}"][data-month="${dateRendezvous.getMonth()}"][data-year="${dateRendezvous.getFullYear()}"]`);
+                const localTimeOffset = dateRendezvous.getTimezoneOffset() * 60000; // Timezone offset in milliseconds
+                const localDateRendezvous = new Date(dateRendezvous.getTime() - localTimeOffset);
+
+                const cell = document.querySelector(`[data-day="${localDateRendezvous.getDate()}"][data-month="${localDateRendezvous.getMonth()}"][data-year="${localDateRendezvous.getFullYear()}"]`);
 
                 if (cell) {
-                    if (dateRendezvous < today) {
+                    if (localDateRendezvous < today) {
                         cell.style.backgroundColor = "#cccccc";
                         cell.innerHTML = `Rendez-vous passé: ${appointment.heureRendezvous}h`;
                     } else {
