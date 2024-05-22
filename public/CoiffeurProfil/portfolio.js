@@ -1,56 +1,92 @@
-const televerserInput = document.getElementById("televerser");
-const imageTeleverser = document.getElementById("imageteleverser");
-
 /* ------------------------
  *    Au chargement mettre l'image
       du coiffeur 
  * ------------------------ */
-
-// Quand quelqu'un clique sur le bouton ''Changer l'image'' cette event va se lancer
-televerserInput.addEventListener("change", function () {
-  const file = this.files[0];
-  if (file) {
-    // Si un utilisateur insère un fichier, cela va créer un lecteur de fichier
-    const reader = new FileReader();
-    // Ce lecteur de fichier va téléverser dans le src de <image>
-    reader.onload = function (e) {
-      // Obtenez l'URL de l'image directement depuis le fichier
-      const imageUrl = e.target.result;
-
-      // Convertir le blob en URL
-      const blobUrl = URL.createObjectURL(file);
-
-      // Utiliser l'URL convertie comme source de l'image **RESOUS LE PROBLEME DU RELOAD :)))))))))))))))))))))**
-      imageTeleverser.src = blobUrl;
-
-      // Envoi de l'image au serveur
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const token = sessionStorage.getItem("token");
-      const data = {
-        token: token,
-        imageUrl: blobUrl, // Stocker le lien de téléchargement dans imageUrl
-      };
-
-      fetch("/portfolio", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          // Gérer la réponse du serveur ici si nécessaire
-        })
-        .catch((error) => console.error(error));
-    };
-    // Le fichier sera lu GRACE A UNE URL
-    reader.readAsDataURL(file);
-  }
-});
+      const televerserInput = document.getElementById("televerser");
+      const imageTeleverser = document.getElementById("imageteleverser");
+      
+      televerserInput.addEventListener("change", async function () {
+        const file = this.files[0];
+        const token = sessionStorage.getItem("token");
+      
+        if (!token) {
+          console.error("Token non trouvé dans sessionStorage");
+          return;
+        }
+      
+        const maxSize = 1024; // Taille maximale en pixels pour chaque côté de l'image
+      
+        // Fonction pour redimensionner l'image
+        const resizeImage = (image, maxSize) => {
+          const canvas = document.createElement("canvas");
+          let width = image.width;
+          let height = image.height;
+      
+          // Redimensionner l'image pour s'adapter à la taille maximale
+          if (width > height) {
+            if (width > maxSize) {
+              height *= maxSize / width;
+              width = maxSize;
+            }
+          } else {
+            if (height > maxSize) {
+              width *= maxSize / height;
+              height = maxSize;
+            }
+          }
+      
+          canvas.width = width;
+          canvas.height = height;
+      
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(image, 0, 0, width, height);
+      
+          return canvas.toDataURL("image/jpeg"); // Convertir le canvas en URL base64
+        };
+      
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const base64Image = e.target.result;
+          const image = new Image();
+          image.src = base64Image;
+      
+          // Attendre que l'image soit chargée pour la redimensionner
+          image.onload = () => {
+            const resizedImage = resizeImage(image, maxSize);
+            const body = {
+              urlPhoto: resizedImage, // Envoyer l'URL de l'image redimensionnée
+              token: token, // Envoyer le token
+            };
+      
+            // Envoyer l'image redimensionnée au serveur
+            fetch("/portfolio", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(body),
+            })
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("Erreur lors du téléversement de l'image");
+                }
+                return response.json();
+              })
+              .then((data) => {
+                console.log(data.message);
+                imageTeleverser.src = resizedImage; // Mettre à jour l'aperçu de l'image
+              })
+              .catch((error) => {
+                console.error("Une erreur est survenue lors du téléversement de l'image :", error);
+                // Gérer l'erreur ici
+              });
+          };
+        };
+      
+        reader.readAsDataURL(file); // Commencer la lecture du fichier comme URL de données
+      });
+      
+      
 
 /* ------------------------
  *    Au chargement mettre l'image
@@ -634,6 +670,7 @@ function updateNavigationBar(loginType) {
         <a href="../avis.html">Avis</a>
         <a href="../AfficherAvis/afficherAvis.html">Tous les avis</a>
         <a href="../favoris/favoris.html">Favoris</a>
+        <a href="../RechercheCoiffeur/rechercheCoiffeur.html">Coiffeurs</a>
         <a href="../rendezvousClient/rendezvousClient.html">Mes rendez-vous</a>
         `;
   } else if (loginType === "coiffeur") {
@@ -642,7 +679,6 @@ function updateNavigationBar(loginType) {
         <a href="../CoiffeurProfil/portfolio.html">Profil</a>
         <a href="../AfficherAvis/afficherAvis.html">Tous les avis</a>
         <a href="../rendezvousCoiffeur/rendezvousCoiffeur.html">Afficher mes rendez vous</a>
-        <a href="../contact/contact.html">Contact</a>
         `;
   }
 
