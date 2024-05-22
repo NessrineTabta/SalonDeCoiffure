@@ -3,14 +3,14 @@
 --------------------------------------------*/
 
 .header {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
     padding: 1rem 2rem;
-    background-color: rgb(27, 27, 27);
-    color: white;
+    background-color: transparent;
+    color: black;
 }
 
 .nav {
@@ -173,12 +173,43 @@
 /*-------------------------------------------
                 HEADERS FIN
 --------------------------------------------*/
-
-html,
-body {
-    height: 100%;
+html, body {
+    height: 100%; 
     margin: 0;
     padding: 0;
-    background-color: rgb(27, 27, 27);
-    color: white;
+    background-color: rgb(27, 27, 27); 
+    color: white; 
+}
+
+
+.contact-box-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px;
+}
+
+.contact-box {
+    background-color: #ffffff;
+    margin: 10px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+.contact-info {
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #555;
+}
+
+.contact-info strong {
+    color: #000;
+}
+
+@media screen and (max-width: 600px) {
+    .contact-box {
+        width: 90%;
+    }
 }

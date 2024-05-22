@@ -453,7 +453,6 @@ router.get("/salon", async (req, res) => {
   }
 });
 
-// GET: Route pour récupérer TOUT les salons disponibles POUR BERIVAN
 // GET: Noms des salons disponibles
 router.get("/nomsSalons", async (req, res) => {
   try {
@@ -502,7 +501,6 @@ async function getIdByEmail(email) {
 router.post("/creerRendezVous", authentification, async (req, res) => {
   const { idDisponibilite, idCoiffeur, idClient } = req.body; // Ajout de idClient dans le destructuring
 
-  // Vérifiez que tous les paramètres requis sont présents
   if (!idDisponibilite || !idClient || !idCoiffeur) {
     return res
       .status(400)
@@ -510,7 +508,6 @@ router.post("/creerRendezVous", authentification, async (req, res) => {
   }
 
   try {
-    // Vérifiez que la disponibilité existe
     const disponibilite = await db("Disponibilite")
       .where("idDisponibilite", idDisponibilite)
       .first();
@@ -529,7 +526,7 @@ router.post("/creerRendezVous", authentification, async (req, res) => {
           idCoiffeur: idCoiffeur,
         },
         ["idRendezvous"]
-      ); // Précisez les colonnes retournées
+      );
 
       await trx("Disponibilite")
         .where("idDisponibilite", idDisponibilite)
@@ -540,7 +537,7 @@ router.post("/creerRendezVous", authentification, async (req, res) => {
 
     res.json({
       message: "Rendez-vous créé et disponibilité supprimée avec succès.",
-      idRendezvous: transactionResult[0], // Assurez-vous que l'ID est bien retourné
+      idRendezvous: transactionResult[0], 
     });
   } catch (error) {
     console.error("Erreur lors de la création du rendez-vous :", error);
@@ -574,7 +571,6 @@ router.get("/salon/:id", async (req, res) => {
 // GET: Route pour récupérer TOUT les salons disponibles
 router.get("/nomsSalons", async (req, res) => {
   try {
-    // Make sure to select both `idSalon` and `nomSalon` from the `Salon` table
     const nomsSalons = await db.select("idSalon", "nomSalon").from("Salon");
     res.status(200).json(nomsSalons);
   } catch (error) {
@@ -606,7 +602,7 @@ router.post("/favoris", authentification, async (req, res) => {
     const client = await getUserByUsername(email);
     const idClient = client.idClient;
 
-    const { idCoiffeur } = req.body; // Assurez-vous que les données sont envoyées dans le corps de la requête
+    const { idCoiffeur } = req.body; 
     if (!idCoiffeur || !idClient) {
       return res.status(400).json({
         error: "Veuillez fournir un idCoiffeur et un idClient",
@@ -644,5 +640,38 @@ router.delete("/favoris/:idFavoris", async (req, res) => {
     res.status(500).json({ error: "Erreur lors de la suppression du favori" });
   }
 });
+
+//pour inserer les informations et le message dun client
+router.post("/FormulaireContact", async (req, res) => {
+  try {
+    const { name, phone, email, salon, message } = req.body;
+    const id = await db('FormulaireContact').insert({
+      name,
+      phone,
+      email,
+      salon,
+      message
+    });
+    res.status(201).json({ id: id[0], message: "Contact information saved successfully." });
+  } catch (error) {
+    console.error("Error saving contact information:", error);
+    res.status(500).json({ message: "Failed to save contact information." });
+  }
+});
+
+//pour recuperer les informations et le message du client
+router.get("/FormulaireContact", async (req, res) => {
+  try {
+    const contacts = await db.select("FormulaireContact.*", "Salon.nomSalon")
+      .from("FormulaireContact")
+      .leftJoin("Salon", "FormulaireContact.salon", "Salon.idSalon");
+    console.log(contacts);  // Log pour voir ce qui est retourné par la requête
+    res.status(200).json(contacts);
+  } catch (error) {
+    console.error("Error retrieving contact information:", error);
+    res.status(500).json({ message: "Failed to retrieve contact information." });
+  }
+});
+
 
 module.exports = router;

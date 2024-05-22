@@ -110,10 +110,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 if (cell) {
                     if (localDateRendezvous < today) {
                         cell.style.backgroundColor = "#cccccc";
-                        cell.innerHTML = `Rendez-vous passé: ${appointment.heureRendezvous}h`;
+                        cell.innerHTML = `Rendez-vous passé: ${appointment.heureRendezvous}`;
                     } else {
                         cell.style.backgroundColor = "rgb(52, 52, 52)";
-                        cell.innerHTML = `Rendez-vous pris: ${appointment.heureRendezvous}h <span class="delete-appointment" data-id="${appointment.idRendezvous}" style="cursor: pointer;">🗑️</span>`;
+                        cell.innerHTML = `Rendez-vous pris: ${appointment.heureRendezvous} <span class="delete-appointment" data-id="${appointment.idRendezvous}" style="cursor: pointer;">🗑️</span>`;
 
                         const deleteButton = cell.querySelector('.delete-appointment');
                         deleteButton.addEventListener('click', function (e) {
@@ -178,7 +178,6 @@ function updateNavigationBar(loginType) {
             <a href="../avis.html">Avis</a>
             <a href="../AfficherAvis/afficherAvis.html">Tous les avis</a>
             <a href="../favoris/favoris.html">Favoris</a>
-            <a href="../RechercheCoiffeur/rechercheCoiffeur.html">Coiffeurs</a>
             <a href="../rendezvousClient/rendezvousClient.html">Mes rendez-vous</a>
             `;
       } else if (loginType === "coiffeur") {
@@ -187,6 +186,7 @@ function updateNavigationBar(loginType) {
             <a href="../CoiffeurProfil/portfolio.html">Profil</a>
             <a href="../AfficherAvis/afficherAvis.html">Tous les avis</a>
             <a href="../rendezvousCoiffeur/rendezvousCoiffeur.html">Afficher mes rendez vous</a>
+            <a href="../contact/contact.html">Contact</a>
             `;
       }
 

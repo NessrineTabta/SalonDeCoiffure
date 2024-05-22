@@ -165,6 +165,18 @@ updateTable('Favoris', async () => {
   });
 });
 
+// Création de la table FormulaireContact
+updateTable('FormulaireContact', async () => {
+  await db.schema.createTable('FormulaireContact', table => {
+    table.increments('id').primary();
+    table.string('name').notNullable();
+    table.string('phone').notNullable();
+    table.string('email').notNullable();
+    table.string('salon').notNullable();
+    table.text('message').notNullable();
+  });
+});
+
 
 
 //exporation de cette base de donnée

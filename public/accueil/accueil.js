@@ -27,7 +27,6 @@ function updateNavigationBar(loginType) {
         <a href="../avis.html">Avis</a>
         <a href="../AfficherAvis/afficherAvis.html">Tous les avis</a>
         <a href="../favoris/favoris.html">Favoris</a>
-        <a href="../RechercheCoiffeur/rechercheCoiffeur.html">Coiffeurs</a>
         <a href="../rendezvousClient/rendezvousClient.html">Mes rendez-vous</a>
         `;
   } else if (loginType === "coiffeur") {
@@ -36,6 +35,7 @@ function updateNavigationBar(loginType) {
         <a href="../CoiffeurProfil/portfolio.html">Profil</a>
         <a href="../AfficherAvis/afficherAvis.html">Tous les avis</a>
         <a href="../rendezvousCoiffeur/rendezvousCoiffeur.html">Afficher mes rendez vous</a>
+        <a href="../contact/contact.html">Contact</a>
         `;
   }
 
@@ -67,5 +67,33 @@ function loadSalons() {
       });
     })
     .catch((error) => console.error("Error fetching salon data:", error));
+}
+async function submitContactForm(event) {
+  event.preventDefault();
+  const formData = {
+    name: document.getElementById('name').value,
+    phone: document.getElementById('phone').value,
+    email: document.getElementById('email').value,
+    salon: document.getElementById('salonSelect').value,
+    message: document.getElementById('message').value
+  };
+
+  try {
+    const response = await fetch("/FormulaireContact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData)
+    });
+
+    if (!response.ok) throw new Error("Failed to submit contact form");
+    const result = await response.json();
+    alert("Votre message a été envoyé avec succès!");
+    console.log("Submitted contact form:", result);
+  } catch (error) {
+    console.error("Error submitting contact form:", error);
+    alert("Failed to submit contact form.");
+  }
 }
 
