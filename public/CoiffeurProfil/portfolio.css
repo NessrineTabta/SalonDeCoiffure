@@ -157,8 +157,8 @@
 
 /* Style pour la carte d'image */
 .card.card-image {
-    cursor: pointer; /* Ajoute un curseur pointer pour indiquer qu'il est cliquable */
-    transition: transform 0.3s ease; /* Ajoute une transition douce au survol */
+    cursor: pointer; 
+    transition: transform 0.3s ease; 
     border-radius: 10px
 
 }
@@ -173,8 +173,8 @@
 
 /* Style pour le contenu de la carte */
 .card.card-image .content {
-    text-align: center; /* Centrer le texte */
-    padding: 1rem; /* Ajouter un padding */
+    text-align: center; 
+    padding: 1rem; 
 }
 
 

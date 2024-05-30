@@ -344,14 +344,11 @@ body {
   bottom: 2px;
   right: 2px;
   background-color: rgb(255, 0, 0);
-  /* Fond gris */
   color: black;
-  /* Icône noire */
   padding: 2px;
   border-radius: 7px;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /* Petite ombre pour du relief */
 }
 
 .singleDay {

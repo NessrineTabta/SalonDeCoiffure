@@ -174,7 +174,7 @@ router.get("/client/:idClient", async (req, res) => {
 // afficher tous les rendez-vous dun client
 router.post("/rendezVousClients", authentification, async (req, res) => {
   try {
-    const email = req.user.email; // Email de l'utilisateur extrait du token
+    const email = req.user.email; 
     const client = await db("Client").where("email", email).first(); // Récupérer les infos du client
     if (!client) {
       return res.status(404).json({ message: "Client non trouvé." });
@@ -196,7 +196,7 @@ router.post("/rendezVousClients", authentification, async (req, res) => {
 // GET: Obtenir tous les rendez-vous d'un client
 router.get("/Rendezvous", authentification, async (req, res) => {
   try {
-    const clientEmail = req.user.email; // Email du client extrait du token
+    const clientEmail = req.user.email; 
     const Rendezvous = await getClientRendezvous(clientEmail);
     res.json({
       Rendezvous: Rendezvous,
@@ -260,7 +260,7 @@ router.delete(
 // PUT: Modifier un rendez-vous existant d'un client
 router.put("/Rendezvous/:idRendezvous", authentification, async (req, res) => {
   const { idRendezvous } = req.params; // ID du rendez-vous à modifier
-  const clientEmail = req.user.email.email; // Email du client extrait du token
+  const clientEmail = req.user.email.email; 
   const { dateRendezvous, heureRendezvous, idCoiffeur } = req.body; // Nouvelles données pour le rendez-vous
 
   try {
@@ -355,10 +355,9 @@ router.post("/avis", authentification, async (req, res) => {
 // DELETE: Supprimer un avis
 router.delete("/avis/:idAvis", authentification, async (req, res) => {
   const { idAvis } = req.params; // ID de l'avis à supprimer
-  const clientEmail = req.user.email.email; // Email du client extrait du token JWT
+  const clientEmail = req.user.email.email; 
 
   try {
-    // Obtenir l'ID du client à partir de son email pour vérifier qu'il possède l'avis
     const client = await getUserByUsername(clientEmail);
     if (!client) {
       return res.status(404).json({ message: "Client non trouvé." });
@@ -394,7 +393,6 @@ router.delete("/avis/:idAvis", authentification, async (req, res) => {
 router.post("/salon", async (req, res) => {
   const { nomSalon, adresseSalon, emailSalon, numSalon } = req.body;
 
-  // Validation des données entrantes
   if (!nomSalon || !adresseSalon || !emailSalon || !numSalon) {
     return res.status(400).json({ message: "Tous les champs sont requis." });
   }
@@ -426,14 +424,13 @@ router.get("/salon", async (req, res) => {
   try {
     const { id } = req.body;
 
-    // Vérifier si l'ID du salon est présent dans le corps de la requête
     if (!id) {
       return res.status(400).json({
         message: "L'ID du salon est requis dans le corps de la requête.",
       });
     }
 
-    // Requête pour obtenir le salon par son ID
+    // obtenir le salon par son ID
     const salon = await db("Salon")
       .select("nomSalon")
       .where("idSalon", id)
@@ -480,7 +477,6 @@ function getNomsSalons() {
   });
 }
 
-// Fonction: récupérer l'ID du coiffeur à partir de l'e-mail
 async function getIdByEmail(email) {
   try {
     const client = await db("Client")
@@ -499,7 +495,7 @@ async function getIdByEmail(email) {
 
 // POST: Créer un rendez-vous et supprimer la disponibilité utilisée
 router.post("/creerRendezVous", authentification, async (req, res) => {
-  const { idDisponibilite, idCoiffeur, idClient } = req.body; // Ajout de idClient dans le destructuring
+  const { idDisponibilite, idCoiffeur, idClient } = req.body; 
 
   if (!idDisponibilite || !idClient || !idCoiffeur) {
     return res
@@ -546,20 +542,19 @@ router.post("/creerRendezVous", authentification, async (req, res) => {
     });
   }
 });
+
 // GET: Obtenir un salon par son ID à partir des paramètres de l'URL
 router.get("/salon/:id", async (req, res) => {
   try {
-    const { id } = req.params; // Récupérer l'ID du salon à partir des paramètres de l'URL
+    const { id } = req.params; 
 
-    // Requête pour obtenir le salon par son ID
     const salon = await db("Salon").select("*").where("idSalon", id).first();
 
-    // Vérifier si le salon existe
     if (!salon) {
       return res.status(404).json({ message: "Salon non trouvé." });
     }
 
-    res.status(200).json(salon); // Renvoyer les informations sur le salon
+    res.status(200).json(salon); 
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -665,7 +660,7 @@ router.get("/FormulaireContact", async (req, res) => {
     const contacts = await db.select("FormulaireContact.*", "Salon.nomSalon")
       .from("FormulaireContact")
       .leftJoin("Salon", "FormulaireContact.salon", "Salon.idSalon");
-    console.log(contacts);  // Log pour voir ce qui est retourné par la requête
+    console.log(contacts); 
     res.status(200).json(contacts);
   } catch (error) {
     console.error("Error retrieving contact information:", error);

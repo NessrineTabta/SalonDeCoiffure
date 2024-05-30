@@ -204,24 +204,22 @@ html {
 .section-white {
     background: linear-gradient(120deg, #bdbdbd, #8f8f8f);
     color: black;
-    padding: 50px 0 20px; /* Ajoute du padding en haut et en bas de la section */
+    padding: 50px 0 20px; 
     text-align: center;
     display: flex;
     height: 700px;
-    flex-direction: column; /* Organise le contenu en colonne */
-    align-items: center; /* Centre horizontalement les éléments */
-    justify-content: flex-start; /* Alignement vertical au début de la section */
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: flex-start; 
 }
 .section-white > h1 {
-    width: 100%; /* Assure que le titre prend toute la largeur pour le centrage */
-    margin-bottom: 30px; /* Espacement entre le titre et les services */
-    font-size: 36px; /* Taille de la police du titre */
+    width: 100%; 
+    margin-bottom: 30px; 
+    font-size: 36px; 
 }
 .section-white h1 {
     margin-bottom: 20px;
-    /* Ajoute un espace entre le titre et le paragraphe */
     font-size: 36px;
-    /* Augmente la taille de la police pour le titre */
     font-family: "Montserrat", sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
@@ -238,17 +236,17 @@ html {
 }
 
 .service-item {
-    flex: 0 1 18%; /* Flex-grow à 0, Flex-shrink à 1 et base à 18% */
-    margin: 10px; /* Espacement autour de chaque boîte */
-    box-shadow: 10px 10px 8px rgba(0,0,0,0.1); /* Ombre portée légère */
-    background-color: #fbfbfb; /* Fond clair pour chaque boîte */
+    flex: 0 1 18%; 
+    margin: 10px; 
+    box-shadow: 10px 10px 8px rgba(0,0,0,0.1); 
+    background-color: #fbfbfb; 
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 180px; /* Largeur fixe pour la cohérence */
-    height: 250px; /* Hauteur fixe pour la cohérence */
-    border-radius: 8px; /* Bords arrondis pour l'esthétique */
+    width: 180px; 
+    height: 250px; 
+    border-radius: 8px; 
 }
 
 .service-item img {
@@ -258,7 +256,7 @@ html {
 
 .service-item p {
     margin-top: 40px;
-    color: #000000; /* Couleur du texte plus foncée pour une meilleure lisibilité */
+    color: #000000; 
     font-family: "Montserrat", sans-serif;
     font-optical-sizing: auto;
     font-weight: 300;

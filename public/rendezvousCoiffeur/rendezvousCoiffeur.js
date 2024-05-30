@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 },
                 body: JSON.stringify({ token, month, year })  
             });
-            if (!response.ok) throw new Error("Failed to fetch appointments");
+            if (!response.ok) console.log("Failed to fetch appointments");
             const appointments = await response.json();
             displayAppointments(appointments);
         } catch (error) {

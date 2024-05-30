@@ -4,7 +4,7 @@ const knex = require("knex");
 const db = knex({
   client: "sqlite3",
   connection: {
-    filename: "./salonDeCoiffure.sqlite3", // Le chemin vers votre fichier SQLite3
+    filename: "./salonDeCoiffure.sqlite3", 
   },
   useNullAsDefault: true,
 });
@@ -160,7 +160,7 @@ updateTable('Favoris', async () => {
     table.increments('idFavoris').primary();
     table.integer('idCoiffeur').unsigned().notNullable();
     table.integer('idClient').unsigned().notNullable();
-    table.foreign('idCoiffeur').references('Coiffeur.idCoiffeur'); // Assurez-vous que la référence est correcte
+    table.foreign('idCoiffeur').references('Coiffeur.idCoiffeur'); 
     table.foreign('idClient').references('Client.idClient');
   });
 });

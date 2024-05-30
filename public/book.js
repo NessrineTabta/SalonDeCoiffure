@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(url)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    console.log(`erreur ${response.status}`);
                 }
                 return response.json();
             })
@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
         fetch(`/disponibilites?${queryString}`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`HTTP error, status = ${response.status}`);
+                    console.log(`erreur ${response.status}`);
                 }
                 return response.json();
             })
@@ -97,11 +97,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const startDateTime = new Date(disponibilite.dateDisponibilite + 'T' + disponibilite.heureDisponibilite);
             console.log("Adding event:", disponibilite);
 
-            // Check if the date and time are correct
             if (startDateTime >= today) {
                 const eventTitle = `${disponibilite.nomCoiffeur} - ${disponibilite.nomSalon}`;
                 calendar.addEvent({
-                    id: `${disponibilite.idDisponibilite}-${disponibilite.heureDisponibilite}`, // Ensure unique ID
+                    id: `${disponibilite.idDisponibilite}-${disponibilite.heureDisponibilite}`, 
                     title: eventTitle,
                     start: startDateTime.toISOString(),
                     allDay: false,
@@ -122,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function afficherDetailsRdv(info) {
         const event = info.event;
         selectedEventId = event.id;
-        console.log("Selected Event Data:", event.extendedProps); // Debug log
+        console.log("Selected Event Data:", event.extendedProps); 
         document.getElementById('detailCoiffeur').textContent = `Coiffeur: ${event.extendedProps.nomCoiffeur}`;
         document.getElementById('detailSalon').textContent = `Salon: ${event.extendedProps.nomSalon}`;
         const formattedDate = event.start.toLocaleDateString('fr-CA');
@@ -140,8 +139,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        const dateRendezvous = event.start.toISOString().split('T')[0]; // Date au format YYYY-MM-DD
-        const heureRendezvous = event.start.toISOString().split('T')[1].substring(0, 5); // Heure au format HH:MM
+        const dateRendezvous = event.start.toISOString().split('T')[0]; // Date format YYYY-MM-DD
+        const heureRendezvous = event.start.toISOString().split('T')[1].substring(0, 5); // Heure format HH:MM
 
         const idDisponibilite = event.extendedProps.idDisponibilite;
         const idClient = sessionStorage.getItem('idClient');

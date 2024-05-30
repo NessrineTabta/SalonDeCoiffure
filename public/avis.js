@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
     })
       .then((response) => {
         if (!response) {
-          throw new Error("Failed to submit review");
+          console.log("Failed to submit review");
         }
         return response.json();
       })

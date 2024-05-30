@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             });
 
             if (!response.ok) {
-                throw new Error("Erreur lors de la récupération des rendez-vous du client");
+                console.log("Erreur lors de la récupération des rendez-vous du client");
             }
 
             const rendezVous = await response.json();
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 const [hour, minute] = appointment.heureRendezvous.split(':');
                 const dateRendezvous = new Date(`${appointment.dateRendezvous}T${hour}:${minute}:00`);
 
-                const localTimeOffset = dateRendezvous.getTimezoneOffset() * 60000; // Timezone offset in milliseconds
+                const localTimeOffset = dateRendezvous.getTimezoneOffset() * 60000; 
                 const localDateRendezvous = new Date(dateRendezvous.getTime() - localTimeOffset);
 
                 const cell = document.querySelector(`[data-day="${localDateRendezvous.getDate()}"][data-month="${localDateRendezvous.getMonth()}"][data-year="${localDateRendezvous.getFullYear()}"]`);
@@ -143,7 +143,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 body: JSON.stringify({ token })
             });
             if (!response.ok) {
-                throw new Error(`Erreur lors de la suppression du rendez-vous: ${response.statusText}`);
+                console.log(`Erreur lors de la suppression du rendez-vous: ${response.statusText}`);
             }
             alert("Rendez-vous annulé avec succès.");
             window.location.reload();

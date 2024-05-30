@@ -6,7 +6,7 @@ const router = express.Router();
 const db = require("./db.js");
 const TOKEN_SECRET_KEY = "WEB_4D2_00003"; //ajout de chaine pour completer le sign token
 
-const jwt = require("jsonwebtoken"); // Assurez-vous d'importer jsonwebtoken correctement
+const jwt = require("jsonwebtoken"); 
 
 const tokenModule = require("./token"); // Importer le module token
 

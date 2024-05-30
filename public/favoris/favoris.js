@@ -2,7 +2,7 @@ async function getCoiffeursFromServer() {
   try {
     const response = await fetch("/coiffeurs");
     if (!response.ok) {
-      throw new Error("Erreur lors de la récupération des coiffeurs");
+      console.log("Erreur lors de la récupération des coiffeurs");
     }
     const data = await response.json();
     return data.coiffeurs;
@@ -16,7 +16,7 @@ async function getSalonFromServer(idSalon) {
   try {
     const response = await fetch(`/salon/${idSalon}`);
     if (!response.ok) {
-      throw new Error(
+      console.log(
         "Erreur lors de la récupération des informations sur le salon"
       );
     }
@@ -39,7 +39,7 @@ async function getPhotoCoiffeurFromServer(email) {
       body: JSON.stringify({ token: token }),
     });
     if (!response.ok) {
-      throw new Error("Erreur lors de la récupération de la photo du coiffeur");
+      console.log("Erreur lors de la récupération de la photo du coiffeur");
     }
     const data = await response.json();
     return data.imageUrl;
@@ -58,7 +58,7 @@ async function retirerDesFavoris(event, coiffeur) {
     );
 
     if (!favoriToDelete) {
-      throw new Error("Favori non trouvé");
+      console.log("Favori non trouvé");
     }
 
     const response = await fetch(`/favoris/${favoriToDelete.idFavoris}`, {
@@ -69,7 +69,7 @@ async function retirerDesFavoris(event, coiffeur) {
     });
 
     if (!response.ok) {
-      throw new Error("Erreur lors du retrait du coiffeur des favoris");
+      console.log("Erreur lors du retrait du coiffeur des favoris");
     }
 
     const data = await response.json();
@@ -84,7 +84,7 @@ async function getFavorisFromServer() {
   try {
     const response = await fetch("/favoris");
     if (!response.ok) {
-      throw new Error("Erreur lors de la récupération des favoris");
+      console.log("Erreur lors de la récupération des favoris");
     }
     const data = await response.json();
     return data;
@@ -187,7 +187,7 @@ async function ajouterAuxFavoris(event, coiffeur) {
       }),
     });
     if (!response.ok) {
-      throw new Error("Erreur lors de l'ajout du coiffeur aux favoris");
+      tconsole.log("Erreur lors de l'ajout du coiffeur aux favoris");
     }
     const data = await response.json();
     console.log(data.message);
@@ -205,8 +205,6 @@ async function toggleFavorite(event, coiffeur) {
 
   if (coiffeur.favori) {
     await ajouterAuxFavoris(coiffeur);
-  } else {
-    // Ajouter la logique pour supprimer des favoris
   }
 }
 

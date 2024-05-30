@@ -225,11 +225,10 @@ router.get("/verifierTypeUtilisateur", authentification, async (req, res) => {
   }
 });
 
-// GET: Route to get coiffeurs by salon ID
+// GET: pour recuperer les coiffeur par id du salon
 router.get("/coiffeursParSalon/:idSalon", async (req, res) => {
   try {
-    const { idSalon } = req.params; // Extracting idSalon from the request parameters
-    // Query to select coiffeurs where `idSalon` matches the provided ID
+    const { idSalon } = req.params; 
     const coiffeurs = await db
       .select("*")
       .from("Coiffeur")
@@ -246,7 +245,6 @@ router.get("/coiffeursParSalon/:idSalon", async (req, res) => {
 // GET: Obtenir tous les coiffeurs
 router.get("/coiffeurs", async (req, res) => {
   try {
-    // Récupérer tous les coiffeurs depuis la base de données
     const allCoiffeurs = await db.select().from("Coiffeur");
 
     res.json({
@@ -266,7 +264,7 @@ router.get("/coiffeurs", async (req, res) => {
 router.post("/coiffeurs", authentification, async (req, res) => {
   try {
     const { nomCoiffeur, prenomCoiffeur, numCoiffeur, password } = req.body;
-    const idCoiffeur = await getIdByEmail(req.user.email); // Obtenez l'ID du coiffeur à partir de l'e-mail de l'utilisateur connecté
+    const idCoiffeur = await getIdByEmail(req.user.email); 
 
     if (!idCoiffeur) {
       return res.status(404).json({ message: "Coiffeur non trouvé." });
@@ -299,9 +297,9 @@ router.post("/coiffeurs", authentification, async (req, res) => {
 router.post("/rendezVousCoiffeur", authentification, async (req, res) => {
   try {
     const email = req.user.email; // Email de l'utilisateur extrait du token
-    const idCoiffeur = await getIdByEmail(email); // Correction : Récupération de l'identifiant du coiffeur
+    const idCoiffeur = await getIdByEmail(email); 
     const rendezVous = await rendezvousCoiffeur(idCoiffeur);
-    res.json(rendezVous); // Correction : Retourne directement les rendez-vous
+    res.json(rendezVous); 
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -310,15 +308,15 @@ router.post("/rendezVousCoiffeur", authentification, async (req, res) => {
     });
   }
 });
+
 //Function: affiche rendez vous d'un coiffeur
 async function rendezvousCoiffeur(idCoiffeur) {
-  // Correction : Ajout de l'async pour permettre l'attente de la requête
   try {
     const rendezVous = await db
-      .select("idRendezvous", "dateRendezvous", "heureRendezvous") // Correction : Ajout de l'identifiant du rendez-vous
+      .select("idRendezvous", "dateRendezvous", "heureRendezvous") 
       .from("Rendezvous")
       .where("idCoiffeur", idCoiffeur);
-    return rendezVous; // Correction : Retourne directement les rendez-vous
+    return rendezVous; 
   } catch (error) {
     throw error;
   }
@@ -406,7 +404,6 @@ router.get("/servicess/:idCoiffeur", async (req, res) => {
 // GET: Obtenir tous les Coiffeur_Service
 router.get("/showCoiffeur_Service", async (req, res) => {
   try {
-    // Récupérer tous les services depuis la base de données
     const allServices = await db.select().from("Coiffeur_Service");
 
     res.json({
@@ -458,7 +455,6 @@ router.get("/tousservices", async (req, res) => {
 // GET: Obtenir tous les services
 router.get("/showServices", async (req, res) => {
   try {
-    // Récupérer tous les services depuis la base de données
     const allServices = await db.select().from("Service");
 
     res.json({
@@ -478,7 +474,7 @@ router.get("/showServices", async (req, res) => {
 router.post("/services", authentification, async (req, res) => {
   try {
     const { nom, description } = req.body;
-    const idCoiffeur = await getIdByEmail(req.user.email); // Obtenez l'ID du coiffeur à partir de l'e-mail de l'utilisateur connecté
+    const idCoiffeur = await getIdByEmail(req.user.email); 
 
     if (!idCoiffeur) {
       return res.status(404).json({ message: "Coiffeur non trouvé." });
@@ -499,7 +495,7 @@ router.post("/services", authentification, async (req, res) => {
 // POST: Ajouter une relation Coiffeur-Service
 router.post("/CoiffeurService", authentification, async (req, res) => {
   try {
-    const idCoiffeur = await getIdByEmail(req.user.email); // Obtenez l'ID du coiffeur à partir de l'e-mail de l'utilisateur connecté
+    const idCoiffeur = await getIdByEmail(req.user.email); 
     const { idService } = req.body;
 
     // Vérifier si les ID de coiffeur et de service sont fournis
@@ -886,7 +882,7 @@ function getServiceDisponibilites(idService) {
 // DELETE: Supprimer une disponibilité
 router.delete("/disponibilites", authentification, async (req, res) => {
   try {
-    const { idDisponibilite } = req.body; // Récupérer l'idDisponibilite depuis le corps de la requête
+    const { idDisponibilite } = req.body; 
     // Vérifier si la disponibilité existe
     const disponibilite = await db("Disponibilite")
       .where("idDisponibilite", idDisponibilite)
@@ -947,7 +943,6 @@ router.post(
       const urlPhoto = req.body.urlPhoto; // Chemin du fichier téléversé par Multer
       const email = req.user.email;
 
-      // Récupérer l'identifiant du coiffeur à partir de l'email
       const idCoiffeur = await getIdByEmail(email);
 
       // Insérer ou mettre à jour l'URL de l'image dans la base de données

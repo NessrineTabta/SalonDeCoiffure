@@ -68,7 +68,7 @@
             })
               .then((response) => {
                 if (!response.ok) {
-                  throw new Error("Erreur lors du téléversement de l'image");
+                  console.log("Erreur lors du téléversement de l'image");
                 }
                 return response.json();
               })
@@ -78,7 +78,6 @@
               })
               .catch((error) => {
                 console.error("Une erreur est survenue lors du téléversement de l'image :", error);
-                // Gérer l'erreur ici
               });
           };
         };
@@ -192,11 +191,11 @@ boutonEnregistrer.addEventListener("click", async () => {
 
     if (!response.ok) {
       const errorMessage = await response.text();
-      throw new Error(errorMessage);
+      tconsole.log(errorMessage);
     }
 
     const responseData = await response.json();
-    alert(responseData.message); // Affiche un message de succès
+    alert(responseData.message); 
   } catch (error) {
     console.error(
       "Une erreur s'est produite lors de la modification du profil :",
@@ -310,9 +309,8 @@ function selectDate(element) {
 
 // Variables globales pour stocker la date et l'heure sélectionnées
 let dateSelectionnee = null;
-let heureSelectionnee = []; // Initialiser le tableau pour stocker les heures sélectionnées
+let heureSelectionnee = []; 
 
-// Sélectionnez tous les éléments <li> représentant les jours dans le calendrier
 const days = document.querySelectorAll(".days li");
 
 // Fonction pour afficher les heures possibles et le bouton Envoyer
@@ -381,7 +379,7 @@ function afficherHeuresPossibles() {
         });
 
         if (!response.ok) {
-          throw new Error("Erreur lors de la requête fetch");
+          console.log("Erreur lors de la requête fetch");
         }
 
         const data = await response.json();
@@ -417,8 +415,6 @@ renderCalendar();
 *    Upload des photos dans portfolios
 * ------------------------ */
 
-// Add event listener to each image upload input
-// Add event listener to each image upload input
 document.addEventListener("DOMContentLoaded", () => {
   const imageUploadInputs = document.querySelectorAll(".image-upload");
   imageUploadInputs.forEach((input) => {
@@ -428,9 +424,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          // Update the src attribute of the image preview
           image.src = e.target.result;
-          // Store the image URL in sessionStorage
           sessionStorage.setItem(
             `image_${input.dataset.index}`,
             e.target.result
@@ -438,7 +432,6 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         reader.readAsDataURL(file);
       } else {
-        // If no file is selected, display a message
         image.src = "https://via.placeholder.com/300x200";
         input.parentNode.querySelector(".content").textContent =
           "No image selected";
@@ -447,9 +440,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// Code to fetch and store image URLs
 const token = sessionStorage.getItem("token");
-const urlPhoto = []; // Déclaration du tableau en dehors de la boucle
+const urlPhoto = []; 
 for (let i = 1; i <= 3; i++) {
   const imageUrl = sessionStorage.getItem(`image_${i}`);
   if (imageUrl) {
@@ -472,7 +464,7 @@ fetch("/portfolioimages", {
     if (response.ok) {
       return response.json();
     } else {
-      throw new Error("Erreur lors de la requête fetch");
+      console.log("Erreur lors de la requête fetch");
     }
   })
   .then((data) => {
@@ -492,9 +484,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          // Update the src attribute of the image preview
           image.src = e.target.result;
-          // Store the image URL in sessionStorage
           sessionStorage.setItem(
             `image_${input.dataset.index}`,
             e.target.result
@@ -502,14 +492,13 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         reader.readAsDataURL(file);
       } else {
-        // If no file is selected, display a message
+        // message si pas de fichier
         image.src = "https://via.placeholder.com/300x200";
         input.parentNode.querySelector(".content").textContent =
           "No image selected";
       }
     });
 
-    // Load image from sessionStorage on page reload
     const imageUrl = sessionStorage.getItem(`image_${input.dataset.index}`);
     if (imageUrl) {
       const image = input.parentNode.querySelector("img");
@@ -528,7 +517,7 @@ async function getAndRenderServices() {
     const coiffeurServicesData = await coiffeurServicesResponse.json();
 
     const servicesList = document.getElementById("servicesList");
-    servicesList.innerHTML = ""; // Clear previous content
+    servicesList.innerHTML = ""; 
 
     data.services.forEach((service) => {
       const checkbox = document.createElement("input");
@@ -565,7 +554,7 @@ async function getAndRenderServices() {
             });
 
             if (!response.ok) {
-              throw new Error("Erreur lors de la requête fetch");
+              console.log("Erreur lors de la requête fetch");
             }
 
             const responseData = await response.json();
@@ -592,7 +581,7 @@ async function getAndRenderServices() {
             );
 
             if (!coiffeurService) {
-              throw new Error("Relation Coiffeur-Service non trouvée");
+              console.log("Relation Coiffeur-Service non trouvée");
             }
 
             const response = await fetch("/CoiffeurService", {
@@ -607,7 +596,7 @@ async function getAndRenderServices() {
             });
 
             if (!response.ok) {
-              throw new Error("Erreur lors de la requête fetch");
+              console.log("Erreur lors de la requête fetch");
             }
 
             const responseData = await response.json();
@@ -647,7 +636,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const token = sessionStorage.getItem("token");
   if (!token) {
-    window.location.href = "/conn"; // Assurez-vous que le chemin est correct
+    window.location.href = "/conn"; 
     return;
   }
 
